@@ -22,13 +22,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.dende.dendeeventos.R
 import br.com.dende.dendeeventos.core.designsystem.theme.*
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 
 @Composable
 fun InviteCard(
     modifier: Modifier = Modifier,
     userName: String = "David Silbia",
     eventName: String = "Dribbble Design meetup 2022",
-    timeAgo: String = "1 min ago"
+    timeAgo: String = "1 min ago",
+    onAcceptClick: () -> Unit = {}, // ADICIONE ISSO
+    onRejectClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -37,7 +41,6 @@ fun InviteCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
-            // Linha Superior: Avatar + Textos
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
@@ -106,7 +109,7 @@ fun InviteCard(
                 // Botão Reject (Fundo claro, texto laranja)
                 DendeButton(
                     text = "Reject",
-                    onClick = { /* TODO */ },
+                    onClick = onRejectClick,
                     modifier = Modifier.weight(1f),
                     containerColor = Color(0xFFFDEEE3), // Um laranja bem clarinho
                     contentColor = Color(0xFFE27D1F)   // Laranja forte
@@ -115,12 +118,32 @@ fun InviteCard(
                 // Botão Accept (Fundo laranja, texto branco)
                 DendeButton(
                     text = "Accept",
-                    onClick = { /* TODO */ },
+                    onClick = onAcceptClick,
                     modifier = Modifier.weight(1f),
                     containerColor = Color(0xFFE27D1F), // Laranja do seu app
                     contentColor = Color.White
                 )
             }
         }
+    }
+}
+
+@Composable
+fun InvitePopup(
+    onDismiss: () -> Unit,
+    onAccept: () -> Unit,
+    onReject: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = { onDismiss() },
+        properties = DialogProperties(
+            usePlatformDefaultWidth = true
+        )
+    ) {
+        InviteCard(
+            modifier = Modifier.wrapContentHeight(),
+            onAcceptClick = onAccept,
+            onRejectClick = onReject
+        )
     }
 }
