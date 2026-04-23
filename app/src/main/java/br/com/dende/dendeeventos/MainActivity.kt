@@ -86,7 +86,7 @@ fun CategorySelector() {
 
         // Categoria Art
         CategoryChip(
-            label = "Art",
+            label = "Teste",
             iconRes = R.drawable.ic_launcher_background, // seu ícone
             isSelected = selectedCategory == "Art",
             onClick = { selectedCategory = "Art" }
@@ -94,13 +94,6 @@ fun CategorySelector() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
 @Preview(showBackground = true)
 @Composable
