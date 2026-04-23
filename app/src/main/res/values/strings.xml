@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">dendeeventos</string>
+    <string name="app_name">Dendê Eventos</string>
+    <string name="btn_join_now">JOIN NOW</string>
+    <string name="btn_accept">Accept</string>
+    <string name="btn_reject">Reject</string>
+    <string name="label_invite_on">invite you on</string>
 </resources>

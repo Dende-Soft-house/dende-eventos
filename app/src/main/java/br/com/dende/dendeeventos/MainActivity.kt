@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import br.com.dende.dendeeventos.core.designsystem.components.CategoryChip
+import br.com.dende.dendeeventos.core.designsystem.components.EventCard
 import br.com.dende.dendeeventos.core.designsystem.components.InviteCard
 import br.com.dende.dendeeventos.core.designsystem.components.InvitePopup
 import br.com.dende.dendeeventos.ui.theme.DendeeventosTheme
@@ -31,7 +32,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            CategorySelector()
+            EventCard()
         }
     }
 }
@@ -105,6 +106,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     DendeeventosTheme {
-        Greeting("Android")
+        EventCard(imageUrl = "")
     }
 }

@@ -1,6 +1,5 @@
 package br.com.dende.dendeeventos.ui.theme
 
-import androidx.compose.runtime.snapshots.SnapshotApplyResult
 import androidx.compose.ui.graphics.Color
 
 //primary color
