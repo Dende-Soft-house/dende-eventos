@@ -6,6 +6,7 @@ enum class CategoriaEvento {
     MUSICA, GASTRONOMIA, ESPORTES, DESIGN, TECNOLOGIA, EDUCACAO, NEGOCIOS, SAUDE, ARTE, CULTURA, FESTA, WORKSHOP, PALESTRA
 }
 
+// Enum que representa as categorias possíveis de um evento.
 
 data class Evento(
     val eventoId: String,
@@ -20,6 +21,7 @@ data class Evento(
     val  categoriaEvento: CategoriaEvento
 )
 
+// Representa o local o evento ocorre
 data class Local(
     val id: String,
     val nome: String,
