@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 data class PerfilUsuarioComum(
     var nome: String,
-    var caminhoImagemPerfil: String,
+    val imagemURL: String,
     var dataNascimento: LocalDate,
     var genero: Genero,
     val email: String,
