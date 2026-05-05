@@ -9,8 +9,6 @@ data class UsuarioOrganizador(
     var genero: Genero,
     val email: String,
     var senha: String,
-    var cnpj: String? = null,
-    var razaoSocial: String? = null,
-    var nomeFantasia: String? = null,
+    var dadosEmpresa: Empresa,
     var ativo: Boolean = true
 )
