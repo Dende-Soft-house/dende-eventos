@@ -11,6 +11,6 @@ data class EventoStatus(
     var localEvento: String,
     var imagemUrl: String,
     // Variável responsável por controlar o estado do evento (ativo/inativo)
-    var isEventActive: Boolean = false,
+    var ativo: Boolean = false,
     val statusOperacao: StatusOperacao = StatusOperacao.AGUARDANDO
 )
