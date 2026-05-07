@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 data class Organizador(
     var nome: String,
-    var caminhoFotoPerfil: String? = null,
+    var caminhoFotoPerfil: String? = "",
     var dataNascimento: LocalDate,
     var genero: Genero,
     val email: String,
