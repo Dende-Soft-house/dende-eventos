@@ -2,7 +2,7 @@ package br.com.dende.dendeeventos.domain
 
 import java.time.LocalDate
 
-data class PerfilUsuarioComum(
+data class PerfilUsuario(
     val nome: String,
     val imagemURL: String,
     val dataNascimento: LocalDate,
