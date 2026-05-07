@@ -1,5 +1,5 @@
 // Enum Class para tela de ativação e desativação de evento
-enum class StatusOperacao {
+enum class EtapaDesativacaoEvento {
     AGUARDANDO, SUCESSO, ERRO
 }
 
