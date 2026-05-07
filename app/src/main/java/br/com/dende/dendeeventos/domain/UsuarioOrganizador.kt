@@ -9,6 +9,6 @@ data class Organizador(
     var genero: Genero,
     val email: String,
     var senha: String,
-    var dadosEmpresa: Empresa,
+    var dadosEmpresa: Empresa?,
     var ativo: Boolean = true
 )
