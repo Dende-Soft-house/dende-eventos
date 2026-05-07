@@ -2,7 +2,7 @@ package br.com.dende.dendeeventos.domain
 
 import java.time.LocalDate
 
-data class UsuarioOrganizador(
+data class Organizador(
     var nome: String,
     var caminhoFotoPerfil: String? = null,
     var dataNascimento: LocalDate,
