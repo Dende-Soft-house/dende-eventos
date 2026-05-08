@@ -3,11 +3,10 @@ package br.com.dende.dendeeventos.domain
 import java.time.LocalDate
 
 data class Usuario(
-    var nome: String,
-    val email: String,
-    var senha: String,
-    var genero: Genero,
-    var dataNascimento: LocalDate,
-    var caminhoFotoPerfil: String?,
-    var ativo: Boolean = true,
+    open var nome: String,
+    open val email: String,
+    open var senha: String,
+    open var genero: Genero,
+    open var dataNascimento: LocalDate,
+    open var ativo: Boolean = true,
 )
