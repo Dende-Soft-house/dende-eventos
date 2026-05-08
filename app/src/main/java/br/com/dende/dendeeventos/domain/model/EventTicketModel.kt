@@ -21,8 +21,8 @@ data class EventCard(
     val evento: String,
     val descricao: String,
     val dataHora: LocalDateTime,
-    val dataInicio: LocalDateTime,
-    val dataFim: LocalDateTime,
+    val dataHoraInicio: LocalDateTime,
+    val dataHoraFim: LocalDateTime,
     val duracao: Period,
     val gratuito: Boolean,
     val totalInscritos: Int,
@@ -32,9 +32,11 @@ data class EventCard(
     val status: StatusEvento,
     val urlImageBanner: String
 ) {
-    fun calcularDataFim(): LocalDateTime {
-
-        return dataInicio.plus(duracao)
+    fun calcularDuracao(): Period {
+        return Period.between(
+            dataHoraInicio.toLocalDate(),
+            dataHoraFim.toLocalDate()
+        )
     }
 }
 
