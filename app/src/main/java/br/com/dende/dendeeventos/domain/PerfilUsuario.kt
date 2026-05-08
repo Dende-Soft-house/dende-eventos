@@ -3,9 +3,9 @@ package br.com.dende.dendeeventos.domain
 import java.time.LocalDate
 
 data class PerfilUsuario(
-    var nome: String,
-    var imagemURL: String,
-    var dataNascimento: LocalDate,
-    var genero: Genero,
-    var email: String,
+    open var nome: String,
+    open var imagemURL: String,
+    open var dataNascimento: LocalDate,
+    open var genero: Genero,
+    open var email: String,
 )
