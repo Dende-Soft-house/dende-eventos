@@ -1,8 +1,6 @@
 package br.com.dende.dendeeventos.domain
 
 data class InativarUsuario(
-    var ingressosUsuario: List<Ingresso>,
-    val precoIngresso: Double,
-    val idIngresso: BigDecimal,
+    val usuario: Usuario
     var ativo: Boolean = true
     )
