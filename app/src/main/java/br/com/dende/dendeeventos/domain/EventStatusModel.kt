@@ -8,5 +8,5 @@ data class EventoStatus(
     var nomeEvento: String,
     // Variável responsável por controlar o estado do evento (ativo/inativo)
     var ativo: Boolean = false,
-    val statusOperacao: StatusOperacao = StatusOperacao.AGUARDANDO
+    val statusOperacao: StatusOperacao = StatusOperacao.AGUARDANDO_CONFIRMACAO
 )
