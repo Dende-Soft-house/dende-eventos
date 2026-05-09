@@ -2,12 +2,12 @@ package br.com.dende.dendeeventos.domain
 
 import java.time.LocalDateTime
 
-data class DadosEvento(
-    val eventoId: Int,
-    var statusEvento: Boolean,
+data class Evento(
+    var eventoId: Long,
+    var ativo: Boolean = false,
     // val organizador: Usuario,
     var nome: String,
-    var pagina: String,
+    var paginaWeb: String = "",
     var descricao: String,
     var dataInicio: LocalDateTime,
     var dataFim: LocalDateTime,
@@ -19,7 +19,7 @@ data class DadosEvento(
     var preco: Double,
     var aceitaEstorno: Boolean,
     var taxaEstorno: Double,
-    var urlImagem: String?
+    var urlBanner: String?
 )
 
 // Único data class utilizado por cadastrar evento, alterar evento e listar eventos do organizador.
