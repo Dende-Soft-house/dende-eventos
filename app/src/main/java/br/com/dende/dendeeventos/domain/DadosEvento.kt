@@ -2,6 +2,12 @@ package br.com.dende.dendeeventos.domain
 
 import java.time.LocalDateTime
 
+data class Faturamento(
+    var preco: Double,
+    var aceitaEstorno: Boolean,
+    var taxaEstorno: Double
+)
+
 data class Evento(
     var eventoId: Long,
     var ativo: Boolean = false,
@@ -12,13 +18,11 @@ data class Evento(
     var dataInicio: LocalDateTime,
     var dataFim: LocalDateTime,
     var tipoEvento: TipoEvento,
-    var eventoPrincipal: DadosEvento?,
+    var eventoPrincipal: Evento?,
     var modalidadeEvento: ModalidadeEvento,
     var capacidadeMaxima: Int,
     var local: String,
-    var preco: Double,
-    var aceitaEstorno: Boolean,
-    var taxaEstorno: Double,
+    var faturamento: Faturamento,
     var urlBanner: String?
 )
 
