@@ -2,7 +2,7 @@ package br.com.dende.dendeeventos.domain
 
 data class CancelamentoIngresso(
     val idPedido: String,
-    val idIngresso: String,
+    val ingresso: Ingresso,
     var statusCancelamento: StatusCancelamento.NAO_INICIADO,
     val percentualTaxaCancelamento: Int, // de 0 a 100
     val motivoCancelamento: TipoMotivoCancelamento? = null,
