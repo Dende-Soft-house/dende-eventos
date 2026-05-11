@@ -1,3 +1,3 @@
 enum class StatusIngresso {
-    ATIVO, CANCELADO
+    ATIVO, CANCELADO, AGUARDANDO_INGRESSO
 }
