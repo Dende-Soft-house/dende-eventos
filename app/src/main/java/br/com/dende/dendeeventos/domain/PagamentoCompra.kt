@@ -7,7 +7,7 @@ enum class StatusPagamento {
 
 data class Pagamento(
     val id: String = UUID.randomUUID().toString(),
-    val usuarioId: String,
+    val ingresso: Ingresso,
     val eventoId: String,
     val cartaoId: String? = null,
     val tipoPagamento: TipoPagamento,
