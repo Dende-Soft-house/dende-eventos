@@ -15,5 +15,5 @@ data class Pagamento(
     val precoUnitario: Double,
     val valorTotal: Double,
     var status: StatusPagamento = StatusPagamento.PENDENTE,
-    val dataHora: 
+    val dataHora: LocalDateTime
 )
