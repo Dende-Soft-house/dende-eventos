@@ -8,5 +8,5 @@ data class Cartao(
     val numero: String,
     val validade: LocalDate,
     val cvv: Int,
-    val salvarParaFuturos: Boolean = false
+    val salvarParaOutrosPagamentos: Boolean = false
 )
