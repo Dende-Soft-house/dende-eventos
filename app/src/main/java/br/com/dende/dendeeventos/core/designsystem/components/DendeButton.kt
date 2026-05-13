@@ -16,13 +16,13 @@ import br.com.dende.dendeeventos.core.designsystem.theme.Inter
 @Composable
 fun DendeButton(
     text: String,
-    onClick: () -> Unit,
+    onClick: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color,
     contentColor: Color
 ) {
     Button(
-        onClick = onClick,
+        onClick = onClick as () -> Unit,
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
