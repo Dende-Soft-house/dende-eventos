@@ -148,3 +148,130 @@ fun BottomNavBar(modifier: Modifier = Modifier) {
         )
     }
 }
+
+@Composable
+fun BottomNavBarSearch(modifier: Modifier = Modifier) {
+
+    val dendeOrange = Color(0xFFF97316) // Cor laranja do seu projeto
+
+    NavigationBar(
+        modifier = modifier
+            .fillMaxWidth()
+            .shadow(
+                elevation = 24.dp,
+                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+                spotColor = Color.Black,
+                ambientColor = Color.Black
+            )
+            .height(70.dp)
+            .clip(
+                RoundedCornerShape(
+                    topStart = 24.dp,
+                    topEnd = 24.dp
+                )
+            ),
+        containerColor = Color(0xFFFFFFFF),
+        tonalElevation = 0.dp
+    ) {
+
+        // Home
+        NavigationBarItem(
+            selected = true,
+            onClick = {},
+            colors = NavigationBarItemDefaults.colors(
+                indicatorColor = Color.Transparent
+            ),
+            icon = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_home),
+                        contentDescription = null,
+                        tint = Color.Black // Cor do ícone selecionado
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(24.dp) // Largura da linha
+                            .height(2.dp) // Espessura da linha
+                            .background(Color.Transparent) // Linha visível (Laranja)
+                    )
+                }
+            }
+        )
+
+        // Busca (Selecionado)
+        NavigationBarItem(
+            selected = false,
+            onClick = {},
+            colors = NavigationBarItemDefaults.colors(
+                indicatorColor = Color.Transparent
+            ),
+            icon = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_search),
+                        contentDescription = null,
+                        tint = dendeOrange
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(24.dp)
+                            .height(2.dp)
+                            .background(dendeOrange) // Linha invisível, trocar quando este for selecionado
+                    )
+                }
+            }
+        )
+
+        // Ticket
+        NavigationBarItem(
+            selected = false,
+            onClick = {},
+            colors = NavigationBarItemDefaults.colors(
+                indicatorColor = Color.Transparent
+            ),
+            icon = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_ticket),
+                        contentDescription = null,
+                        tint = Color.Black
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(24.dp)
+                            .height(2.dp)
+                            .background(Color.Transparent)
+                    )
+                }
+            }
+        )
+
+        // Perfil
+        NavigationBarItem(
+            selected = false,
+            onClick = {},
+            colors = NavigationBarItemDefaults.colors(
+                indicatorColor = Color.Transparent
+            ),
+            icon = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_profile),
+                        contentDescription = null,
+                        tint = Color.Black
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(24.dp)
+                            .height(2.dp)
+                            .background(Color.Transparent)
+                    )
+                }
+            }
+        )
+    }
+}
