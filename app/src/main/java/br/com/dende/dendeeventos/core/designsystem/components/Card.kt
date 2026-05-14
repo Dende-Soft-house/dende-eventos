@@ -35,7 +35,12 @@ import androidx.compose.ui.unit.sp
 import br.com.dende.dendeeventos.R
 
 @Composable
-fun EventCard() {
+fun EventCard(
+    status: String,
+    statusColor: Color,
+    backgroundStatus: Color,
+    buttonColor: Color
+    ) {
     Card(
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(8.dp),
@@ -77,12 +82,12 @@ fun EventCard() {
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
-                        .background(Color(0xFFdFF5D8))
+                        .background(backgroundStatus)
                         .padding(horizontal = 14.dp, vertical = 6.dp)
                 ) {
                     Text(
-                        text = "ATIVO",
-                        color = Color(0XFF169B16),
+                        text = status,
+                        color = statusColor,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -96,7 +101,7 @@ fun EventCard() {
                     .fillMaxWidth()
                     .height(52.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF1F2230)
+                    containerColor = buttonColor
                 ),
                 shape = RoundedCornerShape(14.dp)
             ) {
