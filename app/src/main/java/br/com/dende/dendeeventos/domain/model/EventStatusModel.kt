@@ -48,7 +48,7 @@ data class Ingresso(
     var id: Long,
     val evento: EventCard,
     val categoriaEvento: CategoriaEvento,
-    val nomeUsuario: Usuario,
+    val nomeUsuario: String,
     val statusEvento: StatusEvento,
     val urlQrCode: String,
     val urlImage: String
