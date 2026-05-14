@@ -44,6 +44,12 @@ data class Local(
     val cidade: String
 )
 
+data class Usuario(
+    val id: Long,
+    val nome: String,
+    val email: String
+)
+
 data class Ingresso(
     var id: Long,
     val evento: EventCard,
