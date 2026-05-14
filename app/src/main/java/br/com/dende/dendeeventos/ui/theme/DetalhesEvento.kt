@@ -54,7 +54,7 @@ fun EventosDetalhesScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(Color(0xFFF5F5F5))
                 .padding(16.dp)
         ) {
 
