@@ -17,15 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -109,7 +100,7 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = Icons.Default.LocationOn,
+                        painter = painterResource(R.drawable.ic_location),
                         contentDescription = null,
                         tint = DendeOrange
                     )
@@ -125,7 +116,7 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = Icons.Default.DateRange,
+                        painter = painterResource(R.drawable.ic_time),
                         contentDescription = null,
                         tint = DendeOrange
                     )
