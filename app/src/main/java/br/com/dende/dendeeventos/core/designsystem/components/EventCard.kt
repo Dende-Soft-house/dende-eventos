@@ -1,5 +1,7 @@
 package br.com.dende.dendeeventos.core.designsystem.components
 
+
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,7 +18,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -36,13 +37,14 @@ fun EventCard(
     date: String = "Date",
     location: String = "Location",
     price: String = "$0.00 BRL",
+    time: String = "19:00",
     imageUrl: String = "",
     onJoinClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(110.dp), // Altura fixa para manter o padrão da imagem
+            .height(110.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -53,7 +55,7 @@ fun EventCard(
                 .padding(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 1. Imagem do Evento (Arredondada)
+            //
             AsyncImage(
                 model = imageUrl,
                 contentDescription = "Imagem do evento $title",
@@ -65,10 +67,9 @@ fun EventCard(
                 error = painterResource(id = R.drawable.ic_launcher_background)
             )
 
-
             Spacer(modifier = Modifier.width(12.dp))
 
-            // 2. Conteúdo Central (Título e Data/Local)
+            //
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -94,7 +95,7 @@ fun EventCard(
                         color = SoftDarkish
                     )
 
-                    // Ponto Laranja entre data e local
+
                     Box(
                         modifier = Modifier
                             .padding(horizontal = 6.dp)
@@ -113,15 +114,14 @@ fun EventCard(
                 }
             }
 
-            // 3. Linha Vertical Divisora
+            //
             Box(
                 modifier = Modifier
-                    .fillMaxHeight(0.6f) // Linha não ocupa a altura toda
-                    .width(1.dp)
+                    .fillMaxHeight(0.6f) //
                     .background(Color(0xFFE0E0E0))
             )
 
-            // 4. Seção da Direita (Preço e Join Now)
+            //
             Column(
                 modifier = Modifier
                     .width(90.dp)
@@ -139,8 +139,9 @@ fun EventCard(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                //
                 Text(
-                    text = stringResource(id=R.string.btn_join_now),
+                    text = time,
                     fontFamily = Inter,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 12.sp,
@@ -150,10 +151,4 @@ fun EventCard(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun EventCardPreview(){
-    EventCard()
 }
