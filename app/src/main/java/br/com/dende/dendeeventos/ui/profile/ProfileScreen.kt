@@ -142,17 +142,26 @@ private fun ProfileContent(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 96.dp)
         ) {
-            ProfileHeader(onBackClick = onBackClick)
+            ProfileHeader(
+                showTabs = showTabs,
+                onBackClick = onBackClick
+            )
 
             if (showTabs) {
+                Spacer(modifier = Modifier.height(20.dp))
+
                 ProfileTabs(
                     selectedTab = selectedTab,
                     onTabSelected = onTabSelected
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(
+                    modifier = Modifier.height(
+                        if (selectedTab == ProfileTab.Business) 34.dp else 20.dp
+                    )
+                )
             } else {
-                Spacer(modifier = Modifier.height(28.dp))
+                Spacer(modifier = Modifier.height(24.dp))
             }
 
             fieldsContent()
@@ -190,12 +199,16 @@ private fun ProfileContent(
 
 @Composable
 private fun ProfileHeader(
+    showTabs: Boolean,
     onBackClick: () -> Unit
 ) {
+    val headerHeight = if (showTabs) 298.dp else 339.dp
+    val cardHeight = if (showTabs) 226.dp else 250.dp
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(318.dp)
+            .height(headerHeight)
     ) {
         Box(
             modifier = Modifier
@@ -228,7 +241,7 @@ private fun ProfileHeader(
             modifier = Modifier
                 .padding(horizontal = 30.dp)
                 .fillMaxWidth()
-                .height(226.dp)
+                .height(cardHeight)
                 .align(Alignment.BottomCenter),
             shape = RoundedCornerShape(30.dp),
             colors = CardDefaults.cardColors(containerColor = White),
@@ -287,7 +300,7 @@ private fun ProfileTabs(
             )
         }
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         Row(
             modifier = Modifier
