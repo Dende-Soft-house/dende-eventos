@@ -36,7 +36,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -116,7 +115,7 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_time),
+                        painter = painterResource(R.drawable.ic_date),
                         contentDescription = null,
                         tint = DendeOrange
                     )
@@ -250,8 +249,3 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
         FeedEventosScreen()
     }
 
-@Preview
-@Composable
-fun EventoCardPreview() {
-    EventoCard(titulo ="IntegraSI FSA", local = "Feira de Santana", data= "23 Mar, 14:00")
-}

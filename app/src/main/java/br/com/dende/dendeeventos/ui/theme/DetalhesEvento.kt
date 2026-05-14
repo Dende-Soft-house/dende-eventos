@@ -48,6 +48,7 @@ fun EventosDetalhesScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
+            
     ) {
 
         Column(
@@ -79,7 +80,7 @@ fun EventosDetalhesScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(150.dp)
+                        .height(180.dp)
                         .clip(RoundedCornerShape(16.dp))
                         .background(Color(0xFF1F2232))
                 )
@@ -104,6 +105,7 @@ fun EventosDetalhesScreen(
 
                 // Informações
                 Card(
+                    modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = Color(0xFFF0F0F0)
@@ -120,7 +122,7 @@ fun EventosDetalhesScreen(
                         ) {
 
                             Icon(
-                                painter = painterResource(R.drawable.ic_time),
+                                painter = painterResource(R.drawable.ic_date),
                                 contentDescription = null,
                                 tint = DendeOrange,
                                 modifier = Modifier.size(28.dp)
@@ -193,7 +195,7 @@ fun EventosDetalhesScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // Sobre
                 Card(
@@ -232,7 +234,7 @@ fun EventosDetalhesScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // Participantes
                 Card(
@@ -263,17 +265,17 @@ fun EventosDetalhesScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 // Botões bottom
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
 
                     OutlinedButton(
                         onClick = onShareClick,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(0.8f),
                         shape = RoundedCornerShape(14.dp),
                         border = BorderStroke(0.dp, Color.Transparent),
                         colors = ButtonDefaults.outlinedButtonColors(
@@ -295,6 +297,7 @@ fun EventosDetalhesScreen(
                         )
                     }
 
+
                     Button(
                         onClick = onBuyClick,
                         modifier = Modifier.weight(1f),
@@ -305,16 +308,19 @@ fun EventosDetalhesScreen(
                     ) {
 
                         Icon(
+                            modifier = Modifier.size(25.dp),
                             painter = painterResource(R.drawable.ic_ticket),
                             contentDescription = null,
                             tint = Color.White
                         )
 
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
 
                         Text(
                             text = "Comprar ingresso",
-                            color = Color.White
+                            color = Color.White,
+                            fontSize = 13.sp,
+                            maxLines = 1
                         )
                     }
                 }
