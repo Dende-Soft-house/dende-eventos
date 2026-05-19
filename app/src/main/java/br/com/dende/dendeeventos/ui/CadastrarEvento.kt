@@ -16,8 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
@@ -54,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.dende.dendeeventos.core.designsystem.components.CustomTextField
 import br.com.dende.dendeeventos.core.designsystem.components.DateTimePicker
+import br.com.dende.dendeeventos.core.designsystem.components.DendeButton
 import br.com.dende.dendeeventos.core.designsystem.components.FormLabel
 import br.com.dende.dendeeventos.core.designsystem.components.FormSwitch
 import br.com.dende.dendeeventos.core.designsystem.components.ProgressBarStep
@@ -345,7 +344,8 @@ fun InformacoesBasicasScreen(onBack: () -> Unit, onNext: () -> Unit) {
                     .background(White)
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
-                Button(
+                DendeButton(
+                    text = "CONTINUAR",
                     onClick = {
                         erroNome = when {
                             nome.isEmpty() -> "Campo obrigatório"
@@ -380,17 +380,9 @@ fun InformacoesBasicasScreen(onBack: () -> Unit, onNext: () -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = ButtonLinear)
-                ) {
-                    Text(
-                        "CONTINUAR",
-                        color = White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        fontFamily = Inter
-                    )
-                }
+                    containerColor = ButtonLinear,
+                    contentColor = White
+                )
             }
         }
     }
@@ -614,7 +606,8 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
                     onExpandedChange = { expandirModalidade = it }
                 ) {
                     OutlinedTextField(
-                        value = modalidadeSelecionada?.name?.lowercase()?.replaceFirstChar { it.uppercase() } ?: "",
+                        value = modalidadeSelecionada?.name?.lowercase()
+                            ?.replaceFirstChar { it.uppercase() } ?: "",
                         onValueChange = {},
                         readOnly = true,
                         placeholder = {
@@ -709,7 +702,8 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
                     .background(White)
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
-                Button(
+                DendeButton(
+                    text = "CONTINUAR",
                     onClick = {
                         erroTipo = when (tipoSelecionado) {
                             null -> true
@@ -742,17 +736,9 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = ButtonLinear)
-                ) {
-                    Text(
-                        "CONTINUAR",
-                        color = White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        fontFamily = Inter
-                    )
-                }
+                    containerColor = ButtonLinear,
+                    contentColor = White
+                )
             }
         }
     }
@@ -864,7 +850,8 @@ fun FaturamentoScreen(onBack: () -> Unit, onNext: () -> Unit) {
                     .background(White)
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
-                Button(
+                DendeButton(
+                    text = "CONTINUAR",
                     onClick = {
                         val valorNumerico = valorIngresso.replace(",", ".").toDoubleOrNull()
                         erroValor = when {
@@ -890,17 +877,9 @@ fun FaturamentoScreen(onBack: () -> Unit, onNext: () -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = ButtonLinear)
-                ) {
-                    Text(
-                        "CONTINUAR",
-                        color = White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        fontFamily = Inter
-                    )
-                }
+                    containerColor = ButtonLinear,
+                    contentColor = White
+                )
             }
         }
     }
