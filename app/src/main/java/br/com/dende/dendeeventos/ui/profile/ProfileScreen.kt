@@ -1,11 +1,13 @@
 package br.com.dende.dendeeventos.ui.profile
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +20,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -31,13 +35,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.annotation.DrawableRes
 import br.com.dende.dendeeventos.R
-import br.com.dende.dendeeventos.core.designsystem.components.DendeButton
 import br.com.dende.dendeeventos.core.designsystem.theme.Inter
 import br.com.dende.dendeeventos.ui.theme.DendeeventosTheme
 import br.com.dende.dendeeventos.ui.theme.Grey
@@ -168,7 +172,7 @@ private fun ProfileContent(
 
             Spacer(modifier = Modifier.height(34.dp))
 
-            DendeButton(
+            ProfileActionButton(
                 text = "Editar Perfil",
                 onClick = onEditClick,
                 modifier = Modifier
@@ -180,7 +184,7 @@ private fun ProfileContent(
 
             Spacer(modifier = Modifier.height(22.dp))
 
-            DendeButton(
+            ProfileActionButton(
                 text = "Inativar Perfil",
                 onClick = onDeactivateClick,
                 modifier = Modifier
@@ -350,7 +354,7 @@ private fun PersonalProfileFields() {
 
         ProfileInfoField(
             label = "Data de Nascimento",
-            value = "17 de junho, 2003 (22 anos)",
+            value = "17 de junho, 2003 (22 anos, 10 meses e 5 dias)",
             iconRes = R.drawable.ic_calendar_24
         )
     }
@@ -405,7 +409,7 @@ private fun ProfileInfoField(
                 .height(32.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .background(Grey)
-                .padding(horizontal = 10.dp),
+                .padding(start = 8.dp, end = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -428,12 +432,43 @@ private fun ProfileInfoField(
             Text(
                 text = value,
                 fontFamily = Inter,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
                 color = Color(0xFF20232C),
-                maxLines = 1
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
+    }
+}
+
+@Composable
+private fun ProfileActionButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    containerColor: Color,
+    contentColor: Color,
+    borderColor: Color = SoftDarkish
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.height(50.dp),
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(width = 1.dp, color = borderColor),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = contentColor
+        ),
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp)
+    ) {
+        Text(
+            text = text,
+            fontFamily = Inter,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            lineHeight = 14.sp
+        )
     }
 }
 
