@@ -3,6 +3,7 @@ package br.com.dende.dendeeventos.domain
 import java.time.LocalDateTime
 
 data class Faturamento(
+    val evento: Evento,
     var preco: Double,
     var aceitaEstorno: Boolean,
     var taxaEstorno: Double
