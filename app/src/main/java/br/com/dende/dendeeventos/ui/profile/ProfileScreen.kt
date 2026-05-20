@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection", "unused")
+
 package br.com.dende.dendeeventos.ui.profile
 
 import androidx.compose.foundation.BorderStroke
@@ -29,6 +31,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.annotation.DrawableRes
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.com.dende.dendeeventos.R
 import br.com.dende.dendeeventos.core.designsystem.theme.Inter
 import br.com.dende.dendeeventos.ui.theme.DendeeventosTheme
@@ -50,43 +56,50 @@ import br.com.dende.dendeeventos.ui.theme.Orange
 import br.com.dende.dendeeventos.ui.theme.SoftDarkish
 import br.com.dende.dendeeventos.ui.theme.White
 
-private enum class ProfileTab {
-    Personal,
-    Business
-}
-
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
+    profileViewModel: ProfileViewModel = viewModel(key = "profile-common"),
     onBackClick: () -> Unit = {},
     onEditClick: () -> Unit = {},
     onDeactivateClick: () -> Unit = {}
 ) {
+    LaunchedEffect(profileViewModel) {
+        profileViewModel.loadCommonProfile()
+    }
+
+    val uiState by profileViewModel.uiState.collectAsState()
+
     ProfileContent(
         modifier = modifier,
-        showTabs = false,
-        selectedTab = ProfileTab.Personal,
+        uiState = uiState,
         onBackClick = onBackClick,
         onEditClick = onEditClick,
         onDeactivateClick = onDeactivateClick
-    ) {
-        PersonalProfileFields()
-    }
+    )
 }
 
 @Composable
 fun OrganizerProfileScreen(
     modifier: Modifier = Modifier,
+    profileViewModel: ProfileViewModel = viewModel(key = "profile-organizer-personal"),
     onBackClick: () -> Unit = {},
     onEditClick: () -> Unit = {},
     onDeactivateClick: () -> Unit = {},
     onBusinessTabClick: () -> Unit = {}
 ) {
+    LaunchedEffect(profileViewModel) {
+        profileViewModel.loadOrganizerProfile(ProfileTab.Personal)
+    }
+
+    val uiState by profileViewModel.uiState.collectAsState()
+
     ProfileContent(
         modifier = modifier,
-        showTabs = true,
-        selectedTab = ProfileTab.Personal,
+        uiState = uiState,
         onTabSelected = { selectedTab ->
+            profileViewModel.onTabSelected(selectedTab)
+
             if (selectedTab == ProfileTab.Business) {
                 onBusinessTabClick()
             }
@@ -94,24 +107,30 @@ fun OrganizerProfileScreen(
         onBackClick = onBackClick,
         onEditClick = onEditClick,
         onDeactivateClick = onDeactivateClick
-    ) {
-        PersonalProfileFields()
-    }
+    )
 }
 
 @Composable
 fun OrganizerCompanyProfileScreen(
     modifier: Modifier = Modifier,
+    profileViewModel: ProfileViewModel = viewModel(key = "profile-organizer-business"),
     onBackClick: () -> Unit = {},
     onEditClick: () -> Unit = {},
     onDeactivateClick: () -> Unit = {},
     onPersonalTabClick: () -> Unit = {}
 ) {
+    LaunchedEffect(profileViewModel) {
+        profileViewModel.loadOrganizerProfile(ProfileTab.Business)
+    }
+
+    val uiState by profileViewModel.uiState.collectAsState()
+
     ProfileContent(
         modifier = modifier,
-        showTabs = true,
-        selectedTab = ProfileTab.Business,
+        uiState = uiState,
         onTabSelected = { selectedTab ->
+            profileViewModel.onTabSelected(selectedTab)
+
             if (selectedTab == ProfileTab.Personal) {
                 onPersonalTabClick()
             }
@@ -119,21 +138,17 @@ fun OrganizerCompanyProfileScreen(
         onBackClick = onBackClick,
         onEditClick = onEditClick,
         onDeactivateClick = onDeactivateClick
-    ) {
-        BusinessProfileFields()
-    }
+    )
 }
 
 @Composable
 private fun ProfileContent(
     modifier: Modifier = Modifier,
-    showTabs: Boolean,
-    selectedTab: ProfileTab,
+    uiState: ProfileUiState,
     onTabSelected: (ProfileTab) -> Unit = {},
     onBackClick: () -> Unit,
     onEditClick: () -> Unit,
-    onDeactivateClick: () -> Unit,
-    fieldsContent: @Composable () -> Unit
+    onDeactivateClick: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -147,28 +162,29 @@ private fun ProfileContent(
                 .padding(bottom = 96.dp)
         ) {
             ProfileHeader(
-                showTabs = showTabs,
+                showTabs = uiState.showTabs,
+                profileImageRes = uiState.profileImageRes,
                 onBackClick = onBackClick
             )
 
-            if (showTabs) {
+            if (uiState.showTabs) {
                 Spacer(modifier = Modifier.height(20.dp))
 
                 ProfileTabs(
-                    selectedTab = selectedTab,
+                    selectedTab = uiState.selectedTab,
                     onTabSelected = onTabSelected
                 )
 
                 Spacer(
                     modifier = Modifier.height(
-                        if (selectedTab == ProfileTab.Business) 34.dp else 20.dp
+                        if (uiState.selectedTab == ProfileTab.Business) 34.dp else 20.dp
                     )
                 )
             } else {
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
-            fieldsContent()
+            ProfileFields(fields = uiState.visibleFields)
 
             Spacer(modifier = Modifier.height(34.dp))
 
@@ -204,6 +220,8 @@ private fun ProfileContent(
 @Composable
 private fun ProfileHeader(
     showTabs: Boolean,
+    @DrawableRes
+    profileImageRes: Int,
     onBackClick: () -> Unit
 ) {
     val headerHeight = if (showTabs) 298.dp else 339.dp
@@ -256,7 +274,7 @@ private fun ProfileHeader(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.profile_placeholder),
+                    painter = painterResource(id = profileImageRes),
                     contentDescription = "Foto de perfil",
                     modifier = Modifier
                         .size(170.dp)
@@ -329,73 +347,26 @@ private fun ProfileTabs(
 }
 
 @Composable
-private fun PersonalProfileFields() {
+private fun ProfileFields(
+    fields: List<ProfileFieldUiState>
+) {
     Column(
         modifier = Modifier.padding(horizontal = 32.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        ProfileInfoField(
-            label = "Nome Completo",
-            value = "Rafael Jesus B. Cerqueira",
-            iconRes = R.drawable.ic_field_person_24
-        )
-
-        ProfileInfoField(
-            label = "E-mail",
-            value = "rafaeljbc2003@gmail.com",
-            iconRes = R.drawable.ic_field_email_24
-        )
-
-        ProfileInfoField(
-            label = "Gênero",
-            value = "Masculino",
-            iconRes = R.drawable.ic_field_gender_24
-        )
-
-        ProfileInfoField(
-            label = "Data de Nascimento",
-            value = "17 de junho, 2003 (22 anos, 10 meses e 5 dias)",
-            iconRes = R.drawable.ic_calendar_24
-        )
-    }
-}
-
-@Composable
-private fun BusinessProfileFields() {
-    Column(
-        modifier = Modifier.padding(horizontal = 32.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        ProfileInfoField(
-            label = "CNPJ",
-            value = "00.000.000/0001-00",
-            iconRes = R.drawable.ic_field_business_24
-        )
-
-        ProfileInfoField(
-            label = "Razão Social",
-            value = "Integra SI LTDA",
-            iconRes = R.drawable.ic_field_shield_24
-        )
-
-        ProfileInfoField(
-            label = "Nome Fantasia",
-            value = "Dende Eventos",
-            iconRes = R.drawable.ic_field_store_24
-        )
+        fields.forEach { field ->
+            ProfileInfoField(field = field)
+        }
     }
 }
 
 @Composable
 private fun ProfileInfoField(
-    label: String,
-    value: String,
-    @DrawableRes
-    iconRes: Int
+    field: ProfileFieldUiState
 ) {
     Column {
         Text(
-            text = label,
+            text = field.label,
             fontFamily = Inter,
             fontSize = 14.sp,
             color = Color.Black
@@ -420,8 +391,8 @@ private fun ProfileInfoField(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(id = iconRes),
-                    contentDescription = label,
+                    painter = painterResource(id = field.iconRes),
+                    contentDescription = field.label,
                     modifier = Modifier.size(18.dp),
                     tint = SoftDarkish
                 )
@@ -430,7 +401,7 @@ private fun ProfileInfoField(
             Spacer(modifier = Modifier.width(8.dp))
 
             Text(
-                text = value,
+                text = field.value,
                 fontFamily = Inter,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
@@ -553,7 +524,12 @@ private fun ProfileBottomItem(
 @Composable
 private fun ProfileScreenPreview() {
     DendeeventosTheme {
-        ProfileScreen()
+        ProfileContent(
+            uiState = ProfileMockData.commonProfile(),
+            onBackClick = {},
+            onEditClick = {},
+            onDeactivateClick = {}
+        )
     }
 }
 
@@ -566,7 +542,12 @@ private fun ProfileScreenPreview() {
 @Composable
 private fun OrganizerProfileScreenPreview() {
     DendeeventosTheme {
-        OrganizerProfileScreen()
+        ProfileContent(
+            uiState = ProfileMockData.organizerProfile(ProfileTab.Personal),
+            onBackClick = {},
+            onEditClick = {},
+            onDeactivateClick = {}
+        )
     }
 }
 
@@ -579,6 +560,11 @@ private fun OrganizerProfileScreenPreview() {
 @Composable
 private fun OrganizerCompanyProfileScreenPreview() {
     DendeeventosTheme {
-        OrganizerCompanyProfileScreen()
+        ProfileContent(
+            uiState = ProfileMockData.organizerProfile(ProfileTab.Business),
+            onBackClick = {},
+            onEditClick = {},
+            onDeactivateClick = {}
+        )
     }
 }
