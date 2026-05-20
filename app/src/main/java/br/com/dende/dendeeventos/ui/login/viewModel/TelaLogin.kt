@@ -1,4 +1,4 @@
-package br.com.dende.dendeeventos.ui.login
+package br.com.dende.dendeeventos.ui.login.viewModel
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
