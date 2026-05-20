@@ -57,6 +57,8 @@ import br.com.dende.dendeeventos.core.designsystem.components.FormLabel
 import br.com.dende.dendeeventos.core.designsystem.components.FormSwitch
 import br.com.dende.dendeeventos.core.designsystem.components.ProgressBarStep
 import br.com.dende.dendeeventos.core.designsystem.theme.Inter
+import br.com.dende.dendeeventos.domain.Evento
+import br.com.dende.dendeeventos.domain.Faturamento
 import br.com.dende.dendeeventos.domain.ModalidadeEvento
 import br.com.dende.dendeeventos.domain.TipoEvento
 import br.com.dende.dendeeventos.ui.theme.Black
@@ -73,12 +75,14 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InformacoesBasicasScreen(onBack: () -> Unit, onNext: () -> Unit) {
-    var nome by remember { mutableStateOf("") }
-    var paginaWeb by remember { mutableStateOf("") }
-    var descricao by remember { mutableStateOf("") }
-    var dataInicio by remember { mutableStateOf("") }
-    var dataFim by remember { mutableStateOf("") }
+fun InformacoesBasicasScreen(
+    eventoAlterando: Evento? = null, onBack: () -> Unit, onNext: () -> Unit
+) {
+    var nome by remember { mutableStateOf(eventoAlterando?.nome ?: "") }
+    var paginaWeb by remember { mutableStateOf(eventoAlterando?.paginaWeb ?: "") }
+    var descricao by remember { mutableStateOf(eventoAlterando?.descricao ?: "") }
+    var dataInicio by remember { mutableStateOf(eventoAlterando?.dataInicio?.toString() ?: "") }
+    var dataFim by remember { mutableStateOf(eventoAlterando?.dataFim?.toString() ?: "") }
 
     var erroNome by remember { mutableStateOf<String?>(null) }
     var erroPaginaWeb by remember { mutableStateOf<String?>(null) }
@@ -120,101 +124,80 @@ fun InformacoesBasicasScreen(onBack: () -> Unit, onNext: () -> Unit) {
 
     if (mostrarDataPickerInicio) {
         DatePickerDialog(
-            onDismissRequest = { mostrarDataPickerInicio = false },
-            confirmButton = {
+            onDismissRequest = { mostrarDataPickerInicio = false }, confirmButton = {
                 TextButton(
                     onClick = {
                         if (datePickerStateInicio.selectedDateMillis != null) {
                             mostrarDataPickerInicio = false
                             mostrarHoraPickerInicio = true
                         }
-                    }
-                ) {
+                    }) {
                     Text(
-                        "Próximo",
-                        color = Orange,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = Inter
+                        "Próximo", color = Orange, fontWeight = FontWeight.Bold, fontFamily = Inter
                     )
                 }
-            },
-            dismissButton = {
+            }, dismissButton = {
                 TextButton(onClick = { mostrarDataPickerInicio = false }) {
                     Text("Cancelar", color = ButtonLinear, fontFamily = Inter)
                 }
-            },
-            colors = datePickerColors
+            }, colors = datePickerColors
         ) {
             DatePicker(state = datePickerStateInicio, colors = datePickerColors)
         }
     }
 
     if (mostrarHoraPickerInicio) {
-        DateTimePicker(
-            onDismiss = { mostrarHoraPickerInicio = false },
-            onConfirm = {
-                val dataSel = datePickerStateInicio.selectedDateMillis ?: 0L
-                val cal = Calendar.getInstance().apply {
-                    timeInMillis = dataSel
-                    set(Calendar.HOUR_OF_DAY, timePickerStateInicio.hour)
-                    set(Calendar.MINUTE, timePickerStateInicio.minute)
-                }
-                dataInicio =
-                    SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(cal.time)
-                erroDataInicio = false
-                mostrarHoraPickerInicio = false
+        DateTimePicker(onDismiss = { mostrarHoraPickerInicio = false }, onConfirm = {
+            val dataSel = datePickerStateInicio.selectedDateMillis ?: 0L
+            val cal = Calendar.getInstance().apply {
+                timeInMillis = dataSel
+                set(Calendar.HOUR_OF_DAY, timePickerStateInicio.hour)
+                set(Calendar.MINUTE, timePickerStateInicio.minute)
             }
-        ) {
+            dataInicio = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(cal.time)
+            erroDataInicio = false
+            mostrarHoraPickerInicio = false
+        }) {
             TimePicker(state = timePickerStateInicio, colors = timePickerColors)
         }
     }
 
     if (mostrarDataPickerFim) {
         DatePickerDialog(
-            onDismissRequest = { mostrarDataPickerFim = false },
-            confirmButton = {
+            onDismissRequest = { mostrarDataPickerFim = false }, confirmButton = {
                 TextButton(
                     onClick = {
                         if (datePickerStateFim.selectedDateMillis != null) {
                             mostrarDataPickerFim = false
                             mostrarHoraPickerFim = true
                         }
-                    }
-                ) {
+                    }) {
                     Text(
-                        "Próximo",
-                        color = Orange,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = Inter
+                        "Próximo", color = Orange, fontWeight = FontWeight.Bold, fontFamily = Inter
                     )
                 }
-            },
-            dismissButton = {
+            }, dismissButton = {
                 TextButton(onClick = { mostrarDataPickerFim = false }) {
                     Text("Cancelar", color = ButtonLinear, fontFamily = Inter)
                 }
-            },
-            colors = datePickerColors
+            }, colors = datePickerColors
         ) {
             DatePicker(state = datePickerStateFim, colors = datePickerColors)
         }
     }
 
     if (mostrarHoraPickerFim) {
-        DateTimePicker(
-            onDismiss = { mostrarHoraPickerFim = false },
-            onConfirm = {
-                val dataSelFim = datePickerStateFim.selectedDateMillis ?: 0L
-                val cal = Calendar.getInstance().apply {
-                    timeInMillis = dataSelFim
-                    set(Calendar.HOUR_OF_DAY, timePickerStateFim.hour)
-                    set(Calendar.MINUTE, timePickerStateFim.minute)
-                }
-                dataFim = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(cal.time)
-                erroDataFim = false
-                mostrarHoraPickerFim = false
+        DateTimePicker(onDismiss = { mostrarHoraPickerFim = false }, onConfirm = {
+            val dataSelFim = datePickerStateFim.selectedDateMillis ?: 0L
+            val cal = Calendar.getInstance().apply {
+                timeInMillis = dataSelFim
+                set(Calendar.HOUR_OF_DAY, timePickerStateFim.hour)
+                set(Calendar.MINUTE, timePickerStateFim.minute)
             }
-        ) {
+            dataFim = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(cal.time)
+            erroDataFim = false
+            mostrarHoraPickerFim = false
+        }) {
             TimePicker(state = timePickerStateFim, colors = timePickerColors)
         }
     }
@@ -229,8 +212,7 @@ fun InformacoesBasicasScreen(onBack: () -> Unit, onNext: () -> Unit) {
                         fontSize = 20.sp,
                         fontFamily = Inter
                     )
-                },
-                navigationIcon = {
+                }, navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
@@ -238,11 +220,9 @@ fun InformacoesBasicasScreen(onBack: () -> Unit, onNext: () -> Unit) {
                             tint = Black
                         )
                     }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
-        }
-    ) { paddingValues ->
+        }) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -368,11 +348,7 @@ fun InformacoesBasicasScreen(onBack: () -> Unit, onNext: () -> Unit) {
                         erroDataFim = dataFim.isEmpty()
 
                         when {
-                            erroNome == null &&
-                                    erroPaginaWeb == null &&
-                                    erroDescricao == null &&
-                                    !erroDataInicio &&
-                                    !erroDataFim -> {
+                            erroNome == null && erroPaginaWeb == null && erroDescricao == null && !erroDataInicio && !erroDataFim -> {
                                 onNext()
                             }
                         }
@@ -391,17 +367,27 @@ fun InformacoesBasicasScreen(onBack: () -> Unit, onNext: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun InformacoesBasicasScreenPreview() {
-    InformacoesBasicasScreen({}, {})
+    InformacoesBasicasScreen(eventoAlterando = null, {}, {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
-    var tipoSelecionado by remember { mutableStateOf<TipoEvento?>(null) }
-    var modalidadeSelecionada by remember { mutableStateOf<ModalidadeEvento?>(null) }
-    var eventoPrincipal by remember { mutableStateOf("") }
-    var capacidadeMaxima by remember { mutableStateOf("") }
-    var localEvento by remember { mutableStateOf("") }
+fun InformacoesAdicionaisScreen(
+    eventoAlterando: Evento? = null, onBack: () -> Unit, onNext: () -> Unit
+) {
+    var tipoSelecionado by remember { mutableStateOf(eventoAlterando?.tipoEvento) }
+    var modalidadeSelecionada by remember { mutableStateOf(eventoAlterando?.modalidadeEvento) }
+    var eventoPrincipal by remember {
+        mutableStateOf(
+            eventoAlterando?.eventoPrincipal?.toString() ?: ""
+        )
+    }
+    var capacidadeMaxima by remember {
+        mutableStateOf(
+            eventoAlterando?.capacidadeMaxima?.toString() ?: ""
+        )
+    }
+    var localEvento by remember { mutableStateOf(eventoAlterando?.local ?: "") }
 
     var expandirTipo by remember { mutableStateOf(false) }
     var expandirEventoPrincipal by remember { mutableStateOf(false) }
@@ -422,8 +408,7 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
                         fontSize = 20.sp,
                         fontFamily = Inter
                     )
-                },
-                navigationIcon = {
+                }, navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
@@ -431,11 +416,9 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
                             tint = Black
                         )
                     }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
-        }
-    ) { paddingValues ->
+        }) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -465,9 +448,7 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
 
                 FormLabel("Tipo", true)
                 ExposedDropdownMenuBox(
-                    expanded = expandirTipo,
-                    onExpandedChange = { expandirTipo = it }
-                ) {
+                    expanded = expandirTipo, onExpandedChange = { expandirTipo = it }) {
                     OutlinedTextField(
                         value = tipoSelecionado?.name?.lowercase()?.replace("_", " ")
                             ?.replaceFirstChar { it.uppercase() } ?: "",
@@ -483,7 +464,10 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
                         },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandirTipo) },
                         modifier = Modifier
-                            .menuAnchor()
+                            .menuAnchor(
+                                type = androidx.compose.material3.MenuAnchorType.PrimaryNotEditable,
+                                enabled = true
+                            )
                             .fillMaxWidth(),
                         isError = erroTipo,
                         shape = RoundedCornerShape(16.dp),
@@ -491,38 +475,30 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
                             unfocusedBorderColor = when {
                                 erroTipo -> Error
                                 else -> Grey2
-                            },
-                            focusedBorderColor = Black,
-                            cursorColor = Black
+                            }, focusedBorderColor = Black, cursorColor = Black
                         )
                     )
                     MaterialTheme(
                         colorScheme = MaterialTheme.colorScheme.copy(
-                            surface = White,
-                            surfaceContainer = White
+                            surface = White, surfaceContainer = White
                         )
                     ) {
                         ExposedDropdownMenu(
-                            expanded = expandirTipo,
-                            onDismissRequest = { expandirTipo = false }
-                        ) {
+                            expanded = expandirTipo, onDismissRequest = { expandirTipo = false }) {
                             TipoEvento.entries.forEach { tipo ->
                                 val isSelected = tipoSelecionado == tipo
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            text = tipo.name.lowercase().replace("_", " ")
-                                                .replaceFirstChar { it.uppercase() },
-                                            fontFamily = Inter,
-                                            color = if (isSelected) Orange else Black
-                                        )
-                                    },
-                                    onClick = {
-                                        tipoSelecionado = tipo
-                                        erroTipo = false
-                                        expandirTipo = false
-                                    }
-                                )
+                                DropdownMenuItem(text = {
+                                    Text(
+                                        text = tipo.name.lowercase().replace("_", " ")
+                                            .replaceFirstChar { it.uppercase() },
+                                        fontFamily = Inter,
+                                        color = if (isSelected) Orange else Black
+                                    )
+                                }, onClick = {
+                                    tipoSelecionado = tipo
+                                    erroTipo = false
+                                    expandirTipo = false
+                                })
                             }
                         }
                     }
@@ -533,15 +509,14 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
                 FormLabel("Evento Principal", false)
                 ExposedDropdownMenuBox(
                     expanded = expandirEventoPrincipal,
-                    onExpandedChange = { expandirEventoPrincipal = it }
-                ) {
+                    onExpandedChange = { expandirEventoPrincipal = it }) {
                     OutlinedTextField(
                         value = eventoPrincipal,
                         onValueChange = {},
                         readOnly = true,
                         placeholder = {
                             Text(
-                                "Associe o evento a um principal (opcional)",
+                                "Associe o evento a um principal",
                                 color = SoftDarkish,
                                 fontSize = 15.sp,
                                 fontFamily = Inter
@@ -549,7 +524,10 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
                         },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandirEventoPrincipal) },
                         modifier = Modifier
-                            .menuAnchor()
+                            .menuAnchor(
+                                type = androidx.compose.material3.MenuAnchorType.PrimaryNotEditable,
+                                enabled = true
+                            )
                             .fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -560,40 +538,32 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
                     )
                     MaterialTheme(
                         colorScheme = MaterialTheme.colorScheme.copy(
-                            surface = White,
-                            surfaceContainer = White
+                            surface = White, surfaceContainer = White
                         )
                     ) {
                         ExposedDropdownMenu(
                             expanded = expandirEventoPrincipal,
-                            onDismissRequest = { expandirEventoPrincipal = false }
-                        ) {
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = "IntegraSI 2026.1",
-                                        fontFamily = Inter,
-                                        color = if (eventoPrincipal == "IntegraSI 2026.1") Orange else Black
-                                    )
-                                },
-                                onClick = {
-                                    eventoPrincipal = "IntegraSI 2026.1"
-                                    expandirEventoPrincipal = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = "Nenhum",
-                                        fontFamily = Inter,
-                                        color = if (eventoPrincipal == "Nenhum") Orange else Black
-                                    )
-                                },
-                                onClick = {
-                                    eventoPrincipal = "Nenhum"
-                                    expandirEventoPrincipal = false
-                                }
-                            )
+                            onDismissRequest = { expandirEventoPrincipal = false }) {
+                            DropdownMenuItem(text = {
+                                Text(
+                                    text = "IntegraSI 2026.1",
+                                    fontFamily = Inter,
+                                    color = if (eventoPrincipal == "IntegraSI 2026.1") Orange else Black
+                                )
+                            }, onClick = {
+                                eventoPrincipal = "IntegraSI 2026.1"
+                                expandirEventoPrincipal = false
+                            })
+                            DropdownMenuItem(text = {
+                                Text(
+                                    text = "Nenhum",
+                                    fontFamily = Inter,
+                                    color = if (eventoPrincipal == "Nenhum") Orange else Black
+                                )
+                            }, onClick = {
+                                eventoPrincipal = "Nenhum"
+                                expandirEventoPrincipal = false
+                            })
                         }
                     }
                 }
@@ -602,9 +572,7 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
 
                 FormLabel("Modalidade", true)
                 ExposedDropdownMenuBox(
-                    expanded = expandirModalidade,
-                    onExpandedChange = { expandirModalidade = it }
-                ) {
+                    expanded = expandirModalidade, onExpandedChange = { expandirModalidade = it }) {
                     OutlinedTextField(
                         value = modalidadeSelecionada?.name?.lowercase()
                             ?.replaceFirstChar { it.uppercase() } ?: "",
@@ -620,7 +588,10 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
                         },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandirModalidade) },
                         modifier = Modifier
-                            .menuAnchor()
+                            .menuAnchor(
+                                type = androidx.compose.material3.MenuAnchorType.PrimaryNotEditable,
+                                enabled = true
+                            )
                             .fillMaxWidth(),
                         isError = erroModalidade,
                         shape = RoundedCornerShape(16.dp),
@@ -628,38 +599,31 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
                             unfocusedBorderColor = when {
                                 erroModalidade -> Error
                                 else -> Grey2
-                            },
-                            focusedBorderColor = Black,
-                            cursorColor = Black
+                            }, focusedBorderColor = Black, cursorColor = Black
                         )
                     )
                     MaterialTheme(
                         colorScheme = MaterialTheme.colorScheme.copy(
-                            surface = White,
-                            surfaceContainer = White
+                            surface = White, surfaceContainer = White
                         )
                     ) {
                         ExposedDropdownMenu(
                             expanded = expandirModalidade,
-                            onDismissRequest = { expandirModalidade = false }
-                        ) {
+                            onDismissRequest = { expandirModalidade = false }) {
                             ModalidadeEvento.entries.forEach { mod ->
                                 val isSelected = modalidadeSelecionada == mod
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            text = mod.name.lowercase()
-                                                .replaceFirstChar { it.uppercase() },
-                                            fontFamily = Inter,
-                                            color = if (isSelected) Orange else Black
-                                        )
-                                    },
-                                    onClick = {
-                                        modalidadeSelecionada = mod
-                                        erroModalidade = false
-                                        expandirModalidade = false
-                                    }
-                                )
+                                DropdownMenuItem(text = {
+                                    Text(
+                                        text = mod.name.lowercase()
+                                            .replaceFirstChar { it.uppercase() },
+                                        fontFamily = Inter,
+                                        color = if (isSelected) Orange else Black
+                                    )
+                                }, onClick = {
+                                    modalidadeSelecionada = mod
+                                    erroModalidade = false
+                                    expandirModalidade = false
+                                })
                             }
                         }
                     }
@@ -747,15 +711,17 @@ fun InformacoesAdicionaisScreen(onBack: () -> Unit, onNext: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun InformacoesAdicionaisScreenPreview() {
-    InformacoesAdicionaisScreen({}, {})
+    InformacoesAdicionaisScreen(eventoAlterando = null, {}, {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FaturamentoScreen(onBack: () -> Unit, onNext: () -> Unit) {
-    var valorIngresso by remember { mutableStateOf("") }
-    var aceitaDevolucoes by remember { mutableStateOf(true) }
-    var taxaDevolucao by remember { mutableStateOf("") }
+fun FaturamentoScreen(
+    eventoAlterando: Faturamento? = null, onBack: () -> Unit, onNext: () -> Unit
+) {
+    var valorIngresso by remember { mutableStateOf(eventoAlterando?.preco?.toString() ?: "") }
+    var aceitaDevolucoes by remember { mutableStateOf(eventoAlterando?.aceitaEstorno ?: false) }
+    var taxaDevolucao by remember { mutableStateOf(eventoAlterando?.taxaEstorno?.toString() ?: "") }
 
     var erroValor by remember { mutableStateOf<String?>(null) }
     var erroTaxa by remember { mutableStateOf<String?>(null) }
@@ -770,8 +736,7 @@ fun FaturamentoScreen(onBack: () -> Unit, onNext: () -> Unit) {
                         fontSize = 20.sp,
                         fontFamily = Inter
                     )
-                },
-                navigationIcon = {
+                }, navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
@@ -779,11 +744,9 @@ fun FaturamentoScreen(onBack: () -> Unit, onNext: () -> Unit) {
                             tint = Black
                         )
                     }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
-        }
-    ) { paddingValues ->
+        }) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -824,10 +787,9 @@ fun FaturamentoScreen(onBack: () -> Unit, onNext: () -> Unit) {
 
                 FormSwitch(
                     label = "Aceita Devoluções?",
-                    isRequired = true,
+                    isRequired = false,
                     checked = aceitaDevolucoes,
-                    onCheckedChange = { aceitaDevolucoes = it }
-                )
+                    onCheckedChange = { aceitaDevolucoes = it })
 
                 if (aceitaDevolucoes) {
                     Spacer(modifier = Modifier.height(24.dp))
@@ -888,5 +850,5 @@ fun FaturamentoScreen(onBack: () -> Unit, onNext: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun FaturamentoScreenPreview() {
-    FaturamentoScreen({}, {})
+    FaturamentoScreen(eventoAlterando = null, {}, {})
 }
