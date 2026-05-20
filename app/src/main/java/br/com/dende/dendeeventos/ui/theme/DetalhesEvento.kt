@@ -23,6 +23,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,17 +34,51 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.com.dende.dendeeventos.R
+import br.com.dende.dendeeventos.viewmodel.DetalhesEventoViewModel
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+import java.time.Duration
+
 
 private val DendeOrange = Color(0xFFF25027)
 
 @Composable
 fun EventosDetalhesScreen(
+    eventId: Long = 1,
+    viewModel: DetalhesEventoViewModel = viewModel(),
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
     onBuyClick: () -> Unit = {}
 ) {
+
+    val evento = viewModel.evento.collectAsState()
+
+    LaunchedEffect(eventId) {
+        viewModel.carregarEvento(eventId)
+    }
+
+    val formatadorData =
+        DateTimeFormatter.ofPattern(
+            "dd 'de' MMM, HH:mm",
+            Locale("pt", "BR")
+        )
+
+    val duracaoTexto = evento.value?.let {
+
+        val duracao =
+            Duration.between(
+                it.dataInicio,
+                it.dataFim
+            )
+
+        val horas = duracao.toHours()
+        val minutos = duracao.toMinutes() % 60
+
+        "${horas}h ${minutos}m de duração"
+    } ?: ""
 
     Box(
         modifier = Modifier
@@ -89,7 +125,7 @@ fun EventosDetalhesScreen(
 
                 // Título
                 Text(
-                    text = "IntegraSI FSA",
+                    text = evento.value?.evento?: "",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
@@ -131,7 +167,7 @@ fun EventosDetalhesScreen(
                             Spacer(modifier = Modifier.width(12.dp))
 
                             Text(
-                                text = "21 de Abril, 18:50",
+                                text = evento.value?.dataInicio?.format(formatadorData)?: "",
                                 fontSize = 16.sp
                             )
                         }
@@ -150,7 +186,9 @@ fun EventosDetalhesScreen(
                             Spacer(modifier = Modifier.width(12.dp))
 
                             Text(
-                                text = "UNEX, Feira de Santana - BA",
+                                text = evento.value?.local?.let {
+                                    "${it.nome}, ${it.cidade}"
+                                } ?: "",
                                 fontSize = 16.sp
                             )
                         }
@@ -169,7 +207,7 @@ fun EventosDetalhesScreen(
                             Spacer(modifier = Modifier.width(12.dp))
 
                             Text(
-                                text = "3h 30m de Duração",
+                                text = duracaoTexto,
                                 fontSize = 16.sp
                             )
                         }
@@ -188,7 +226,11 @@ fun EventosDetalhesScreen(
                             Spacer(modifier = Modifier.width(12.dp))
 
                             Text(
-                                text = "Entrada Gratuita",
+                                text = if (evento.value?.gratuito == true)
+                                        "Entrada Gratuita"
+                                    else
+                                        "Evento Pago"
+                                ,
                                 fontSize = 16.sp
                             )
                         }
@@ -218,7 +260,7 @@ fun EventosDetalhesScreen(
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Text(
-                            text = "O IntegraSI FSA é um evento para estudantes, profissionais e entusiastas da área de Tecnologia da Informação que buscam aprender, se atualizar e se conectar com outras pessoas do meio.",
+                            text = evento.value?.sobreEvento?: "",
                             color = Color.Gray,
                             fontSize = 14.sp,
                             lineHeight = 20.sp
@@ -258,7 +300,7 @@ fun EventosDetalhesScreen(
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                            text = "+120 Pessoas já confirmaram",
+                            text = "+${evento.value?.totalInscritos ?: 0} pessoas já confirmaram",
                             color = Color.Gray,
                             fontSize = 14.sp
                         )
@@ -332,5 +374,5 @@ fun EventosDetalhesScreen(
 @Preview(showBackground = true)
 @Composable
 fun EventosDetalhesScreenPreview() {
-    EventosDetalhesScreen()
+    EventosDetalhesScreen(eventId = 1)
 }

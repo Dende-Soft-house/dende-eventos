@@ -19,6 +19,7 @@ enum class StatusEvento {
 data class EventCard(
     var id: Long,
     val evento: String,
+    val sobreEvento: String,
     val descricao: String,
     val dataHora: LocalDateTime,
     val dataInicio: LocalDateTime,

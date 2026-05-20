@@ -1,5 +1,7 @@
 package br.com.dende.dendeeventos.ui.theme
 
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import android.media.Image
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -28,6 +31,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
@@ -43,6 +47,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.dende.dendeeventos.R
 import br.com.dende.dendeeventos.core.designsystem.components.BottomNavBar
+import br.com.dende.dendeeventos.viewmodel.FeedEventosViewModel
+import androidx.compose.foundation.lazy.items
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 private val DendeOrange = Color(0xFFF25027)
 private val BackgroundColor = Color(0xF5F5F5)
@@ -108,7 +115,8 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
 
                     Text(
                         text = local,
-                        color = Color.Gray
+                        color = Color.Gray,
+                        maxLines = 1
                     )
                 }
                 Row(
@@ -124,7 +132,8 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
 
                     Text(
                         text = data,
-                        color = Color.Gray
+                        color = Color.Gray,
+                        maxLines = 1
                     )
                 }
             }
@@ -168,7 +177,11 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
 }
 
     @Composable
-    fun FeedEventosScreen() {
+    fun FeedEventosScreen(
+        viewModel: FeedEventosViewModel = viewModel()
+    ) {
+
+        val eventos = viewModel.eventos.collectAsState()
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -230,10 +243,27 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
                 
                 Spacer(modifier = Modifier.height(20.dp))
 
+                val formatadorHorario =
+                    DateTimeFormatter.ofPattern(
+                        "dd MMM, HH:mm",
+                        Locale("pt", "BR")
+
+                    )
+
                 //Lista de eventos
-                EventoCard( titulo ="IntegraSI FSA", local ="Unex, Feira de Santana", data = "21 Abr, 18:50")
-                Spacer(modifier = Modifier.height(20.dp))
-                EventoCard(titulo ="DevopsDays", local = "Feira de Santana", data= "23 Mar, 14:00")
+                LazyColumn{
+
+                    items(eventos.value) { evento ->
+
+                        EventoCard(
+                            titulo = evento.evento,
+                            local = "${evento.local.nome}, ${evento.local.cidade}",
+                            data = evento.dataInicio.format(formatadorHorario)
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
+                }
+
 
             }
 
