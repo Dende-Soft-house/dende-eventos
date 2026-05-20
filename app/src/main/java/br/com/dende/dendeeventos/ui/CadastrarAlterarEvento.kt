@@ -1,6 +1,7 @@
 package br.com.dende.dendeeventos.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
@@ -44,12 +47,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import br.com.dende.dendeeventos.R
 import br.com.dende.dendeeventos.core.designsystem.components.CustomTextField
 import br.com.dende.dendeeventos.core.designsystem.components.DateTimePicker
 import br.com.dende.dendeeventos.core.designsystem.components.DendeButton
@@ -69,6 +76,7 @@ import br.com.dende.dendeeventos.ui.theme.Grey2
 import br.com.dende.dendeeventos.ui.theme.Orange
 import br.com.dende.dendeeventos.ui.theme.SoftDarkish
 import br.com.dende.dendeeventos.ui.theme.White
+import coil.compose.AsyncImage
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -125,22 +133,22 @@ fun InformacoesBasicasScreen(
     if (mostrarDataPickerInicio) {
         DatePickerDialog(
             onDismissRequest = { mostrarDataPickerInicio = false }, confirmButton = {
-                TextButton(
-                    onClick = {
-                        if (datePickerStateInicio.selectedDateMillis != null) {
-                            mostrarDataPickerInicio = false
-                            mostrarHoraPickerInicio = true
-                        }
-                    }) {
-                    Text(
-                        "Próximo", color = Orange, fontWeight = FontWeight.Bold, fontFamily = Inter
-                    )
-                }
-            }, dismissButton = {
-                TextButton(onClick = { mostrarDataPickerInicio = false }) {
-                    Text("Cancelar", color = ButtonLinear, fontFamily = Inter)
-                }
-            }, colors = datePickerColors
+            TextButton(
+                onClick = {
+                    if (datePickerStateInicio.selectedDateMillis != null) {
+                        mostrarDataPickerInicio = false
+                        mostrarHoraPickerInicio = true
+                    }
+                }) {
+                Text(
+                    "Próximo", color = Orange, fontWeight = FontWeight.Bold, fontFamily = Inter
+                )
+            }
+        }, dismissButton = {
+            TextButton(onClick = { mostrarDataPickerInicio = false }) {
+                Text("Cancelar", color = ButtonLinear, fontFamily = Inter)
+            }
+        }, colors = datePickerColors
         ) {
             DatePicker(state = datePickerStateInicio, colors = datePickerColors)
         }
@@ -165,22 +173,22 @@ fun InformacoesBasicasScreen(
     if (mostrarDataPickerFim) {
         DatePickerDialog(
             onDismissRequest = { mostrarDataPickerFim = false }, confirmButton = {
-                TextButton(
-                    onClick = {
-                        if (datePickerStateFim.selectedDateMillis != null) {
-                            mostrarDataPickerFim = false
-                            mostrarHoraPickerFim = true
-                        }
-                    }) {
-                    Text(
-                        "Próximo", color = Orange, fontWeight = FontWeight.Bold, fontFamily = Inter
-                    )
-                }
-            }, dismissButton = {
-                TextButton(onClick = { mostrarDataPickerFim = false }) {
-                    Text("Cancelar", color = ButtonLinear, fontFamily = Inter)
-                }
-            }, colors = datePickerColors
+            TextButton(
+                onClick = {
+                    if (datePickerStateFim.selectedDateMillis != null) {
+                        mostrarDataPickerFim = false
+                        mostrarHoraPickerFim = true
+                    }
+                }) {
+                Text(
+                    "Próximo", color = Orange, fontWeight = FontWeight.Bold, fontFamily = Inter
+                )
+            }
+        }, dismissButton = {
+            TextButton(onClick = { mostrarDataPickerFim = false }) {
+                Text("Cancelar", color = ButtonLinear, fontFamily = Inter)
+            }
+        }, colors = datePickerColors
         ) {
             DatePicker(state = datePickerStateFim, colors = datePickerColors)
         }
@@ -206,21 +214,21 @@ fun InformacoesBasicasScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(
-                        "Informações Básicas",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        fontFamily = Inter
+                Text(
+                    "Informações Básicas",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    fontFamily = Inter
+                )
+            }, navigationIcon = {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = Black
                     )
-                }, navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                            tint = Black
-                        )
-                    }
-                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }
+            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
         }) { paddingValues ->
         Box(
@@ -402,21 +410,21 @@ fun InformacoesAdicionaisScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(
-                        "Informações Adicionais",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        fontFamily = Inter
+                Text(
+                    "Informações Adicionais",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    fontFamily = Inter
+                )
+            }, navigationIcon = {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = Black
                     )
-                }, navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                            tint = Black
-                        )
-                    }
-                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }
+            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
         }) { paddingValues ->
         Box(
@@ -451,7 +459,7 @@ fun InformacoesAdicionaisScreen(
                     expanded = expandirTipo, onExpandedChange = { expandirTipo = it }) {
                     OutlinedTextField(
                         value = tipoSelecionado?.name?.lowercase()?.replace("_", " ")
-                            ?.replaceFirstChar { it.uppercase() } ?: "",
+                        ?.replaceFirstChar { it.uppercase() } ?: "",
                         onValueChange = {},
                         readOnly = true,
                         placeholder = {
@@ -575,7 +583,7 @@ fun InformacoesAdicionaisScreen(
                     expanded = expandirModalidade, onExpandedChange = { expandirModalidade = it }) {
                     OutlinedTextField(
                         value = modalidadeSelecionada?.name?.lowercase()
-                            ?.replaceFirstChar { it.uppercase() } ?: "",
+                        ?.replaceFirstChar { it.uppercase() } ?: "",
                         onValueChange = {},
                         readOnly = true,
                         placeholder = {
@@ -730,21 +738,21 @@ fun FaturamentoScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(
-                        "Faturamento",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        fontFamily = Inter
+                Text(
+                    "Faturamento",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    fontFamily = Inter
+                )
+            }, navigationIcon = {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = Black
                     )
-                }, navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                            tint = Black
-                        )
-                    }
-                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }
+            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
         }) { paddingValues ->
         Box(
@@ -851,4 +859,137 @@ fun FaturamentoScreen(
 @Composable
 fun FaturamentoScreenPreview() {
     FaturamentoScreen(eventoAlterando = null, {}, {})
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BannerScreen(
+    eventoAlterando: Evento? = null, onBack: () -> Unit, onComplete: () -> Unit
+) {
+    var bannerUri by remember { mutableStateOf(eventoAlterando?.urlBanner ?: "") }
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                Text(
+                    "Banner", fontWeight = FontWeight.Bold, fontSize = 20.sp, fontFamily = Inter
+                )
+            }, navigationIcon = {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Voltar",
+                        tint = Black
+                    )
+                }
+            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+            )
+        }) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(White)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 100.dp)
+            ) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Passo 4 de 4",
+                    color = SoftDarkish,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = Inter
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+
+                ProgressBarStep(step = 4, totalSteps = 4)
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                FormLabel("Anexo", false)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(220.dp)
+                        .border(1.dp, Orange, RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(if (bannerUri.isEmpty()) Grey2.copy(alpha = 0.2f) else White),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (bannerUri.isEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clickable {
+                                    bannerUri = " "
+                                }, contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+                                contentDescription = "Adicionar banner",
+                                modifier = Modifier.size(32.dp),
+                                tint = Orange
+                            )
+                        }
+                    } else {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            AsyncImage(
+                                model = bannerUri.ifEmpty { null },
+                                contentDescription = "Banner do evento",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop,
+                                placeholder = painterResource(id = R.drawable.ic_launcher_background),
+                                error = painterResource(id = R.drawable.ic_launcher_background)
+                            )
+
+                            IconButton(
+                                onClick = { bannerUri = "" },
+                                modifier = Modifier.align(Alignment.Center)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Excluir",
+                                    tint = Orange,
+                                    modifier = Modifier.size(32.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .background(White)
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
+            ) {
+                DendeButton(
+                    text = "CONCLUIR",
+                    onClick = onComplete,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    containerColor = Orange,
+                    contentColor = White
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BannerScreenPreview() {
+    BannerScreen(eventoAlterando = null, onBack = {}, onComplete = {})
 }
