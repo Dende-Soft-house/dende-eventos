@@ -1,1 +1,40 @@
 /build
+
+ === PASTAS DA EQUIPE (ignoradas intencionalmente) ===
+app/src/main/java/br/com/dende/dendeeventos/domain/
+app/src/main/java/br/com/dende/dendeeventos/feature/login/
+
+# === ANDROID PADRÃO ===
+
+# Build
+build/
+app/build/
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Gradle
+.gradle/
+local.properties
+gradle-wrapper.jar
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Keystore
+*.jks
+*.keystore
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
