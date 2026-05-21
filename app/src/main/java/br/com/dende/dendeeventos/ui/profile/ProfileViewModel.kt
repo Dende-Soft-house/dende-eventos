@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package br.com.dende.dendeeventos.ui.profile
 
 import androidx.annotation.DrawableRes
