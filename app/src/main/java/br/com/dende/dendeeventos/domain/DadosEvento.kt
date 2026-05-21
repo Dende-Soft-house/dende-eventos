@@ -1,12 +1,13 @@
 package br.com.dende.dendeeventos.domain
 
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 data class Faturamento(
     val evento: Evento,
-    var preco: Double,
+    var preco: BigDecimal,
     var aceitaEstorno: Boolean,
-    var taxaEstorno: Double
+    var taxaEstorno: BigDecimal
 )
 
 data class Evento(
