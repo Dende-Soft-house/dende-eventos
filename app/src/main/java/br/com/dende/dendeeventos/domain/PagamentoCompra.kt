@@ -5,7 +5,6 @@ data class Pagamento(
     val id: String = UUID.randomUUID().toString(),
     val ingresso: Ingresso,
     val eventoId: String,
-    val cartaoId: String? = null,
     val tipoPagamento: TipoPagamento,
     val quantidade: Int,
     val valorTotal: Double,
