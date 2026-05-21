@@ -10,17 +10,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-
 import androidx.compose.foundation.shape.RoundedCornerShape
-
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
-
 import androidx.compose.runtime.Composable
-
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,11 +27,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
 import br.com.dende.dendeeventos.R
 
 @Composable
-fun EventCard() {
+fun EventCard(
+    titulo: String = "IntegraSI FSA",
+    local: String = "UNEX, Feira de Santana",
+    isAtivo: Boolean = true // Flag que controla o visual do estado
+) {
     Card(
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(8.dp),
@@ -62,27 +61,28 @@ fun EventCard() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column{
+                Column {
                     Text(
-                        text = "IntegraSI FSA",
+                        text = titulo, // Título dinâmico
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text ="21 Abr, 18:50",
+                        text = local, // Local dinâmico
                         color = Color.Gray
                     )
                 }
 
+                // Pílula de Estado Dinâmica
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
-                        .background(Color(0xFFdFF5D8))
+                        .background(if (isAtivo) Color(0xFFdFF5D8) else Color(0xFFE0E0E0))
                         .padding(horizontal = 14.dp, vertical = 6.dp)
                 ) {
                     Text(
-                        text = "ATIVO",
-                        color = Color(0XFF169B16),
+                        text = if (isAtivo) "ATIVO" else "ENCERRADO",
+                        color = if (isAtivo) Color(0XFF169B16) else Color.DarkGray,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -91,7 +91,7 @@ fun EventCard() {
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = {},
+                onClick = { /* Ação do botão será implementada na navegação */ },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
@@ -113,6 +113,16 @@ fun EventCard() {
 @Preview(showBackground = true)
 @Composable
 fun EventCardPreview() {
-
-    EventCard()
+    // Mostra os dois exemplos de cartão diretamente no Preview
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        EventCard(isAtivo = true)
+        EventCard(
+            titulo = "Hackathon",
+            local = "UniFTC, Feira de Santana",
+            isAtivo = false
+        )
+    }
 }

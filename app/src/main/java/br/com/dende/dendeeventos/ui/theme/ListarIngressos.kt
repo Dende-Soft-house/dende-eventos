@@ -1,6 +1,7 @@
 package br.com.dende.dendeeventos.ui.theme
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,13 +42,20 @@ import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel // IMPORTANTE: Import do ViewModel no Compose
 
 import br.com.dende.dendeeventos.R
 import br.com.dende.dendeeventos.core.designsystem.components.BottomBar
 import br.com.dende.dendeeventos.core.designsystem.components.EventCard
+import br.com.dende.dendeeventos.ui.theme.viewmodels.AbaIngressos // Import correto
+import br.com.dende.dendeeventos.ui.theme.viewmodels.ListarIngressosViewModel
 
 @Composable
-fun ListarIngressos() {
+fun ListarIngressos(
+    viewModel: ListarIngressosViewModel = viewModel()
+) {
+
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         bottomBar = {
@@ -104,7 +114,7 @@ fun ListarIngressos() {
                     )
 
                     Text(
-                        text = "Olá, Usuário",
+                        text = "Olá, ${uiState.nomeUsuario}",
                         color = Color.White,
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold
@@ -114,16 +124,16 @@ fun ListarIngressos() {
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement =
-                        Arrangement.spacedBy(40.dp)
+                    horizontalArrangement = Arrangement.spacedBy(40.dp)
                 ) {
+                    // COLUNA 1: ATIVOS
                     Column(
-                        horizontalAlignment =
-                            Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.clickable { viewModel.selecionarAba(AbaIngressos.ATIVOS) }
                     ) {
                         Text(
                             text = "Ativos",
-                            color = Color.White,
+                            color = if (uiState.abaSelecionada == AbaIngressos.ATIVOS) Color.White else Color.White.copy(alpha = 0.6f),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -132,34 +142,58 @@ fun ListarIngressos() {
                             modifier = Modifier.height(10.dp)
                         )
 
-                        Box(
-                            modifier = Modifier
-                                .width(100.dp)
-                                .height(3.dp)
-                                .background(Color.White)
+                        if (uiState.abaSelecionada == AbaIngressos.ATIVOS) {
+                            Box(
+                                modifier = Modifier
+                                    .width(100.dp)
+                                    .height(3.dp)
+                                    .background(Color.White)
+                            )
+                        } else {
+                            Spacer(modifier = Modifier.height(3.dp))
+                        }
+                    } // Fim da Coluna Ativos
+
+                    // COLUNA 2: ENCERRADOS (Agora está fora da coluna Ativos)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.clickable { viewModel.selecionarAba(AbaIngressos.ENCERRADOS) }
+                    ) {
+                        Text(
+                            text = "Encerrados",
+                            // Cor dinâmica baseada na aba selecionada
+                            color = if (uiState.abaSelecionada == AbaIngressos.ENCERRADOS) Color.White else Color.White.copy(alpha = 0.6f),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
                         )
-                    }
-                    Text(
-                        text = "Encerrados",
-                        color = Color.White,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        if (uiState.abaSelecionada == AbaIngressos.ENCERRADOS) {
+                            Box(
+                                modifier = Modifier
+                                    .width(100.dp)
+                                    .height(3.dp)
+                                    .background(Color.White)
+                            )
+                        } else {
+                            Spacer(modifier = Modifier.height(3.dp))
+                        }
+                    } // Fim da Coluna Encerrados
                 }
             }
+
             // LISTA DE EVENTOS
             LazyColumn(
-                contentPadding = PaddingValues(
-                    top = 200.dp,
-                    start = 20.dp,
-                    end = 20.dp,
-                    bottom = 100.dp
-                ),
-                verticalArrangement =
-                    Arrangement.spacedBy(18.dp)
+                contentPadding = PaddingValues(top = 200.dp, start = 20.dp, end = 20.dp, bottom = 100.dp),
+                verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
-                items(2) {
-                    EventCard()
+                items(uiState.ingressosExibidos) { ingresso ->
+                    EventCard(
+                        titulo = ingresso.titulo,
+                        local = ingresso.local,
+                        isAtivo = ingresso.isAtivo // <- Só adicionar esta linha!
+                    )
                 }
             }
         }
@@ -172,6 +206,5 @@ fun ListarIngressos() {
 )
 @Composable
 fun ListarIngressosPreview() {
-
     ListarIngressos()
 }
