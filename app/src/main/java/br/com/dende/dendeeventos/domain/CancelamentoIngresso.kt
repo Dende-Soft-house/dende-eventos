@@ -7,7 +7,7 @@ data class CancelamentoIngresso(
     val percentualTaxaCancelamento: Int, // de 0 a 100
     var motivoCancelamento: TipoMotivoCancelamento = TipoMotivoCancelamento.OUTRO,
     val observacaoCancelamento: String? = null,
-    val valorOriginal: Double,
+    val valorOriginal: BigDecimal,
     val taxaCancelamento: Double, // Ver Tipo (float talvez ou algo similar)
     val valorReembolso: Double,
     val metodoPagamento: String,
