@@ -9,5 +9,5 @@ data class Pagamento(
     val quantidade: Int,
     val valorTotal: Double,
     var status: StatusPagamento = StatusPagamento.PENDENTE,
-    val dataHora: LocalDateTime
+    val dataHora: LocalDateTime = LocalDateTime.now()
 )
