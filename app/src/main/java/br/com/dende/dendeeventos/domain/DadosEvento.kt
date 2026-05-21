@@ -4,7 +4,6 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 
 data class Faturamento(
-    val evento: Evento,
     var preco: BigDecimal,
     var aceitaEstorno: Boolean = false,
     var taxaEstorno: BigDecimal
