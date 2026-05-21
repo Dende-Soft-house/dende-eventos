@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.com.dende.dendeeventos.R
-import br.com.dende.dendeeventos.viewmodel.DetalhesEventoViewModel
+import br.com.dende.dendeeventos.ui.viewmodel.DetalhesEventoViewModel
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.time.Duration

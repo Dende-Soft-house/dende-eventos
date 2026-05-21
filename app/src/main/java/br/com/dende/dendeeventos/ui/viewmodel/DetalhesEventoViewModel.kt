@@ -1,7 +1,7 @@
-package br.com.dende.dendeeventos.viewmodel
+package br.com.dende.dendeeventos.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
-import br.com.dende.dendeeventos.data.EventData
+import br.com.dende.dendeeventos.ui.data.EventData
 import br.com.dende.dendeeventos.domain.model.EventCard
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

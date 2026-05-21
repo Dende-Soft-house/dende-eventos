@@ -1,4 +1,4 @@
-package br.com.dende.dendeeventos.data
+package br.com.dende.dendeeventos.ui.data
 
 import java.time.Period
 import br.com.dende.dendeeventos.domain.model.EventCard
