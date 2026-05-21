@@ -7,7 +7,7 @@ data class Pagamento(
     val eventoId: String,
     val tipoPagamento: TipoPagamento,
     val quantidade: Int,
-    val valorTotal: Double,
+    val valorTotal: BigDecimal,
     var status: StatusPagamento = StatusPagamento.PENDENTE,
     val dataHora: LocalDateTime = LocalDateTime.now()
 )
