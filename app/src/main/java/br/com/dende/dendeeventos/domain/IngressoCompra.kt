@@ -6,5 +6,5 @@ data class Ingresso(
     val evento: Evento,
     var pagamento: Pagamento,
     val assento: String,
-    var status: StatusIngresso = StatusIngresso.ATIVO
+    var status: StatusIngresso = StatusIngresso.AGUARDANDO_PAGAMENTO
 )
