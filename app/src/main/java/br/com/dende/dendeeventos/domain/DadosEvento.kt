@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 data class Faturamento(
     val evento: Evento,
     var preco: BigDecimal,
-    var aceitaEstorno: Boolean,
+    var aceitaEstorno: Boolean = false,
     var taxaEstorno: BigDecimal
 )
 
@@ -25,7 +25,7 @@ data class Evento(
     var capacidadeMaxima: Int,
     var local: String,
     var faturamento: Faturamento,
-    var urlBanner: String?
+    var urlBanner: String? = ""
 )
 
 // Único data class utilizado por cadastrar evento, alterar evento e listar eventos do organizador.
