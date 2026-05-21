@@ -727,7 +727,7 @@ fun InformacoesAdicionaisScreenPreview() {
 fun FaturamentoScreen(
     eventoAlterando: Faturamento? = null, onBack: () -> Unit, onNext: () -> Unit
 ) {
-    var valorIngresso by remember { mutableStateOf(eventoAlterando?.preco?.toString() ?: "") }
+    var valorIngresso by remember { mutableStateOf(eventoAlterando?.precoTicket?.toString() ?: "") }
     var aceitaDevolucoes by remember { mutableStateOf(eventoAlterando?.aceitaEstorno ?: false) }
     var taxaDevolucao by remember { mutableStateOf(eventoAlterando?.taxaEstorno?.toString() ?: "") }
 
