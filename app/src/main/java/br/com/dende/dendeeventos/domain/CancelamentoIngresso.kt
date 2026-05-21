@@ -9,6 +9,6 @@ data class CancelamentoIngresso(
     val observacaoCancelamento: String? = null,
     val valorOriginal: BigDecimal,
     val taxaCancelamento: BigDecimal, // Ver Tipo (float talvez ou algo similar)
-    val valorReembolso: Double,
+    val valorReembolso: BigDecimal,
     val metodoPagamento: String,
 )
