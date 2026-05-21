@@ -8,7 +8,7 @@ data class CancelamentoIngresso(
     var motivoCancelamento: TipoMotivoCancelamento = TipoMotivoCancelamento.OUTRO,
     val observacaoCancelamento: String? = null,
     val valorOriginal: BigDecimal,
-    val taxaCancelamento: Double, // Ver Tipo (float talvez ou algo similar)
+    val taxaCancelamento: BigDecimal, // Ver Tipo (float talvez ou algo similar)
     val valorReembolso: Double,
     val metodoPagamento: String,
 )
