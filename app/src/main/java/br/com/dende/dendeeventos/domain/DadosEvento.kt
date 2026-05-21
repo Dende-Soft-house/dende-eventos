@@ -1,18 +1,18 @@
 package br.com.dende.dendeeventos.domain
 
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 data class Faturamento(
-    val evento: Evento,
-    var preco: Double,
-    var aceitaEstorno: Boolean,
-    var taxaEstorno: Double
+    var precoTicket: BigDecimal,
+    var aceitaEstorno: Boolean = false,
+    var taxaEstorno: BigDecimal
 )
 
 data class Evento(
     var eventoId: Long,
-    var ativo: Boolean = false,
-    // val organizador: Usuario,
+    var status: StatusEvento,
+    val organizador: Organizador,
     var nome: String,
     var paginaWeb: String = "",
     var descricao: String,
@@ -24,7 +24,7 @@ data class Evento(
     var capacidadeMaxima: Int,
     var local: String,
     var faturamento: Faturamento,
-    var urlBanner: String?
+    var urlBanner: String? = ""
 )
 
 // Único data class utilizado por cadastrar evento, alterar evento e listar eventos do organizador.
