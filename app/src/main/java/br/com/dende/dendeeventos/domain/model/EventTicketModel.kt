@@ -12,8 +12,15 @@ enum class StatusEvento {
 
 data class EventCard(
     val evento: Evento,
-    val totalInscritos: Int
+    val totalInscritos: Int,
+    val ingressos: List<Ingresso>
 ) {
+
+    //para pegar as fotos do usuario pra colocar no card do feed
+    val participantesPreview: List<UsuarioComum>
+        get() = ingressos.take(3).map {it.usuario}
+
+
     fun calcularDuracao(): Duration {
         return Duration.between(
             evento.dataInicio,
