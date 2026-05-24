@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.com.dende.dendeeventos.R
 import br.com.dende.dendeeventos.core.designsystem.theme.Inter
 import br.com.dende.dendeeventos.ui.components.DendeBackButton
@@ -33,9 +34,9 @@ import br.com.dende.dendeeventos.ui.theme.White
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CadastrarOrganizadorScreen(
-    initialState: CadastroUiState = CadastroUiState()
+    viewModel: CadastroOrganizadorViewModel = viewModel()
 ) {
-    var state by remember { mutableStateOf(initialState) }
+    val state by viewModel.uiState.collectAsState()
 
     Scaffold { paddingValues ->
         Column(
@@ -48,16 +49,13 @@ fun CadastrarOrganizadorScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                DendeBackButton( onClick = {
-                    if (state.tipoUsuario != null) {
-                        if (state.currentStep > 1) {
-                            state = state.copy(currentStep = state.currentStep - 1)
-                        } else {
-                            state = state.copy(tipoUsuario = null, isEmpresa = null)
-                        }
-                    }
-                })
-                Spacer(modifier = Modifier.width(30.dp))
+                val estaEmModal = state.erroAtualDialog != null || state.showSuccessDialog
+                val mostrarBotao = !estaEmModal && state.currentStep == 1
+
+                if (mostrarBotao) {
+                    DendeBackButton(onClick = { viewModel.voltarPasso() })
+                    Spacer(modifier = Modifier.width(30.dp))
+                }
                 Text(
                     text = "Registrar-me",
                     fontSize = 30.sp,
@@ -69,69 +67,67 @@ fun CadastrarOrganizadorScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             if (state.tipoUsuario == null) {
-                CadastrarUsuario(state = state, onStateChange = { state = it })
+                // Passamos a viewModel para a tela de baixo
+                CadastrarUsuario(viewModel = viewModel)
             } else if (state.tipoUsuario == "ORGANIZADOR") {
 
-        if (state.currentStep > 1) {
-            val passoAtualVisual = state.currentStep - 1
+                if (state.currentStep > 1) {
+                    val passoAtualVisual = state.currentStep - 1
+                    val totalPassosVisuais = state.totalSteps
+                    val progresso = passoAtualVisual / totalPassosVisuais.toFloat()
 
-            val totalPassosVisuais = if (state.isEmpresa == true) 3 else 2
-            val progresso = passoAtualVisual / totalPassosVisuais.toFloat()
+                    // BARRA DE PROGRESSO DO ORGANIZADOR
+                    Text(
+                        text = "Passo $passoAtualVisual de $totalPassosVisuais",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Orange
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LinearProgressIndicator(
+                        progress = progresso,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(8.dp),
+                        color = Orange,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
 
-            // BARRA DE PROGRESSO DO ORGANIZADOR
-            Text(
-                text = "Passo $passoAtualVisual de $totalPassosVisuais",
-                style = MaterialTheme.typography.labelLarge,
-                color = Orange
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            LinearProgressIndicator(
-                progress = progresso,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp),
-                color = Orange,
-                trackColor = MaterialTheme.colorScheme.surfaceVariant
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-
-        Box(
-            modifier = Modifier.weight(1f)
-        ) {
-            when (state.currentStep) {
-                1 -> IsEmpresa(state) { state = it }
-                2 -> if (state.isEmpresa == true) CadastrarDadosEmpresariais(state) { state = it } else CadastrarDadosPessoais(state) { state = it }
-                3 -> if (state.isEmpresa == true) CadastrarDadosPessoais(state) { state = it } else ConferenciaPF(state)
-                4 -> ConferenciaPJ(state)
-            }
-        }
+                Box(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    // Todas as subtelas recebem o estado e a viewModel!
+                    when (state.currentStep) {
+                        1 -> IsEmpresa(state, viewModel)
+                        2 -> if (state.isEmpresa == true) CadastrarDadosEmpresariais(state, viewModel) else CadastrarDadosPessoais(state, viewModel)
+                        3 -> if (state.isEmpresa == true) CadastrarDadosPessoais(state, viewModel) else ConferenciaPF(state, viewModel)
+                        4 -> ConferenciaPJ(state, viewModel)
+                    }
+                }
 
                 if (state.showSuccessDialog) {
                     CadastroConcluidoDialog(
-                        onConfirm = { },
-                        onDismiss = {}
+                        onConfirm = { viewModel.fecharDialogSucesso() },
+                        onDismiss = { viewModel.fecharDialogSucesso() }
                     )
                 }
 
                 when (state.erroAtualDialog) {
                     TipoErroDialog.EMAIL_DUPLICADO -> {
                         ErroEmailDuplicadoDialog(
-                            onTentarNovamente = { state = state.copy(erroAtualDialog = null) },
-                            onIrParaLogin = {
-                                state = state.copy(erroAtualDialog = null)
-                                // Aqui no futuro você colocará a navegação para a tela de Login
-                            }
+                            onTentarNovamente = { viewModel.fecharDialogErro() },
+                            onIrParaLogin = { viewModel.fecharDialogErro() }
                         )
                     }
                     TipoErroDialog.IDADE_MINIMA -> {
                         ErroIdadeMinimaDialog(
-                            onTentarNovamente = { state = state.copy(erroAtualDialog = null) }
+                            onTentarNovamente = { viewModel.fecharDialogErro() }
                         )
                     }
                     TipoErroDialog.CAMPOS_VAZIOS -> {
                         ErroCamposNaoPreenchidosDialog(
-                            onTentarNovamente = { state = state.copy(erroAtualDialog = null) }
+                            onTentarNovamente = { viewModel.fecharDialogErro() }
                         )
                     }
                     null -> { /* Não faz nada, nenhum erro ativo */ }
@@ -144,10 +140,8 @@ fun CadastrarOrganizadorScreen(
     }
 }
 
-
-
 @Composable
-fun CadastrarUsuario(state: CadastroUiState, onStateChange: (CadastroUiState) -> Unit) {
+fun CadastrarUsuario(viewModel: CadastroOrganizadorViewModel) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -164,7 +158,7 @@ fun CadastrarUsuario(state: CadastroUiState, onStateChange: (CadastroUiState) ->
         Spacer(modifier = Modifier.height(90.dp))
 
         Button(
-            onClick = { onStateChange(state.copy(tipoUsuario = "COMUM")) },
+            onClick = { viewModel.updateTipoUsuario("COMUM") },
             shape = RoundedCornerShape(15.dp),
             colors = ButtonDefaults.buttonColors(containerColor = BlackLinear, contentColor = White),
             modifier = Modifier
@@ -175,7 +169,7 @@ fun CadastrarUsuario(state: CadastroUiState, onStateChange: (CadastroUiState) ->
         }
 
         OutlinedButton(
-            onClick = { onStateChange(state.copy(tipoUsuario = "ORGANIZADOR")) },
+            onClick = { viewModel.updateTipoUsuario("ORGANIZADOR") },
             shape = RoundedCornerShape(15.dp),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = Orange),
             border = BorderStroke(2.dp, Orange),
@@ -189,14 +183,13 @@ fun CadastrarUsuario(state: CadastroUiState, onStateChange: (CadastroUiState) ->
 }
 
 @Composable
-fun IsEmpresa(state: CadastroUiState, onStateChange: (CadastroUiState) -> Unit) {
-    var state by remember { mutableStateOf(CadastroUiState()) }
+fun IsEmpresa(state: CadastroUiState, viewModel: CadastroOrganizadorViewModel) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
-    Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "Você representa um Empresa/Instituição?",
             fontSize = 18.sp,
@@ -208,9 +201,11 @@ fun IsEmpresa(state: CadastroUiState, onStateChange: (CadastroUiState) -> Unit) 
 
         Row() {
             OutlinedButton(
-                onClick = { onStateChange(state.copy(isEmpresa = true)) },
+                onClick = {
+                    viewModel.updateIsEmpresa(true)
+                    viewModel.avancarPasso()
+                },
                 shape = RoundedCornerShape(15.dp),
-                // Se estiver selecionado, podemos mudar a cor do fundo para dar feedback
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = if (state.isEmpresa == true) Orange.copy(alpha = 0.1f) else Color.Transparent,
                     contentColor = Orange
@@ -226,7 +221,10 @@ fun IsEmpresa(state: CadastroUiState, onStateChange: (CadastroUiState) -> Unit) 
             Spacer(modifier = Modifier.width(50.dp))
 
             OutlinedButton(
-                onClick = { onStateChange(state.copy(isEmpresa = false)) },
+                onClick = {
+                    viewModel.updateIsEmpresa(false)
+                    viewModel.avancarPasso()
+                },
                 shape = RoundedCornerShape(15.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = if (state.isEmpresa == false) Orange.copy(alpha = 0.1f) else Color.Transparent,
@@ -244,27 +242,20 @@ fun IsEmpresa(state: CadastroUiState, onStateChange: (CadastroUiState) -> Unit) 
 }
 
 @Composable
-fun CadastrarDadosEmpresariais(state: CadastroUiState, onStateChange: (CadastroUiState) -> Unit) {
+fun CadastrarDadosEmpresariais(state: CadastroUiState, viewModel: CadastroOrganizadorViewModel) {
     Column(modifier = Modifier.fillMaxSize()) {
-
 
         Column(modifier = Modifier
             .weight(1f)
             .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)) {
 
-            Text(
-                "Dados empresariais",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = Inter
-            )
-
+            Text("Dados empresariais", fontSize = 20.sp, fontWeight = FontWeight.Bold, fontFamily = Inter)
             Spacer(modifier = Modifier.height(8.dp))
 
             DendeTextField(
                 value = state.cnpj,
-                onValueChange = { onStateChange(state.copy(cnpj = it)) },
+                onValueChange = { viewModel.updateCnpj(it) },
                 title = "CNPJ",
                 placeholder = "XX.XXX.XXX/XXXX-XX",
                 isError = state.cnpjError != null,
@@ -273,7 +264,7 @@ fun CadastrarDadosEmpresariais(state: CadastroUiState, onStateChange: (CadastroU
 
             DendeTextField(
                 value = state.razaoSocial,
-                onValueChange = { onStateChange(state.copy(razaoSocial = it)) },
+                onValueChange = { viewModel.updateRazaoSocial(it) },
                 title = "Razão Social",
                 placeholder = "Exemplo",
                 isError = state.razaoSocialError != null,
@@ -282,7 +273,7 @@ fun CadastrarDadosEmpresariais(state: CadastroUiState, onStateChange: (CadastroU
 
             DendeTextField(
                 value = state.nomeFantasia,
-                onValueChange = { onStateChange(state.copy(nomeFantasia = it)) },
+                onValueChange = { viewModel.updateNomeFantasia(it) },
                 title = "Nome Fantasia",
                 placeholder = "Exemplo",
                 isError = state.nomeFantasiaError != null,
@@ -291,20 +282,18 @@ fun CadastrarDadosEmpresariais(state: CadastroUiState, onStateChange: (CadastroU
 
             Spacer(modifier = Modifier.height(16.dp))
         }
+
         DendeFooterButton(
-            onPrimaryClick = {
-                onStateChange(state.copy(currentStep = state.currentStep + 1))
-            },
-            onSecondaryClick = {
-                onStateChange(state.copy(currentStep = state.currentStep - 1))
-            }
+            onPrimaryClick = { viewModel.avancarPasso() },
+            onSecondaryClick = { viewModel.voltarPasso() }
         )
     }
 }
+
 @SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CadastrarDadosPessoais(state: CadastroUiState, onStateChange: (CadastroUiState) -> Unit) {
+fun CadastrarDadosPessoais(state: CadastroUiState, viewModel: CadastroOrganizadorViewModel) {
     Column(modifier = Modifier.fillMaxSize()) {
 
         Column(
@@ -317,7 +306,7 @@ fun CadastrarDadosPessoais(state: CadastroUiState, onStateChange: (CadastroUiSta
 
             DendeTextField(
                 value = state.email,
-                onValueChange = { onStateChange(state.copy(email = it)) },
+                onValueChange = { novoTexto -> viewModel.updateEmail(novoTexto)},
                 title = "Email",
                 placeholder = "exemplo@email.com",
                 isError = state.emailError != null,
@@ -326,7 +315,7 @@ fun CadastrarDadosPessoais(state: CadastroUiState, onStateChange: (CadastroUiSta
 
             DendeTextField(
                 value = state.senha,
-                onValueChange = { onStateChange(state.copy(senha = it)) },
+                onValueChange = { viewModel.updateSenha(it) },
                 title = "Senha",
                 placeholder = "********",
                 isError = state.senhaError != null,
@@ -335,7 +324,7 @@ fun CadastrarDadosPessoais(state: CadastroUiState, onStateChange: (CadastroUiSta
 
             DendeTextField(
                 value = state.nome,
-                onValueChange = { onStateChange(state.copy(nome = it)) },
+                onValueChange = { viewModel.updateNome(it) },
                 title = "Nome",
                 placeholder = "Dende Eventos",
                 isError = state.nomeError != null,
@@ -344,7 +333,7 @@ fun CadastrarDadosPessoais(state: CadastroUiState, onStateChange: (CadastroUiSta
 
             DendeDropdownField(
                 value = state.genero,
-                onValueChange = { onStateChange(state.copy(genero = it)) },
+                onValueChange = { viewModel.updateGenero(it) },
                 options = listOf("Masculino", "Feminino", "Não Binário", "Prefiro não dizer"),
                 title = "Gênero",
                 placeholder = "Selecione..."
@@ -352,47 +341,34 @@ fun CadastrarDadosPessoais(state: CadastroUiState, onStateChange: (CadastroUiSta
 
             DendeDatePickerField(
                 value = state.dataNascimento,
-                onDateSelected = { onStateChange(state.copy(dataNascimento = it)) },
+                onDateSelected = { viewModel.updateDataNascimento(it) },
                 title = "Data de Nascimento",
                 placeholder = "DD/MM/AAAA"
             )
 
             DendeCheckBox(
                 checked = state.aceitouTermos,
-                onCheckedChange = { novoValor ->
-                    onStateChange(state.copy(aceitouTermos = novoValor, aceitouTermosError = false))
-                },
+                onCheckedChange = { novoValor -> viewModel.updateAceitouTermos(novoValor) },
                 isError = state.aceitouTermosError
             )
         }
 
         DendeFooterButton(
-            onPrimaryClick = {  },
-            onSecondaryClick = {  }
+            onPrimaryClick = { viewModel.avancarPasso() },
+            onSecondaryClick = { viewModel.voltarPasso() }
         )
     }
 }
 
-// CONFERÊNCIA PESSOA JURÍDICA
 @Composable
-fun ConferenciaPJ(state: CadastroUiState) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(horizontal = 18.dp)) {
-
+fun ConferenciaPJ(state: CadastroUiState, viewModel: CadastroOrganizadorViewModel) {
+    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 18.dp)) {
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState()),
+            modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(
-                "Confira seus dados",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = Inter
-            )
+            Text("Confira seus dados", fontSize = 24.sp, fontWeight = FontWeight.Bold, fontFamily = Inter)
 
             ItemConferencia("Nome", state.nome)
             ItemConferencia("E-mail", state.email)
@@ -406,36 +382,21 @@ fun ConferenciaPJ(state: CadastroUiState) {
             Spacer(modifier = Modifier.height(16.dp))
         }
         DendeFooterButton(
-            onPrimaryClick = {
-
-            },
-            onSecondaryClick = {
-
-            }
+            onPrimaryClick = { viewModel.abrirDialogSucesso() },
+            onSecondaryClick = { viewModel.voltarPasso() }
         )
     }
 }
 
-// CONFERÊNCIA PESSOA FÍSICA
 @Composable
-fun ConferenciaPF(state: CadastroUiState) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(horizontal = 18.dp)) {
-
+fun ConferenciaPF(state: CadastroUiState, viewModel: CadastroOrganizadorViewModel) {
+    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 18.dp)) {
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState()),
+            modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(
-                "Confira seus dados",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = Inter
-            )
+            Text("Confira seus dados", fontSize = 24.sp, fontWeight = FontWeight.Bold, fontFamily = Inter)
 
             ItemConferencia("E-mail", state.email)
             ItemConferencia("Nome Completo", state.nome)
@@ -445,12 +406,8 @@ fun ConferenciaPF(state: CadastroUiState) {
             Spacer(modifier = Modifier.height(16.dp))
         }
         DendeFooterButton(
-            onPrimaryClick = {
-
-            },
-            onSecondaryClick = {
-
-            }
+            onPrimaryClick = { viewModel.abrirDialogSucesso() },
+            onSecondaryClick = { viewModel.voltarPasso() }
         )
     }
 }
@@ -458,26 +415,18 @@ fun ConferenciaPF(state: CadastroUiState) {
 @Composable
 fun ItemConferencia(label: String, valor: String) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = label,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
+        Text(text = label, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.Black)
         Text(
             text = if (valor.isNotBlank()) valor else "Não preenchido",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
-            fontFamily = Inter
+            fontSize = 16.sp, fontWeight = FontWeight.Medium, fontFamily = Inter
         )
     }
 }
 
+// MODAIS
+
 @Composable
-fun CadastroConcluidoDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
+fun CadastroConcluidoDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
     DendeNotificationDialog(
         title = "Cadastro Realizado com Sucesso!",
         description = "Bem Vindo ao Dendê Eventos",
@@ -490,10 +439,7 @@ fun CadastroConcluidoDialog(
 }
 
 @Composable
-fun ErroEmailDuplicadoDialog(
-    onTentarNovamente: () -> Unit,
-    onIrParaLogin: () -> Unit
-) {
+fun ErroEmailDuplicadoDialog(onTentarNovamente: () -> Unit, onIrParaLogin: () -> Unit) {
     DendeNotificationDialog(
         title = "Atenção",
         description = "Email Já Cadastrado! \nPor favor tente outro email ou realize o Login",
@@ -506,8 +452,7 @@ fun ErroEmailDuplicadoDialog(
 }
 
 @Composable
-fun ErroIdadeMinimaDialog(
-    onTentarNovamente: () -> Unit,){
+fun ErroIdadeMinimaDialog(onTentarNovamente: () -> Unit){
     DendeNotificationDialog(
         title = "Atenção",
         description =  "Você precisa ter no minimo 18 anos para ser um organizador de eventos.",
@@ -519,8 +464,7 @@ fun ErroIdadeMinimaDialog(
 }
 
 @Composable
-fun ErroCamposNaoPreenchidosDialog(
-    onTentarNovamente: () -> Unit,){
+fun ErroCamposNaoPreenchidosDialog(onTentarNovamente: () -> Unit){
     DendeNotificationDialog(
         title = "Atenção",
         description =  "Todos os campos devem ser preenchidos!",
@@ -531,128 +475,13 @@ fun ErroCamposNaoPreenchidosDialog(
     )
 }
 
+
 // PREVIEWS
 
-@Preview(device = Devices.PIXEL_7, showSystemUi = true, name = "0. Tela de Escolha Inicial")
+@Preview(device = Devices.PIXEL_7, showSystemUi = true, name = "Aplicativo Rodando")
 @Composable
-fun FullPreview_EscolhaUsuario() {
+fun FullPreviewApp() {
     MaterialTheme {
         CadastrarOrganizadorScreen()
-    }
-}
-
-@Preview(device = Devices.PIXEL_7, showSystemUi = true, name = "1. Passo 1 - Pergunta Empresa")
-@Composable
-fun FullPreview_Passo1_IsEmpresa() {
-    MaterialTheme {
-        CadastrarOrganizadorScreen(
-            initialState = CadastroUiState(tipoUsuario = "ORGANIZADOR", currentStep = 1)
-        )
-    }
-}
-
-@Preview(device = Devices.PIXEL_7, showSystemUi = true, name = "2. Passo 2 (PJ) - Dados Empresariais")
-@Composable
-fun FullPreview_Passo2_DadosEmpresariais() {
-    MaterialTheme {
-        CadastrarOrganizadorScreen(
-            initialState = CadastroUiState(tipoUsuario = "ORGANIZADOR", isEmpresa = true, currentStep = 2)
-        )
-    }
-}
-
-@Preview(device = Devices.PIXEL_7, showSystemUi = true, name = "3. Passo 2 (PF) - Dados Pessoais (Pulou a Empresa)")
-@Composable
-fun FullPreview_Passo2_DadosPessoais_PF() {
-    MaterialTheme {
-        CadastrarOrganizadorScreen(
-            initialState = CadastroUiState(tipoUsuario = "ORGANIZADOR", isEmpresa = false, currentStep = 2)
-        )
-    }
-}
-
-@Preview(device = Devices.PIXEL_7, showSystemUi = true, name = "4. Passo 3 (PJ) - Dados Pessoais")
-@Composable
-fun FullPreview_Passo3_DadosPessoais_PJ() {
-    MaterialTheme {
-        CadastrarOrganizadorScreen(
-            initialState = CadastroUiState(tipoUsuario = "ORGANIZADOR", isEmpresa = true, currentStep = 3)
-        )
-    }
-}
-
-@Preview(device = Devices.PIXEL_7, showSystemUi = true, name = "5. Passo Final (PF) - Conferência Física")
-@Composable
-fun FullPreview_Passo3_Conferencia_PF() {
-    MaterialTheme {
-        CadastrarOrganizadorScreen(
-            initialState = CadastroUiState(tipoUsuario = "ORGANIZADOR", isEmpresa = false, currentStep = 3)
-        )
-    }
-}
-
-@Preview(device = Devices.PIXEL_7, showSystemUi = true, name = "6. Passo Final (PJ) - Conferência Jurídica")
-@Composable
-fun FullPreview_Passo4_Conferencia_PJ() {
-    MaterialTheme {
-        CadastrarOrganizadorScreen(
-            initialState = CadastroUiState(tipoUsuario = "ORGANIZADOR", isEmpresa = true, currentStep = 4)
-        )
-    }
-}
-
-@Preview(device = Devices.PIXEL_7, showSystemUi = true, name = "Conferência com Pop-up de Sucesso")
-@Composable
-fun PreviewSucessoSobreConferencia() {
-    MaterialTheme {
-        val stateComSucesso = CadastroUiState(
-            tipoUsuario = "ORGANIZADOR",
-            currentStep = 4,
-            isEmpresa = true,
-            showSuccessDialog = true
-        )
-        CadastrarOrganizadorScreen(initialState = stateComSucesso)
-    }
-}
-
-@Preview(device = Devices.PIXEL_7, showSystemUi = true, name = "Erro: Email Duplicado (Sobre Dados Pessoais)")
-@Composable
-fun PreviewErroEmailDuplicadoSobreTela() {
-    MaterialTheme {
-        val stateComErro = CadastroUiState(
-            tipoUsuario = "ORGANIZADOR",
-            currentStep = 3, // Tela de Dados Pessoais (PJ) onde o e-mail é preenchido
-            isEmpresa = true,
-            erroAtualDialog = TipoErroDialog.EMAIL_DUPLICADO
-        )
-        CadastrarOrganizadorScreen(initialState = stateComErro)
-    }
-}
-
-@Preview(device = Devices.PIXEL_7, showSystemUi = true, name = "Erro: Idade Mínima (Sobre Dados Pessoais)")
-@Composable
-fun PreviewErroIdadeMinimaSobreTela() {
-    MaterialTheme {
-        val stateComErro = CadastroUiState(
-            tipoUsuario = "ORGANIZADOR",
-            currentStep = 3, // Tela de Dados Pessoais onde a data de nascimento é colocada
-            isEmpresa = true,
-            erroAtualDialog = TipoErroDialog.IDADE_MINIMA
-        )
-        CadastrarOrganizadorScreen(initialState = stateComErro)
-    }
-}
-
-@Preview(device = Devices.PIXEL_7, showSystemUi = true, name = "Erro: Campos Vazios (Sobre Dados Empresariais)")
-@Composable
-fun PreviewErroCamposVaziosSobreTela() {
-    MaterialTheme {
-        val stateComErro = CadastroUiState(
-            tipoUsuario = "ORGANIZADOR",
-            currentStep = 2,
-            isEmpresa = true,
-            erroAtualDialog = TipoErroDialog.CAMPOS_VAZIOS
-        )
-        CadastrarOrganizadorScreen(initialState = stateComErro)
     }
 }

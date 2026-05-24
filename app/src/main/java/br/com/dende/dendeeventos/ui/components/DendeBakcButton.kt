@@ -20,25 +20,22 @@ import br.com.dende.dendeeventos.ui.theme.BlackLinear
 
 @Composable
 fun DendeBackButton (
-onClick: () -> Unit,
+    onClick: () -> Unit,
 ) {
     FilledIconButton(
-        onClick = {
-        },
+        onClick = onClick,
         modifier = Modifier
-            .size(ButtonDefaults.IconSize)
+            .size(48.dp)
             .border(BorderStroke(1.dp, BlackLinear), shape = RoundedCornerShape(15.dp)),
         colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent),
     ) {
         Icon(
             painter = painterResource(id = R.drawable.back_butto_svg),
             contentDescription = "Voltar",
-            modifier = Modifier.size(ButtonDefaults.IconSize),
+            modifier = Modifier.size(24.dp),
         )
-
     }
 }
-
 @Preview(showBackground = true, name = "back button preview")
 @Composable
 fun backButtonPreview(){
