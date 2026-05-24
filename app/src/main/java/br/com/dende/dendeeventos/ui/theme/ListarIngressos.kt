@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import br.com.dende.dendeeventos.R
 import br.com.dende.dendeeventos.core.designsystem.components.BottomBar
 import br.com.dende.dendeeventos.core.designsystem.components.EventCard
+import br.com.dende.dendeeventos.core.designsystem.components.TopTabButton
 
 @Composable
 fun ListarIngressos() {
@@ -114,36 +115,17 @@ fun ListarIngressos() {
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement =
-                        Arrangement.spacedBy(40.dp)
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Column(
-                        horizontalAlignment =
-                            Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Ativos",
-                            color = Color.White,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
 
-                        Spacer(
-                            modifier = Modifier.height(10.dp)
-                        )
+                    TopTabButton(
+                        text = "Ativos",
+                        selected = true
+                    )
 
-                        Box(
-                            modifier = Modifier
-                                .width(100.dp)
-                                .height(3.dp)
-                                .background(Color.White)
-                        )
-                    }
-                    Text(
+                    TopTabButton(
                         text = "Encerrados",
-                        color = Color.White,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+                        selected = false
                     )
                 }
             }
