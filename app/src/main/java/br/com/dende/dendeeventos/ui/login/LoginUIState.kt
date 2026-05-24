@@ -1,4 +1,4 @@
-package br.com.dende.dendeeventos.ui.login.viewModel
+package br.com.dende.dendeeventos.ui.login
 
 // Classe do model Login
 data class LoginUIState (

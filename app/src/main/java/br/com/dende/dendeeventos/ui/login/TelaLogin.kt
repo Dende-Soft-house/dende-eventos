@@ -1,4 +1,4 @@
-package br.com.dende.dendeeventos.ui.login.viewModel
+package br.com.dende.dendeeventos.ui.login
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -19,10 +19,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.shadow
-
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -33,16 +33,45 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import br.com.dende.dendeeventos.R
+import br.com.dende.dendeeventos.ui.navigation.AppDestinations
 
 private val DendeOrange = Color(0xFFF25D27)
 
 @Composable
 fun LoginScreen(
-    loginViewModel: LoginViewModel
+    navController: NavHostController,
+    loginViewModel: LoginViewModel = viewModel()
 ) {
-
+    // Variável que coleta o UIState do ViewModel
     val uiState by loginViewModel.uiState.collectAsState()
+
+    // LoginScreen lida com o processo de eventos de navegação
+    LaunchedEffect(Unit) {
+        loginViewModel.navigationEvent.collect { destination ->
+            when (destination) {
+
+                // Botão de retorno
+                AppDestinations.Home -> {
+                    navController.popBackStack()
+                }
+
+                // Quando o login for bem-sucedido, redireciona para o Dashboard
+                AppDestinations.EventDashboard -> {
+                    navController.navigate(AppDestinations.EventDashboard) {
+                        // ⚠️ Remove Login E Home da back stack
+                        // Usuário autenticado não pode voltar para essas telas
+                        popUpTo(AppDestinations.Home) { inclusive = true }
+                    }
+                }
+
+                else -> Unit
+            }
+        }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -274,5 +303,8 @@ fun VisualTextField(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(loginViewModel = LoginViewModel())
+    LoginScreen(
+        navController = rememberNavController(),
+        loginViewModel = LoginViewModel()
+    )
 }

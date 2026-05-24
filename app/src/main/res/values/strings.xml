@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Dendê Eventos</string>
     <string name="btn_join_now">JOIN NOW</string>
+    <string name="btn_participe">PARTICIPE</string>
+    <string name="home_banner_text">Todos os tipos de eventos em um só lugar.</string>
     <string name="btn_accept">Accept</string>
     <string name="btn_reject">Reject</string>
     <string name="label_invite_on">invite you on</string>
