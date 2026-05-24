@@ -23,12 +23,19 @@ import androidx.compose.runtime.Composable
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+
 import androidx.compose.ui.draw.clip
+
 import androidx.compose.ui.graphics.Color
+
 import androidx.compose.ui.layout.ContentScale
+
 import androidx.compose.ui.res.painterResource
+
 import androidx.compose.ui.text.font.FontWeight
+
 import androidx.compose.ui.tooling.preview.Preview
+
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -39,76 +46,120 @@ fun EventCard(
     status: String,
     statusColor: Color,
     backgroundStatus: Color,
-    buttonColor: Color
-    ) {
+    buttonColor: Color,
+    buttonTextColor: Color
+) {
+
     Card(
         shape = RoundedCornerShape(20.dp),
+
         elevation = CardDefaults.cardElevation(8.dp),
+
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         )
     ) {
+
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
+
+            // BANNER
             Image(
-                painter = painterResource(id = R.drawable.banner_card),
-                contentDescription = "Card do Banner",
+                painter = painterResource(
+                    id = R.drawable.banner_card
+                ),
+
+                contentDescription = "Banner do Evento",
+
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp)
                     .clip(RoundedCornerShape(16.dp)),
+
                 contentScale = ContentScale.Crop
             )
-            Spacer(modifier = Modifier.height(14.dp))
 
+            Spacer(
+                modifier = Modifier.height(14.dp)
+            )
+
+            // HEADER DO CARD
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+
+                horizontalArrangement =
+                    Arrangement.SpaceBetween,
+
+                verticalAlignment =
+                    Alignment.CenterVertically
             ) {
-                Column{
+
+                Column {
+
                     Text(
                         text = "IntegraSI FSA",
+
                         fontSize = 22.sp,
+
                         fontWeight = FontWeight.Bold
                     )
+
                     Text(
-                        text ="21 Abr, 18:50",
+                        text = "21 Abr, 18:50",
+
                         color = Color.Gray
                     )
                 }
 
+                // STATUS
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
                         .background(backgroundStatus)
-                        .padding(horizontal = 14.dp, vertical = 6.dp)
+                        .padding(
+                            horizontal = 14.dp,
+                            vertical = 6.dp
+                        )
                 ) {
+
                     Text(
                         text = status,
+
                         color = statusColor,
+
                         fontWeight = FontWeight.Bold
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(
+                modifier = Modifier.height(16.dp)
+            )
 
+            // BOTÃO
             Button(
                 onClick = {},
+
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
+
                 colors = ButtonDefaults.buttonColors(
                     containerColor = buttonColor
                 ),
+
                 shape = RoundedCornerShape(14.dp)
             ) {
+
                 Text(
                     text = "Ingresso",
+
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+
+                    fontWeight = FontWeight.Bold,
+
+                    color = buttonTextColor
                 )
             }
         }
@@ -119,5 +170,15 @@ fun EventCard(
 @Composable
 fun EventCardPreview() {
 
-    EventCard()
+    EventCard(
+        status = "ATIVO",
+
+        statusColor = Color(0xFF169B16),
+
+        backgroundStatus = Color(0xFFDFF5D8),
+
+        buttonColor = Color(0xFF1F2230),
+
+        buttonTextColor = Color.White
+    )
 }
