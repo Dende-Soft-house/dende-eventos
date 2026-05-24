@@ -46,7 +46,7 @@ private val DendeOrange = Color(0xFFF25027)
 
 @Composable
 fun EventosDetalhesScreen(
-    eventId: Long = 1,
+    eventId: Long?,
     viewModel: DetalhesEventoViewModel = viewModel(),
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},

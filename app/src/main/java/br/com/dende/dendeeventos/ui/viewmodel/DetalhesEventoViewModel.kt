@@ -13,7 +13,7 @@ class DetalhesEventoViewModel: ViewModel() {
     val evento: StateFlow<EventCard?>
         get() = _evento
 
-    fun carregarEvento(id: Long) {
+    fun carregarEvento(id: Long?) {
 
         _evento.value = EventData.eventos.find {
             it.id == id

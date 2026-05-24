@@ -45,13 +45,15 @@ import br.com.dende.dendeeventos.core.designsystem.components.BottomNavBar
 import br.com.dende.dendeeventos.ui.viewmodel.FeedEventosViewModel
 import androidx.compose.foundation.lazy.items
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 private val DendeOrange = Color(0xFFF25027)
 private val BackgroundColor = Color(0xF5F5F5)
 
 
 @Composable
-fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, data: String) {
+fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, data: String, onVerDetalhesClick: () -> Unit) {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -158,7 +160,7 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
 
                 // Botão
                 Button(
-                    onClick = {},
+                    onClick = onVerDetalhesClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF1F2232)
                     ),
@@ -173,6 +175,7 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
 
     @Composable
     fun FeedEventosScreen(
+        navController: NavController,
         viewModel: FeedEventosViewModel = viewModel()
     ) {
 
@@ -256,7 +259,11 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
                         EventoCard(
                             titulo = evento.evento,
                             local = "${evento.local.nome}, ${evento.local.cidade}",
-                            data = evento.dataInicio.format(formatadorHorario)
+                            data = evento.dataInicio.format(formatadorHorario),
+
+                            onVerDetalhesClick = {
+                                navController.navigate("detalhes/${evento.id}")
+                            }
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                     }
@@ -274,6 +281,8 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
     @Preview
     @Composable
     fun FeedEventosScreenPreview() {
-        FeedEventosScreen()
+        FeedEventosScreen(
+            navController = rememberNavController()
+        )
     }
 
