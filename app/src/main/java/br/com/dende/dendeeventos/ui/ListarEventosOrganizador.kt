@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -21,7 +22,6 @@ import androidx.compose.ui.unit.sp
 import br.com.dende.dendeeventos.core.designsystem.components.OrganizerEventCard
 import br.com.dende.dendeeventos.core.designsystem.theme.Inter
 import br.com.dende.dendeeventos.ui.theme.Black
-import br.com.dende.dendeeventos.ui.theme.Grey2
 import br.com.dende.dendeeventos.ui.theme.Orange
 import br.com.dende.dendeeventos.ui.theme.SoftDarkish
 import br.com.dende.dendeeventos.ui.theme.White
@@ -37,8 +37,7 @@ data class EventoListagem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MeusEventosScreen(
-    onBackClick: () -> Unit,
-    onEventClick: (String) -> Unit
+    onBackClick: () -> Unit, onEventClick: (String) -> Unit, onAddEventClick: () -> Unit
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("AGENDADOS", "INATIVOS")
@@ -60,17 +59,27 @@ fun MeusEventosScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text("Meus Eventos", fontWeight = FontWeight.Bold, fontSize = 20.sp, fontFamily = Inter)
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar", tint = Black)
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                Text(
+                    "Meus Eventos",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    fontFamily = Inter
+                )
+            }, navigationIcon = {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Voltar",
+                        tint = Black
+                    )
+                }
+            }, actions = {
+                IconButton(onClick = onAddEventClick) {
+                    Icon(Icons.Default.Add, contentDescription = "Novo Evento", tint = Black)
+                }
+            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
-        }
-    ) { paddingValues ->
+        }) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -82,7 +91,6 @@ fun MeusEventosScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp, vertical = 6.dp)
-                    .background(Grey2, RoundedCornerShape(32.dp))
                     .padding(4.dp)
             ) {
                 tabs.forEachIndexed { index, title ->
@@ -95,8 +103,7 @@ fun MeusEventosScreen(
                             .background(if (isActive) Orange else Color.Transparent)
                             .clickable { selectedTab = index }
                             .padding(vertical = 12.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
+                        contentAlignment = Alignment.Center) {
                         Text(
                             text = title,
                             fontFamily = Inter,
@@ -132,5 +139,5 @@ fun MeusEventosScreen(
 @Preview(showBackground = true)
 @Composable
 fun MeusEventosScreenPreview() {
-    MeusEventosScreen({}, {})
+    MeusEventosScreen({}, {}, {})
 }
