@@ -36,9 +36,7 @@ data class EventoListagem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MeusEventosScreen(
-    onBackClick: () -> Unit, onEventClick: (String) -> Unit, onAddEventClick: () -> Unit
-) {
+fun MeusEventosScreen(onBackClick: () -> Unit, onEventClick: (String) -> Unit, onAddEventClick: () -> Unit) {
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("AGENDADOS", "INATIVOS")
 
