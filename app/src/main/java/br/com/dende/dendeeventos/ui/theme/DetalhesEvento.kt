@@ -42,7 +42,6 @@ import java.util.Locale
 import java.time.Duration
 
 
-private val DendeOrange = Color(0xFFF25027)
 
 @Composable
 fun EventosDetalhesScreen(
@@ -56,6 +55,7 @@ fun EventosDetalhesScreen(
 
     val evento = viewModel.evento.collectAsState()
 
+    // Executa a busca do evento ao abrir tela ou quando id mudar
     LaunchedEffect(eventId) {
         viewModel.carregarEvento(eventId)
     }
@@ -101,7 +101,7 @@ fun EventosDetalhesScreen(
                 Icon(
                     painter = painterResource(R.drawable.ic_back),
                     contentDescription = "Voltar",
-                    tint = DendeOrange
+                    tint = Orange
                 )
             }
 
@@ -160,7 +160,7 @@ fun EventosDetalhesScreen(
                             Icon(
                                 painter = painterResource(R.drawable.ic_date),
                                 contentDescription = null,
-                                tint = DendeOrange,
+                                tint = Orange,
                                 modifier = Modifier.size(28.dp)
                             )
 
@@ -179,7 +179,7 @@ fun EventosDetalhesScreen(
                             Icon(
                                 painter = painterResource(R.drawable.ic_location),
                                 contentDescription = null,
-                                tint = DendeOrange,
+                                tint = Orange,
                                 modifier = Modifier.size(28.dp)
                             )
 
@@ -200,7 +200,7 @@ fun EventosDetalhesScreen(
                             Icon(
                                 painter = painterResource(R.drawable.ic_time),
                                 contentDescription = null,
-                                tint = DendeOrange,
+                                tint = Orange,
                                 modifier = Modifier.size(28.dp)
                             )
 
@@ -219,7 +219,7 @@ fun EventosDetalhesScreen(
                             Icon(
                                 painter = painterResource(R.drawable.ic_ticket),
                                 contentDescription = null,
-                                tint = DendeOrange,
+                                tint = Orange,
                                 modifier = Modifier.size(28.dp)
                             )
 
@@ -270,7 +270,7 @@ fun EventosDetalhesScreen(
 
                         Text(
                             text = "Ver mais...",
-                            color = DendeOrange,
+                            color = Orange,
                             fontSize = 12.sp
                         )
                     }
