@@ -20,6 +20,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import br.com.dende.dendeeventos.R
 import br.com.dende.dendeeventos.domain.EventStatusViewModel
 import br.com.dende.dendeeventos.ui.theme.Orange
+// AtivarEventoAviso.kt — primeira linha deve ser:
+
 
 @Composable
 fun AtivarEventoAvisoDialog(
