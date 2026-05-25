@@ -15,8 +15,8 @@ enum class StatusEvento {
 
 // Enum que representa os status possíveis de um evento.
 
-
-data class EventCard(
+//TROCAR PARA DATASET OFICIAL APÓS MERGE JUNTO AS DEPENDENCIAS DOS OUTROS GRUPOS
+data class EventCardDataset(
     var id: Long,
     val evento: String,
     val sobreEvento: String,
@@ -53,7 +53,7 @@ data class Usuario(
 
 data class Ingresso(
     var id: Long,
-    val evento: EventCard,
+    val evento: EventCardDataset,
     val categoriaEvento: CategoriaEvento,
     val nomeUsuario: String,
     val statusEvento: StatusEvento,

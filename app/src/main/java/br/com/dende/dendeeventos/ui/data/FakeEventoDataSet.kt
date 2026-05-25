@@ -1,17 +1,18 @@
 package br.com.dende.dendeeventos.ui.data
 
 import java.time.Period
-import br.com.dende.dendeeventos.domain.model.EventCard
+import br.com.dende.dendeeventos.domain.model.EventCardDataset
 import br.com.dende.dendeeventos.domain.model.CategoriaEvento
 import br.com.dende.dendeeventos.domain.model.Local
 import br.com.dende.dendeeventos.domain.model.StatusEvento
-import br.com.dende.dendeeventos.ui.theme.EventoCard
 import java.time.LocalDateTime
 
+
+//SUBSTITUIR POR DATASET OFICIAL APÓS MERGE JUNTO AS DEPENDENCIAS DOS OUTROS GRUPOS
 object EventData {
     val eventos = listOf(
 
-        EventCard(
+        EventCardDataset(
             id = 1,
             evento = "IntegraSI FSA",
             sobreEvento = "O IntegraSI FSA é um evento para estudantes, profissionais e entusiastas da área de Tecnologia da Informação que buscam aprender, se atualizar e se conectar com outras pessoas do meio.",
@@ -22,7 +23,7 @@ object EventData {
             ),
             dataFim = LocalDateTime.of(
                 2026, 4, 21, 22, 20
-        ),
+            ),
             duracao = Period.ofDays(1),
             gratuito = true,
             totalInscritos = 120,
@@ -40,7 +41,7 @@ object EventData {
             urlImageBanner = ""
         ),
 
-        EventCard(
+        EventCardDataset(
             id = 2,
             evento = "DevOps Days",
             sobreEvento = "Um encontro de tecnologia, inovação e conexão",
@@ -67,6 +68,6 @@ object EventData {
                 StatusEvento.ATIVO,
 
             urlImageBanner = ""
-    )
+        )
     )
 }

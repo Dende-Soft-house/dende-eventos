@@ -47,6 +47,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import br.com.dende.dendeeventos.ui.navigation.AppDestinations
 
 private val DendeOrange = Color(0xFFF25027)
 private val BackgroundColor = Color(0xF5F5F5)
@@ -214,10 +215,10 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
                     Image(
                         painter = painterResource(R.drawable.profile_placeholder),
                         contentDescription = "Foto de Perfil",
-                        contentScale = ContentScale.Crop, // Faz a imagem preencher o espaço cortando as bordas
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(52.dp)
-                            .clip(CircleShape) // Arredonda a imagem perfeitamente
+                            .clip(CircleShape)
                     )
 
                     Spacer(modifier = Modifier.width(12.dp))
@@ -262,7 +263,7 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
                             data = evento.dataInicio.format(formatadorHorario),
 
                             onVerDetalhesClick = {
-                                navController.navigate("detalhes/${evento.id}")
+                                navController.navigate(AppDestinations.detalhesRoute(evento.id))
                             }
                         )
                         Spacer(modifier = Modifier.height(20.dp))
