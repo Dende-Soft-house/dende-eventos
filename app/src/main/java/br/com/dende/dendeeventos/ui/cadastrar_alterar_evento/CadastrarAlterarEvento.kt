@@ -81,6 +81,7 @@ import coil.compose.AsyncImage
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -159,12 +160,14 @@ fun InformacoesBasicasScreen(
     if (mostrarHoraPickerInicio) {
         DateTimePicker(onDismiss = { mostrarHoraPickerInicio = false }, onConfirm = {
             val dataSel = datePickerStateInicio.selectedDateMillis ?: 0L
-            val cal = Calendar.getInstance().apply {
+            val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
                 timeInMillis = dataSel
                 set(Calendar.HOUR_OF_DAY, timePickerStateInicio.hour)
                 set(Calendar.MINUTE, timePickerStateInicio.minute)
             }
-            dataInicio = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(cal.time)
+            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+            simpleDateFormat.timeZone = TimeZone.getTimeZone("UTC")
+            dataInicio = simpleDateFormat.format(cal.time)
             erroDataInicio = false
             mostrarHoraPickerInicio = false
         }) {
@@ -199,12 +202,14 @@ fun InformacoesBasicasScreen(
     if (mostrarHoraPickerFim) {
         DateTimePicker(onDismiss = { mostrarHoraPickerFim = false }, onConfirm = {
             val dataSelFim = datePickerStateFim.selectedDateMillis ?: 0L
-            val cal = Calendar.getInstance().apply {
+            val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
                 timeInMillis = dataSelFim
                 set(Calendar.HOUR_OF_DAY, timePickerStateFim.hour)
                 set(Calendar.MINUTE, timePickerStateFim.minute)
             }
-            dataFim = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(cal.time)
+            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+            simpleDateFormat.timeZone = TimeZone.getTimeZone("UTC")
+            dataFim = simpleDateFormat.format(cal.time)
             erroDataFim = false
             mostrarHoraPickerFim = false
         }) {
