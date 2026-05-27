@@ -1,5 +1,6 @@
 package br.com.dende.dendeeventos.ui.cadastrar_alterar_evento
 
+import br.com.dende.dendeeventos.domain.Evento
 import br.com.dende.dendeeventos.domain.ModalidadeEvento
 import br.com.dende.dendeeventos.domain.TipoEvento
 
@@ -15,11 +16,10 @@ data class CadastrarAlterarEventoUIState(
     val erroDataInicio: Boolean = false,
     val erroDataFim: Boolean = false,
     val erroData: String? = null,
-    val tipoEvento: TipoEvento? = null,
+    val tipoEvento: TipoEvento = TipoEvento.OUTRO,
     val erroTipoEvento: String? = null,
-    val idEventoPrincipal: Long? = null,
-    val nomeEventoPrincipal: String = "",
-    val modalidadeEvento: ModalidadeEvento? = null,
+    val eventoPrincipal: Evento? = null,
+    val modalidadeEvento: ModalidadeEvento = ModalidadeEvento.HIBRIDO,
     val capacidadeMaxima: String = "",
     val local: String = "",
     val erroCapacidadeMaxima: String? = null,
