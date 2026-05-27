@@ -1,4 +1,4 @@
-package br.com.dende.dendeeventos.ui
+package br.com.dende.dendeeventos.ui.listar_eventos_organizador
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -1,4 +1,4 @@
-package br.com.dende.dendeeventos.ui
+package br.com.dende.dendeeventos.ui.cadastrar_alterar_evento
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
