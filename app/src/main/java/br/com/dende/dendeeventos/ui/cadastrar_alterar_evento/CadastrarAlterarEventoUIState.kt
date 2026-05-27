@@ -16,6 +16,7 @@ data class CadastrarAlterarEventoUIState(
     val erroDataFim: Boolean = false,
     val erroData: String? = null,
     val tipoEvento: TipoEvento? = null,
+    val erroTipoEvento: String? = null,
     val idEventoPrincipal: Long? = null,
     val nomeEventoPrincipal: String = "",
     val modalidadeEvento: ModalidadeEvento? = null,
