@@ -12,7 +12,7 @@ data class Faturamento(
 data class Evento(
     var eventoId: Long,
     var status: StatusEvento,
-    // val organizador: Organizador,
+    val organizador: Long,
     var nome: String,
     var paginaWeb: String = "",
     var descricao: String,

@@ -68,6 +68,7 @@ import br.com.dende.dendeeventos.domain.Evento
 import br.com.dende.dendeeventos.domain.Faturamento
 import br.com.dende.dendeeventos.domain.ModalidadeEvento
 import br.com.dende.dendeeventos.domain.TipoEvento
+import br.com.dende.dendeeventos.ui.components.DendeNotificationDialog
 import br.com.dende.dendeeventos.ui.theme.Black
 import br.com.dende.dendeeventos.ui.theme.ButtonLinear
 import br.com.dende.dendeeventos.ui.theme.Error
@@ -80,21 +81,25 @@ import coil.compose.AsyncImage
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InformacoesBasicasScreen(evento: Evento? = null, onBack: () -> Unit, onNext: () -> Unit) {
-    var nome by remember { mutableStateOf(evento?.nome ?: "") }
-    var paginaWeb by remember { mutableStateOf(evento?.paginaWeb ?: "") }
-    var descricao by remember { mutableStateOf(evento?.descricao ?: "") }
-    var dataInicio by remember { mutableStateOf(evento?.dataInicio?.toString() ?: "") }
-    var dataFim by remember { mutableStateOf(evento?.dataFim?.toString() ?: "") }
+fun InformacoesBasicasScreen(
+    eventoAlterando: Evento? = null, onBack: () -> Unit, onNext: () -> Unit
+) {
+    var nome by remember { mutableStateOf(eventoAlterando?.nome ?: "") }
+    var paginaWeb by remember { mutableStateOf(eventoAlterando?.paginaWeb ?: "") }
+    var descricao by remember { mutableStateOf(eventoAlterando?.descricao ?: "") }
+    var dataInicio by remember { mutableStateOf(eventoAlterando?.dataInicio?.toString() ?: "") }
+    var dataFim by remember { mutableStateOf(eventoAlterando?.dataFim?.toString() ?: "") }
 
     var erroNome by remember { mutableStateOf<String?>(null) }
     var erroPaginaWeb by remember { mutableStateOf<String?>(null) }
     var erroDescricao by remember { mutableStateOf<String?>(null) }
     var erroDataInicio by remember { mutableStateOf(false) }
     var erroDataFim by remember { mutableStateOf(false) }
+    var erroDataDialog by remember { mutableStateOf<String?>(null) }
 
     var mostrarDataPickerInicio by remember { mutableStateOf(false) }
     var mostrarHoraPickerInicio by remember { mutableStateOf(false) }
@@ -107,36 +112,46 @@ fun InformacoesBasicasScreen(evento: Evento? = null, onBack: () -> Unit, onNext:
     val timePickerStateFim = rememberTimePickerState()
 
     val datePickerColors = DatePickerDefaults.colors(
-        containerColor = White, titleContentColor = Black, headlineContentColor = Black, weekdayContentColor = Color.Gray,
-        selectedDayContainerColor = Orange, selectedDayContentColor = White, todayContentColor = Orange,
+        containerColor = White,
+        titleContentColor = Black,
+        headlineContentColor = Black,
+        weekdayContentColor = Color.Gray,
+        selectedDayContainerColor = Orange,
+        selectedDayContentColor = White,
+        todayContentColor = Orange,
         todayDateBorderColor = Orange
     )
 
     val timePickerColors = TimePickerDefaults.colors(
-        clockDialColor = Grey, clockDialSelectedContentColor = White, clockDialUnselectedContentColor = Black,
-        selectorColor = Orange, timeSelectorSelectedContainerColor = Orange, timeSelectorUnselectedContainerColor = Grey,
-        timeSelectorSelectedContentColor = White, timeSelectorUnselectedContentColor = Black
+        clockDialColor = Grey,
+        clockDialSelectedContentColor = White,
+        clockDialUnselectedContentColor = Black,
+        selectorColor = Orange,
+        timeSelectorSelectedContainerColor = Orange,
+        timeSelectorUnselectedContainerColor = Grey,
+        timeSelectorSelectedContentColor = White,
+        timeSelectorUnselectedContentColor = Black
     )
 
     if (mostrarDataPickerInicio) {
         DatePickerDialog(
             onDismissRequest = { mostrarDataPickerInicio = false }, confirmButton = {
-            TextButton(
-                onClick = {
-                    if (datePickerStateInicio.selectedDateMillis != null) {
-                        mostrarDataPickerInicio = false
-                        mostrarHoraPickerInicio = true
-                    }
-                }) {
-                Text(
-                    "Próximo", color = Orange, fontWeight = FontWeight.Bold, fontFamily = Inter
-                )
-            }
-        }, dismissButton = {
-            TextButton(onClick = { mostrarDataPickerInicio = false }) {
-                Text("Cancelar", color = ButtonLinear, fontFamily = Inter)
-            }
-        }, colors = datePickerColors
+                TextButton(
+                    onClick = {
+                        if (datePickerStateInicio.selectedDateMillis != null) {
+                            mostrarDataPickerInicio = false
+                            mostrarHoraPickerInicio = true
+                        }
+                    }) {
+                    Text(
+                        "Próximo", color = Orange, fontWeight = FontWeight.Bold, fontFamily = Inter
+                    )
+                }
+            }, dismissButton = {
+                TextButton(onClick = { mostrarDataPickerInicio = false }) {
+                    Text("Cancelar", color = ButtonLinear, fontFamily = Inter)
+                }
+            }, colors = datePickerColors
         ) {
             DatePicker(state = datePickerStateInicio, colors = datePickerColors)
         }
@@ -145,12 +160,14 @@ fun InformacoesBasicasScreen(evento: Evento? = null, onBack: () -> Unit, onNext:
     if (mostrarHoraPickerInicio) {
         DateTimePicker(onDismiss = { mostrarHoraPickerInicio = false }, onConfirm = {
             val dataSel = datePickerStateInicio.selectedDateMillis ?: 0L
-            val cal = Calendar.getInstance().apply {
+            val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
                 timeInMillis = dataSel
                 set(Calendar.HOUR_OF_DAY, timePickerStateInicio.hour)
                 set(Calendar.MINUTE, timePickerStateInicio.minute)
             }
-            dataInicio = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(cal.time)
+            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+            simpleDateFormat.timeZone = TimeZone.getTimeZone("UTC")
+            dataInicio = simpleDateFormat.format(cal.time)
             erroDataInicio = false
             mostrarHoraPickerInicio = false
         }) {
@@ -161,22 +178,22 @@ fun InformacoesBasicasScreen(evento: Evento? = null, onBack: () -> Unit, onNext:
     if (mostrarDataPickerFim) {
         DatePickerDialog(
             onDismissRequest = { mostrarDataPickerFim = false }, confirmButton = {
-            TextButton(
-                onClick = {
-                    if (datePickerStateFim.selectedDateMillis != null) {
-                        mostrarDataPickerFim = false
-                        mostrarHoraPickerFim = true
-                    }
-                }) {
-                Text(
-                    "Próximo", color = Orange, fontWeight = FontWeight.Bold, fontFamily = Inter
-                )
-            }
-        }, dismissButton = {
-            TextButton(onClick = { mostrarDataPickerFim = false }) {
-                Text("Cancelar", color = ButtonLinear, fontFamily = Inter)
-            }
-        }, colors = datePickerColors
+                TextButton(
+                    onClick = {
+                        if (datePickerStateFim.selectedDateMillis != null) {
+                            mostrarDataPickerFim = false
+                            mostrarHoraPickerFim = true
+                        }
+                    }) {
+                    Text(
+                        "Próximo", color = Orange, fontWeight = FontWeight.Bold, fontFamily = Inter
+                    )
+                }
+            }, dismissButton = {
+                TextButton(onClick = { mostrarDataPickerFim = false }) {
+                    Text("Cancelar", color = ButtonLinear, fontFamily = Inter)
+                }
+            }, colors = datePickerColors
         ) {
             DatePicker(state = datePickerStateFim, colors = datePickerColors)
         }
@@ -185,12 +202,14 @@ fun InformacoesBasicasScreen(evento: Evento? = null, onBack: () -> Unit, onNext:
     if (mostrarHoraPickerFim) {
         DateTimePicker(onDismiss = { mostrarHoraPickerFim = false }, onConfirm = {
             val dataSelFim = datePickerStateFim.selectedDateMillis ?: 0L
-            val cal = Calendar.getInstance().apply {
+            val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
                 timeInMillis = dataSelFim
                 set(Calendar.HOUR_OF_DAY, timePickerStateFim.hour)
                 set(Calendar.MINUTE, timePickerStateFim.minute)
             }
-            dataFim = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(cal.time)
+            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+            simpleDateFormat.timeZone = TimeZone.getTimeZone("UTC")
+            dataFim = simpleDateFormat.format(cal.time)
             erroDataFim = false
             mostrarHoraPickerFim = false
         }) {
@@ -202,16 +221,21 @@ fun InformacoesBasicasScreen(evento: Evento? = null, onBack: () -> Unit, onNext:
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                Text(
-                    "Informações Básicas", fontWeight = FontWeight.Bold, fontSize = 20.sp, fontFamily = Inter
-                )
-            }, navigationIcon = {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Black
+                    Text(
+                        "Informações Básicas",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        fontFamily = Inter
                     )
-                }
-            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }, navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = Black
+                        )
+                    }
+                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
         }) { paddingValues ->
         Box(
@@ -225,11 +249,15 @@ fun InformacoesBasicasScreen(evento: Evento? = null, onBack: () -> Unit, onNext:
                     .background(White)
                     .padding(horizontal = 24.dp)
                     .padding(bottom = 100.dp)
-                    .verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.Start
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.Start
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Passo 1 de 4", color = Color.Gray, fontSize = 14.sp, fontWeight = FontWeight.Bold,
+                    text = "Passo 1 de 4",
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
                     fontFamily = Inter
                 )
                 Spacer(modifier = Modifier.height(6.dp))
@@ -240,7 +268,10 @@ fun InformacoesBasicasScreen(evento: Evento? = null, onBack: () -> Unit, onNext:
 
                 FormLabel("Nome", true)
                 CustomTextField(
-                    nome, { nome = it; erroNome = null }, "Digite nome do evento", isError = erroNome != null,
+                    nome,
+                    { nome = it; erroNome = null },
+                    "Digite nome do evento",
+                    isError = erroNome != null,
                     errorMessage = erroNome
                 )
 
@@ -248,16 +279,22 @@ fun InformacoesBasicasScreen(evento: Evento? = null, onBack: () -> Unit, onNext:
 
                 FormLabel("Página Web", false)
                 CustomTextField(
-                    paginaWeb, { paginaWeb = it; erroPaginaWeb = null }, "Digite página do evento",
-                    isError = erroPaginaWeb != null, errorMessage = erroPaginaWeb
+                    paginaWeb,
+                    { paginaWeb = it; erroPaginaWeb = null },
+                    "Digite página do evento",
+                    isError = erroPaginaWeb != null,
+                    errorMessage = erroPaginaWeb
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 FormLabel("Descrição", true)
                 CustomTextField(
-                    descricao, { descricao = it; erroDescricao = null }, "Digite descrição do evento",
-                    isError = erroDescricao != null, errorMessage = erroDescricao
+                    descricao,
+                    { descricao = it; erroDescricao = null },
+                    "Digite descrição do evento",
+                    isError = erroDescricao != null,
+                    errorMessage = erroDescricao
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -265,7 +302,11 @@ fun InformacoesBasicasScreen(evento: Evento? = null, onBack: () -> Unit, onNext:
                 FormLabel("Data de início", true)
                 Box(modifier = Modifier.fillMaxWidth()) {
                     CustomTextField(
-                        dataInicio, { }, "Selecione data e hora", icon = Icons.Default.DateRange, isError = erroDataInicio
+                        dataInicio,
+                        { },
+                        "Selecione data e hora",
+                        icon = Icons.Default.DateRange,
+                        isError = erroDataInicio
                     )
                     Box(
                         modifier = Modifier
@@ -278,7 +319,11 @@ fun InformacoesBasicasScreen(evento: Evento? = null, onBack: () -> Unit, onNext:
                 FormLabel("Data de fim", true)
                 Box(modifier = Modifier.fillMaxWidth()) {
                     CustomTextField(
-                        dataFim, { }, "Selecione data e hora", icon = Icons.Default.DateRange, isError = erroDataFim
+                        dataFim,
+                        { },
+                        "Selecione data e hora",
+                        icon = Icons.Default.DateRange,
+                        isError = erroDataFim
                     )
                     Box(
                         modifier = Modifier
@@ -295,7 +340,8 @@ fun InformacoesBasicasScreen(evento: Evento? = null, onBack: () -> Unit, onNext:
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
                 DendeButton(
-                    text = "CONTINUAR", onClick = {
+                    text = "CONTINUAR",
+                    onClick = {
                         erroNome = when {
                             nome.isEmpty() -> "Campo obrigatório"
                             nome.length < 3 -> "Nome curto ou inválido"
@@ -315,15 +361,32 @@ fun InformacoesBasicasScreen(evento: Evento? = null, onBack: () -> Unit, onNext:
 
                         erroDataInicio = dataInicio.isEmpty()
                         erroDataFim = dataFim.isEmpty()
+                        if (erroDataInicio || erroDataFim) {
+                            erroDataDialog = "Data(s) inválida(s)."
+                        }
 
                         when {
-                            erroNome == null && erroPaginaWeb == null && erroDescricao == null && !erroDataInicio && !erroDataFim -> {
+                            erroNome == null && erroPaginaWeb == null && erroDescricao == null && !erroDataInicio && !erroDataFim && erroDataDialog == null -> {
                                 onNext()
                             }
                         }
-                    }, modifier = Modifier
+                    },
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp), containerColor = ButtonLinear, contentColor = White
+                        .height(56.dp),
+                    containerColor = ButtonLinear,
+                    contentColor = White
+                )
+            }
+
+            if (erroDataDialog != null) {
+                DendeNotificationDialog(
+                    title = "Atenção",
+                    description = "Data(s) inválida(s). Tente novamente.",
+                    iconRes = R.drawable.error_ico,
+                    confirmText = "OK",
+                    onConfirm = { erroDataDialog = null },
+                    onDismiss = { erroDataDialog = null }
                 )
             }
         }
@@ -333,17 +396,27 @@ fun InformacoesBasicasScreen(evento: Evento? = null, onBack: () -> Unit, onNext:
 @Preview(showBackground = true)
 @Composable
 fun InformacoesBasicasScreenPreview() {
-    InformacoesBasicasScreen(evento = null, {}, {})
+    InformacoesBasicasScreen(eventoAlterando = null, {}, {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InformacoesAdicionaisScreen(evento: Evento? = null, onBack: () -> Unit, onNext: () -> Unit) {
-    var tipoSelecionado by remember { mutableStateOf(evento?.tipoEvento) }
-    var modalidadeSelecionada by remember { mutableStateOf(evento?.modalidadeEvento) }
-    var eventoPrincipal by remember { mutableStateOf(evento?.eventoPrincipal?.toString() ?: "") }
-    var capacidadeMaxima by remember { mutableStateOf(evento?.capacidadeMaxima?.toString() ?: "") }
-    var localEvento by remember { mutableStateOf(evento?.local ?: "") }
+fun InformacoesAdicionaisScreen(
+    eventoAlterando: Evento? = null, onBack: () -> Unit, onNext: () -> Unit
+) {
+    var tipoSelecionado by remember { mutableStateOf(eventoAlterando?.tipoEvento) }
+    var modalidadeSelecionada by remember { mutableStateOf(eventoAlterando?.modalidadeEvento) }
+    var eventoPrincipal by remember {
+        mutableStateOf(
+            eventoAlterando?.eventoPrincipal?.toString() ?: ""
+        )
+    }
+    var capacidadeMaxima by remember {
+        mutableStateOf(
+            eventoAlterando?.capacidadeMaxima?.toString() ?: ""
+        )
+    }
+    var localEvento by remember { mutableStateOf(eventoAlterando?.local ?: "") }
 
     var expandirTipo by remember { mutableStateOf(false) }
     var expandirEventoPrincipal by remember { mutableStateOf(false) }
@@ -358,16 +431,21 @@ fun InformacoesAdicionaisScreen(evento: Evento? = null, onBack: () -> Unit, onNe
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                Text(
-                    "Informações Adicionais", fontWeight = FontWeight.Bold, fontSize = 20.sp, fontFamily = Inter
-                )
-            }, navigationIcon = {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Black
+                    Text(
+                        "Informações Adicionais",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        fontFamily = Inter
                     )
-                }
-            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }, navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = Black
+                        )
+                    }
+                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
         }) { paddingValues ->
         Box(
@@ -386,7 +464,11 @@ fun InformacoesAdicionaisScreen(evento: Evento? = null, onBack: () -> Unit, onNe
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "Passo 2 de 4", color = SoftDarkish, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = Inter
+                    "Passo 2 de 4",
+                    color = SoftDarkish,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = Inter
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 ProgressBarStep(step = 2, totalSteps = 4)
@@ -397,17 +479,27 @@ fun InformacoesAdicionaisScreen(evento: Evento? = null, onBack: () -> Unit, onNe
                 ExposedDropdownMenuBox(
                     expanded = expandirTipo, onExpandedChange = { expandirTipo = it }) {
                     OutlinedTextField(
-                        value = tipoSelecionado?.name?.lowercase()?.replace("_", " ")?.replaceFirstChar { it.uppercase() }
-                            ?: "", onValueChange = {}, readOnly = true, placeholder = {
+                        value = tipoSelecionado?.name?.lowercase()?.replace("_", " ")
+                            ?.replaceFirstChar { it.uppercase() } ?: "",
+                        onValueChange = {},
+                        readOnly = true,
+                        placeholder = {
                             Text(
-                                "Selecione tipo do evento", color = SoftDarkish, fontSize = 15.sp, fontFamily = Inter
+                                "Selecione tipo do evento",
+                                color = SoftDarkish,
+                                fontSize = 15.sp,
+                                fontFamily = Inter
                             )
-                        }, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandirTipo) },
+                        },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandirTipo) },
                         modifier = Modifier
                             .menuAnchor(
-                                type = androidx.compose.material3.MenuAnchorType.PrimaryNotEditable, enabled = true
+                                type = androidx.compose.material3.MenuAnchorType.PrimaryNotEditable,
+                                enabled = true
                             )
-                            .fillMaxWidth(), isError = erroTipo, shape = RoundedCornerShape(16.dp),
+                            .fillMaxWidth(),
+                        isError = erroTipo,
+                        shape = RoundedCornerShape(16.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedBorderColor = when {
                                 erroTipo -> Error
@@ -426,8 +518,10 @@ fun InformacoesAdicionaisScreen(evento: Evento? = null, onBack: () -> Unit, onNe
                                 val isSelected = tipoSelecionado == tipo
                                 DropdownMenuItem(text = {
                                     Text(
-                                        text = tipo.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() },
-                                        fontFamily = Inter, color = if (isSelected) Orange else Black
+                                        text = tipo.name.lowercase().replace("_", " ")
+                                            .replaceFirstChar { it.uppercase() },
+                                        fontFamily = Inter,
+                                        color = if (isSelected) Orange else Black
                                     )
                                 }, onClick = {
                                     tipoSelecionado = tipo
@@ -443,19 +537,32 @@ fun InformacoesAdicionaisScreen(evento: Evento? = null, onBack: () -> Unit, onNe
 
                 FormLabel("Evento Principal", false)
                 ExposedDropdownMenuBox(
-                    expanded = expandirEventoPrincipal, onExpandedChange = { expandirEventoPrincipal = it }) {
+                    expanded = expandirEventoPrincipal,
+                    onExpandedChange = { expandirEventoPrincipal = it }) {
                     OutlinedTextField(
-                        value = eventoPrincipal, onValueChange = {}, readOnly = true, placeholder = {
-                        Text(
-                            "Associe o evento a um principal", color = SoftDarkish, fontSize = 15.sp, fontFamily = Inter
-                        )
-                    }, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandirEventoPrincipal) },
+                        value = eventoPrincipal,
+                        onValueChange = {},
+                        readOnly = true,
+                        placeholder = {
+                            Text(
+                                "Associe o evento a um principal",
+                                color = SoftDarkish,
+                                fontSize = 15.sp,
+                                fontFamily = Inter
+                            )
+                        },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandirEventoPrincipal) },
                         modifier = Modifier
                             .menuAnchor(
-                                type = androidx.compose.material3.MenuAnchorType.PrimaryNotEditable, enabled = true
+                                type = androidx.compose.material3.MenuAnchorType.PrimaryNotEditable,
+                                enabled = true
                             )
-                            .fillMaxWidth(), shape = RoundedCornerShape(16.dp), colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Grey2, focusedBorderColor = Black, cursorColor = Black
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = Grey2,
+                            focusedBorderColor = Black,
+                            cursorColor = Black
                         )
                     )
                     MaterialTheme(
@@ -464,10 +571,12 @@ fun InformacoesAdicionaisScreen(evento: Evento? = null, onBack: () -> Unit, onNe
                         )
                     ) {
                         ExposedDropdownMenu(
-                            expanded = expandirEventoPrincipal, onDismissRequest = { expandirEventoPrincipal = false }) {
+                            expanded = expandirEventoPrincipal,
+                            onDismissRequest = { expandirEventoPrincipal = false }) {
                             DropdownMenuItem(text = {
                                 Text(
-                                    text = "IntegraSI 2026.1", fontFamily = Inter,
+                                    text = "IntegraSI 2026.1",
+                                    fontFamily = Inter,
                                     color = if (eventoPrincipal == "IntegraSI 2026.1") Orange else Black
                                 )
                             }, onClick = {
@@ -476,7 +585,8 @@ fun InformacoesAdicionaisScreen(evento: Evento? = null, onBack: () -> Unit, onNe
                             })
                             DropdownMenuItem(text = {
                                 Text(
-                                    text = "Nenhum", fontFamily = Inter,
+                                    text = "Nenhum",
+                                    fontFamily = Inter,
                                     color = if (eventoPrincipal == "Nenhum") Orange else Black
                                 )
                             }, onClick = {
@@ -493,17 +603,27 @@ fun InformacoesAdicionaisScreen(evento: Evento? = null, onBack: () -> Unit, onNe
                 ExposedDropdownMenuBox(
                     expanded = expandirModalidade, onExpandedChange = { expandirModalidade = it }) {
                     OutlinedTextField(
-                        value = modalidadeSelecionada?.name?.lowercase()?.replaceFirstChar { it.uppercase() } ?: "",
-                        onValueChange = {}, readOnly = true, placeholder = {
+                        value = modalidadeSelecionada?.name?.lowercase()
+                            ?.replaceFirstChar { it.uppercase() } ?: "",
+                        onValueChange = {},
+                        readOnly = true,
+                        placeholder = {
                             Text(
-                                "Selecione modalidade do evento", color = SoftDarkish, fontSize = 15.sp, fontFamily = Inter
+                                "Selecione modalidade do evento",
+                                color = SoftDarkish,
+                                fontSize = 15.sp,
+                                fontFamily = Inter
                             )
-                        }, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandirModalidade) },
+                        },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandirModalidade) },
                         modifier = Modifier
                             .menuAnchor(
-                                type = androidx.compose.material3.MenuAnchorType.PrimaryNotEditable, enabled = true
+                                type = androidx.compose.material3.MenuAnchorType.PrimaryNotEditable,
+                                enabled = true
                             )
-                            .fillMaxWidth(), isError = erroModalidade, shape = RoundedCornerShape(16.dp),
+                            .fillMaxWidth(),
+                        isError = erroModalidade,
+                        shape = RoundedCornerShape(16.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedBorderColor = when {
                                 erroModalidade -> Error
@@ -517,12 +637,15 @@ fun InformacoesAdicionaisScreen(evento: Evento? = null, onBack: () -> Unit, onNe
                         )
                     ) {
                         ExposedDropdownMenu(
-                            expanded = expandirModalidade, onDismissRequest = { expandirModalidade = false }) {
+                            expanded = expandirModalidade,
+                            onDismissRequest = { expandirModalidade = false }) {
                             ModalidadeEvento.entries.forEach { mod ->
                                 val isSelected = modalidadeSelecionada == mod
                                 DropdownMenuItem(text = {
                                     Text(
-                                        text = mod.name.lowercase().replaceFirstChar { it.uppercase() }, fontFamily = Inter,
+                                        text = mod.name.lowercase()
+                                            .replaceFirstChar { it.uppercase() },
+                                        fontFamily = Inter,
                                         color = if (isSelected) Orange else Black
                                     )
                                 }, onClick = {
@@ -539,21 +662,29 @@ fun InformacoesAdicionaisScreen(evento: Evento? = null, onBack: () -> Unit, onNe
 
                 FormLabel("Capacidade Máxima", true)
                 CustomTextField(
-                    value = capacidadeMaxima, onValueChange = {
+                    value = capacidadeMaxima,
+                    onValueChange = {
                         capacidadeMaxima = it
                         erroCapacidade = null
-                    }, placeholder = "Digite capacidade máxima de pessoas", isError = erroCapacidade != null,
-                    errorMessage = erroCapacidade, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    },
+                    placeholder = "Digite capacidade máxima de pessoas",
+                    isError = erroCapacidade != null,
+                    errorMessage = erroCapacidade,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 FormLabel("Local", true)
                 CustomTextField(
-                    value = localEvento, onValueChange = {
+                    value = localEvento,
+                    onValueChange = {
                         localEvento = it
                         erroLocal = null
-                    }, placeholder = "Digite local ou link do evento", isError = erroLocal != null, errorMessage = erroLocal
+                    },
+                    placeholder = "Digite local ou link do evento",
+                    isError = erroLocal != null,
+                    errorMessage = erroLocal
                 )
             }
 
@@ -565,7 +696,8 @@ fun InformacoesAdicionaisScreen(evento: Evento? = null, onBack: () -> Unit, onNe
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
                 DendeButton(
-                    text = "CONTINUAR", onClick = {
+                    text = "CONTINUAR",
+                    onClick = {
                         erroTipo = when (tipoSelecionado) {
                             null -> true
                             else -> false
@@ -593,9 +725,12 @@ fun InformacoesAdicionaisScreen(evento: Evento? = null, onBack: () -> Unit, onNe
                                 onNext()
                             }
                         }
-                    }, modifier = Modifier
+                    },
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp), containerColor = ButtonLinear, contentColor = White
+                        .height(56.dp),
+                    containerColor = ButtonLinear,
+                    contentColor = White
                 )
             }
         }
@@ -605,15 +740,17 @@ fun InformacoesAdicionaisScreen(evento: Evento? = null, onBack: () -> Unit, onNe
 @Preview(showBackground = true)
 @Composable
 fun InformacoesAdicionaisScreenPreview() {
-    InformacoesAdicionaisScreen(evento = null, {}, {})
+    InformacoesAdicionaisScreen(eventoAlterando = null, {}, {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FaturamentoScreen(evento: Faturamento? = null, onBack: () -> Unit, onNext: () -> Unit) {
-    var valorIngresso by remember { mutableStateOf(evento?.precoTicket?.toString() ?: "") }
-    var aceitaDevolucoes by remember { mutableStateOf(evento?.aceitaEstorno ?: false) }
-    var taxaDevolucao by remember { mutableStateOf(evento?.taxaEstorno?.toString() ?: "") }
+fun FaturamentoScreen(
+    eventoAlterando: Faturamento? = null, onBack: () -> Unit, onNext: () -> Unit
+) {
+    var valorIngresso by remember { mutableStateOf(eventoAlterando?.precoTicket?.toString() ?: "") }
+    var aceitaDevolucoes by remember { mutableStateOf(eventoAlterando?.aceitaEstorno ?: false) }
+    var taxaDevolucao by remember { mutableStateOf(eventoAlterando?.taxaEstorno?.toString() ?: "") }
 
     var erroValor by remember { mutableStateOf<String?>(null) }
     var erroTaxa by remember { mutableStateOf<String?>(null) }
@@ -622,16 +759,21 @@ fun FaturamentoScreen(evento: Faturamento? = null, onBack: () -> Unit, onNext: (
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                Text(
-                    "Faturamento", fontWeight = FontWeight.Bold, fontSize = 20.sp, fontFamily = Inter
-                )
-            }, navigationIcon = {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Black
+                    Text(
+                        "Faturamento",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        fontFamily = Inter
                     )
-                }
-            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }, navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = Black
+                        )
+                    }
+                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
         }) { paddingValues ->
         Box(
@@ -649,7 +791,11 @@ fun FaturamentoScreen(evento: Faturamento? = null, onBack: () -> Unit, onNext: (
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "Passo 3 de 4", color = SoftDarkish, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = Inter
+                    "Passo 3 de 4",
+                    color = SoftDarkish,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = Inter
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 ProgressBarStep(step = 3, totalSteps = 4)
@@ -658,25 +804,31 @@ fun FaturamentoScreen(evento: Faturamento? = null, onBack: () -> Unit, onNext: (
 
                 FormLabel("Valor de Ingresso", true)
                 CustomTextField(
-                    value = valorIngresso, onValueChange = { valorIngresso = it; erroValor = null },
+                    value = valorIngresso,
+                    onValueChange = { valorIngresso = it; erroValor = null },
                     placeholder = "Digite valor do ingresso do evento",
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), isError = erroValor != null,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    isError = erroValor != null,
                     errorMessage = erroValor
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 FormSwitch(
-                    label = "Aceita Devoluções?", isRequired = false, checked = aceitaDevolucoes,
+                    label = "Aceita Devoluções?",
+                    isRequired = false,
+                    checked = aceitaDevolucoes,
                     onCheckedChange = { aceitaDevolucoes = it })
 
                 if (aceitaDevolucoes) {
                     Spacer(modifier = Modifier.height(24.dp))
                     FormLabel("Taxa de Devolução", true)
                     CustomTextField(
-                        value = taxaDevolucao, onValueChange = { taxaDevolucao = it; erroTaxa = null },
+                        value = taxaDevolucao,
+                        onValueChange = { taxaDevolucao = it; erroTaxa = null },
                         placeholder = "Digite taxa de devolução do ingresso",
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), isError = erroTaxa != null,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        isError = erroTaxa != null,
                         errorMessage = erroTaxa
                     )
                 }
@@ -690,7 +842,8 @@ fun FaturamentoScreen(evento: Faturamento? = null, onBack: () -> Unit, onNext: (
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
                 DendeButton(
-                    text = "CONTINUAR", onClick = {
+                    text = "CONTINUAR",
+                    onClick = {
                         val valorNumerico = valorIngresso.replace(",", ".").toDoubleOrNull()
                         erroValor = when {
                             valorIngresso.isEmpty() -> "Campo obrigatório"
@@ -711,9 +864,12 @@ fun FaturamentoScreen(evento: Faturamento? = null, onBack: () -> Unit, onNext: (
                                 onNext()
                             }
                         }
-                    }, modifier = Modifier
+                    },
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp), containerColor = ButtonLinear, contentColor = White
+                        .height(56.dp),
+                    containerColor = ButtonLinear,
+                    contentColor = White
                 )
             }
         }
@@ -723,28 +879,32 @@ fun FaturamentoScreen(evento: Faturamento? = null, onBack: () -> Unit, onNext: (
 @Preview(showBackground = true)
 @Composable
 fun FaturamentoScreenPreview() {
-    FaturamentoScreen(evento = null, {}, {})
+    FaturamentoScreen(eventoAlterando = null, {}, {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BannerScreen(evento: Evento? = null, onBack: () -> Unit, onComplete: () -> Unit) {
-    var bannerUri by remember { mutableStateOf(evento?.urlBanner ?: "") }
+fun BannerScreen(
+    eventoAlterando: Evento? = null, onBack: () -> Unit, onComplete: () -> Unit
+) {
+    var bannerUri by remember { mutableStateOf(eventoAlterando?.urlBanner ?: "") }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                Text(
-                    "Banner", fontWeight = FontWeight.Bold, fontSize = 20.sp, fontFamily = Inter
-                )
-            }, navigationIcon = {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar", tint = Black
+                    Text(
+                        "Banner", fontWeight = FontWeight.Bold, fontSize = 20.sp, fontFamily = Inter
                     )
-                }
-            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }, navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Voltar",
+                            tint = Black
+                        )
+                    }
+                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
         }) { paddingValues ->
         Box(
@@ -762,7 +922,10 @@ fun BannerScreen(evento: Evento? = null, onBack: () -> Unit, onComplete: () -> U
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Passo 4 de 4", color = SoftDarkish, fontSize = 14.sp, fontWeight = FontWeight.Bold,
+                    text = "Passo 4 de 4",
+                    color = SoftDarkish,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
                     fontFamily = Inter
                 )
                 Spacer(modifier = Modifier.height(6.dp))
@@ -793,23 +956,30 @@ fun BannerScreen(evento: Evento? = null, onBack: () -> Unit, onComplete: () -> U
                         ) {
                             Icon(
                                 painter = painterResource(id = android.R.drawable.ic_menu_gallery),
-                                contentDescription = "Adicionar banner", modifier = Modifier.size(32.dp), tint = Orange
+                                contentDescription = "Adicionar banner",
+                                modifier = Modifier.size(32.dp),
+                                tint = Orange
                             )
                         }
                     } else {
                         Box(modifier = Modifier.fillMaxSize()) {
                             AsyncImage(
-                                model = bannerUri.ifEmpty { null }, contentDescription = "Banner do evento",
-                                modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop,
+                                model = bannerUri.ifEmpty { null },
+                                contentDescription = "Banner do evento",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop,
                                 placeholder = painterResource(id = R.drawable.ic_launcher_background),
                                 error = painterResource(id = R.drawable.ic_launcher_background)
                             )
 
                             IconButton(
-                                onClick = { bannerUri = "" }, modifier = Modifier.align(Alignment.Center)
+                                onClick = { bannerUri = "" },
+                                modifier = Modifier.align(Alignment.Center)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Delete, contentDescription = "Excluir", tint = Orange,
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Excluir",
+                                    tint = Orange,
                                     modifier = Modifier.size(32.dp)
                                 )
                             }
@@ -826,10 +996,13 @@ fun BannerScreen(evento: Evento? = null, onBack: () -> Unit, onComplete: () -> U
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
                 DendeButton(
-                    text = "CONCLUIR", onClick = onComplete, modifier = Modifier
+                    text = "CONCLUIR",
+                    onClick = onComplete,
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    containerColor = Orange, contentColor = White
+                    containerColor = Orange,
+                    contentColor = White
                 )
             }
         }
@@ -839,5 +1012,5 @@ fun BannerScreen(evento: Evento? = null, onBack: () -> Unit, onComplete: () -> U
 @Preview(showBackground = true)
 @Composable
 fun BannerScreenPreview() {
-    BannerScreen(evento = null, onBack = {}, onComplete = {})
+    BannerScreen(eventoAlterando = null, onBack = {}, onComplete = {})
 }
