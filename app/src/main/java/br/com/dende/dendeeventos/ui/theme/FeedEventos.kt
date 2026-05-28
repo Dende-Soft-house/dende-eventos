@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.sp
 import br.com.dende.dendeeventos.R
 import br.com.dende.dendeeventos.core.designsystem.components.BottomNavBar
 
-private val DendeOrange = Color(0xFFF25027)
 private val BackgroundColor = Color(0xF5F5F5)
 
 
@@ -101,7 +100,7 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
                     Icon(
                         painter = painterResource(R.drawable.ic_location),
                         contentDescription = null,
-                        tint = DendeOrange
+                        tint = Orange
                     )
 
                     Spacer(modifier = Modifier.width(4.dp))
@@ -117,7 +116,7 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
                     Icon(
                         painter = painterResource(R.drawable.ic_date),
                         contentDescription = null,
-                        tint = DendeOrange
+                        tint = Orange
                     )
 
                     Spacer(modifier = Modifier.width(4.dp))
@@ -181,7 +180,7 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
                     .fillMaxWidth()
                     .height(220.dp)
                     .background(
-                        color = DendeOrange,
+                        color = Orange,
                         shape = RoundedCornerShape(
                             bottomStart = 32.dp,
                             bottomEnd = 32.dp

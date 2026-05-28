@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.dende.dendeeventos.R
 
-private val DendeOrange = Color(0xFFF25027)
+
 
 @Composable
 fun EventosDetalhesScreen(
@@ -65,7 +65,7 @@ fun EventosDetalhesScreen(
                 Icon(
                     painter = painterResource(R.drawable.ic_back),
                     contentDescription = "Voltar",
-                    tint = DendeOrange
+                    tint = Orange
                 )
             }
 
@@ -92,7 +92,7 @@ fun EventosDetalhesScreen(
                     text = "IntegraSI FSA",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    color = Black
                 )
 
                 Text(
@@ -124,7 +124,7 @@ fun EventosDetalhesScreen(
                             Icon(
                                 painter = painterResource(R.drawable.ic_date),
                                 contentDescription = null,
-                                tint = DendeOrange,
+                                tint = Orange,
                                 modifier = Modifier.size(28.dp)
                             )
 
@@ -143,7 +143,7 @@ fun EventosDetalhesScreen(
                             Icon(
                                 painter = painterResource(R.drawable.ic_location),
                                 contentDescription = null,
-                                tint = DendeOrange,
+                                tint = Orange,
                                 modifier = Modifier.size(28.dp)
                             )
 
@@ -162,7 +162,7 @@ fun EventosDetalhesScreen(
                             Icon(
                                 painter = painterResource(R.drawable.ic_time),
                                 contentDescription = null,
-                                tint = DendeOrange,
+                                tint = Orange,
                                 modifier = Modifier.size(28.dp)
                             )
 
@@ -181,7 +181,7 @@ fun EventosDetalhesScreen(
                             Icon(
                                 painter = painterResource(R.drawable.ic_ticket),
                                 contentDescription = null,
-                                tint = DendeOrange,
+                                tint = Orange,
                                 modifier = Modifier.size(28.dp)
                             )
 
@@ -228,7 +228,7 @@ fun EventosDetalhesScreen(
 
                         Text(
                             text = "Ver mais...",
-                            color = DendeOrange,
+                            color = Orange,
                             fontSize = 12.sp
                         )
                     }
@@ -252,7 +252,7 @@ fun EventosDetalhesScreen(
                             text = "Participantes",
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
-                            color = Color(0xFF232323)
+                            color = Black
                         )
 
                         Spacer(modifier = Modifier.height(4.dp))
