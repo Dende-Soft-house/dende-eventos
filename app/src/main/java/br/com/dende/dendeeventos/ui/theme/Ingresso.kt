@@ -7,15 +7,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.BorderStroke
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -23,6 +22,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 
@@ -49,6 +49,7 @@ import br.com.dende.dendeeventos.R
 fun IngressoScreen() {
 
     Scaffold { padding ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -56,57 +57,79 @@ fun IngressoScreen() {
                 .padding(padding)
                 .padding(horizontal = 22.dp)
         ) {
+
             Spacer(modifier = Modifier.height(16.dp))
 
+            // TOPO
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp)
             ) {
+
                 IconButton(
                     onClick = {},
                     modifier = Modifier.align(Alignment.CenterStart)
                 ) {
+
                     Icon(
                         painter = painterResource(
                             id = R.drawable.icon_arrow
                         ),
+
                         contentDescription = "Botão de Voltar",
+
                         tint = Color(0xFFFF6A00),
+
                         modifier = Modifier.size(28.dp)
                     )
                 }
 
                 Text(
                     text = "Ingresso",
+
                     fontSize = 22.sp,
+
                     fontWeight = FontWeight.Bold,
+
+                    color = Color(0xFF232330),
+
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
+
             Spacer(modifier = Modifier.height(24.dp))
 
+            // BANNER + TITULO
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
+
                 modifier = Modifier.fillMaxWidth()
             ) {
+
                 Image(
                     painter = painterResource(
                         id = R.drawable.banner_card
                     ),
-                    contentDescription = "Card do Banner",
+
+                    contentDescription = "Banner do Evento",
+
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(140.dp),
+                        .height(150.dp),
+
                     contentScale = ContentScale.Crop
                 )
 
-                Spacer(modifier = Modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
                     text = "IntegraSI FSA",
-                    fontSize = 22.sp,
+
+                    fontSize = 24.sp,
+
                     fontWeight = FontWeight.Bold,
+
                     color = Color(0xFF232330)
                 )
 
@@ -114,83 +137,140 @@ fun IngressoScreen() {
 
                 Text(
                     text = "Um encontro de tecnologia, inovação e conexão",
-                    fontSize = 13.sp,
+
+                    fontSize = 14.sp,
+
                     color = Color.Gray
                 )
             }
 
-            Spacer(modifier = Modifier.height(18.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
+            // CARD INFO
             Card(
                 modifier = Modifier.fillMaxWidth(),
+
                 shape = RoundedCornerShape(20.dp),
+
                 colors = CardDefaults.cardColors(
                     containerColor = Color(0xFFEDEDED)
                 )
             ) {
+
                 Column(
-                    modifier = Modifier.padding(18.dp)
+                    modifier = Modifier.padding(22.dp)
                 ) {
+
                     TicketInfoRow(
                         icon = R.drawable.icon_calendar,
                         text = "21 de Abril as 18:40"
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     TicketInfoRow(
                         icon = R.drawable.icon_map_pin,
                         text = "UNEX, Feira de Santana - BA"
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     TicketInfoRow(
                         icon = R.drawable.icon_ticket_ticket,
                         text = "Entrada Gratuita"
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     TicketInfoRow(
                         icon = R.drawable.icon_user_ticket,
                         text = "Chaira Sacra"
                     )
 
-                    Spacer(modifier = Modifier.height(30.dp))
+                    Spacer(modifier = Modifier.height(28.dp))
 
                     Box(
                         modifier = Modifier.fillMaxWidth(),
+
                         contentAlignment = Alignment.Center
                     ) {
+
                         Image(
                             painter = painterResource(
                                 id = R.drawable.qrcode
                             ),
-                            contentDescription = "Qrcode",
-                            modifier = Modifier.size(145.dp)
+
+                            contentDescription = "QR Code",
+
+                            modifier = Modifier.size(180.dp)
                         )
                     }
                 }
             }
+
             Spacer(modifier = Modifier.weight(1f))
 
-            Button(
-                onClick = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF1F2230)
-                ),
-                shape = RoundedCornerShape(16.dp)
+            // BOTÕES
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(
-                    text = "Baixar",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
+
+                // BAIXAR
+                Button(
+                    onClick = {},
+
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp),
+
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF1F2230)
+                    ),
+
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+
+                    Text(
+                        text = "Baixar",
+
+                        fontSize = 18.sp,
+
+                        fontWeight = FontWeight.Bold,
+
+                        color = Color.White
+                    )
+                }
+
+                // CANCELAR
+                OutlinedButton(
+                    onClick = {},
+
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp),
+
+                    shape = RoundedCornerShape(16.dp),
+
+                    border = BorderStroke(
+                        width = 2.5.dp,
+                        color = Color.Black
+                    )
+                ) {
+
+                    Text(
+                        text = "Cancelar",
+
+                        fontSize = 18.sp,
+
+                        fontWeight = FontWeight.Bold,
+
+                        color = Color.Black
+                    )
+                }
             }
+
             Spacer(modifier = Modifier.height(20.dp))
         }
     }
@@ -201,20 +281,28 @@ fun TicketInfoRow(
     icon: Int,
     text: String
 ) {
+
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
+
         Icon(
             painter = painterResource(id = icon),
+
             contentDescription = null,
+
             tint = Color(0xFFFF6A00),
+
             modifier = Modifier.size(18.dp)
         )
-        Spacer(modifier = Modifier.size(14.dp))
+
+        Spacer(modifier = Modifier.width(14.dp))
 
         Text(
             text = text,
+
             fontSize = 15.sp,
+
             color = Color(0xFF232330)
         )
     }

@@ -24,17 +24,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.dende.dendeeventos.R
-import br.com.dende.dendeeventos.core.designsystem.components.BottomNavBarSearch
+import br.com.dende.dendeeventos.core.designsystem.components.BottomNavBar
 
 @Composable
 fun SearchScreen() {
-
-
     Scaffold(
         containerColor = Color(0xFFF5F5F5),
 
         bottomBar = {
-            BottomNavBarSearch()
+            // Chamamos a barra que existe e dizemos que a aba selecionada é a 1 (Search)
+            BottomNavBar(selectedIndex = 1)
         }
     ) { padding ->
 

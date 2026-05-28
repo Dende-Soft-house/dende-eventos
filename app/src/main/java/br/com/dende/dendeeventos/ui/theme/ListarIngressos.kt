@@ -43,8 +43,8 @@ import androidx.compose.ui.unit.sp
 
 import br.com.dende.dendeeventos.R
 
-import br.com.dende.dendeeventos.core.designsystem.components.BottomBar
-import br.com.dende.dendeeventos.core.designsystem.components.EventCard
+import br.com.dende.dendeeventos.core.designsystem.components.BottomNavBar
+import br.com.dende.dendeeventos.core.designsystem.components.TicketCard
 import br.com.dende.dendeeventos.core.designsystem.components.TopTabButton
 
 // ======================================================
@@ -56,14 +56,13 @@ fun ListarIngressosAtivos() {
 
     Scaffold(
         bottomBar = {
-            BottomBar()
+            BottomNavBar(selectedIndex = 2)
         }
     ) { padding ->
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
                 .background(Color(0xFFF3F3F3))
         ) {
 
@@ -97,7 +96,6 @@ fun ListarIngressosAtivos() {
                             .background(
                                 Color.White.copy(alpha = 0.2f)
                             ),
-
                         contentAlignment = Alignment.Center
                     ) {
 
@@ -105,11 +103,8 @@ fun ListarIngressosAtivos() {
                             painter = painterResource(
                                 id = R.drawable.icon_user
                             ),
-
                             contentDescription = null,
-
                             tint = Color.White,
-
                             modifier = Modifier.size(30.dp)
                         )
                     }
@@ -120,11 +115,8 @@ fun ListarIngressosAtivos() {
 
                     Text(
                         text = "Olá, Usuário",
-
                         color = Color.White,
-
                         fontSize = 26.sp,
-
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -134,9 +126,7 @@ fun ListarIngressosAtivos() {
                 // TABS
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-
-                    horizontalArrangement =
-                        Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
 
                     TopTabButton(
@@ -153,29 +143,27 @@ fun ListarIngressosAtivos() {
 
             // LISTA
             LazyColumn(
+                modifier = Modifier.padding(padding),
 
                 contentPadding = PaddingValues(
                     top = 200.dp,
                     start = 20.dp,
                     end = 20.dp,
-                    bottom = 100.dp
+                    bottom = 120.dp
                 ),
 
-                verticalArrangement =
-                    Arrangement.spacedBy(18.dp)
+                verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
 
                 items(2) {
 
-                    EventCard(
+                    TicketCard(
+                        titulo = "IntegraSI FSA",
+                        data = "21 Abr, 18:50",
                         status = "ATIVO",
-
                         statusColor = Color(0xFF169B16),
-
                         backgroundStatus = Color(0xFFDFF5D8),
-
                         buttonColor = Color(0xFF1F2230),
-
                         buttonTextColor = Color.White
                     )
                 }
@@ -184,10 +172,7 @@ fun ListarIngressosAtivos() {
     }
 }
 
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
+@Preview(showBackground = true)
 @Composable
 fun ListarIngressosAtivosPreview() {
 
@@ -203,14 +188,13 @@ fun ListarIngressosEncerrados() {
 
     Scaffold(
         bottomBar = {
-
+            BottomNavBar(selectedIndex = 2)
         }
     ) { padding ->
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
                 .background(Color(0xFFF3F3F3))
         ) {
 
@@ -221,7 +205,6 @@ fun ListarIngressosEncerrados() {
                     .height(220.dp)
                     .background(
                         color = Color(0xFFFF6A00),
-
                         shape = RoundedCornerShape(
                             bottomStart = 28.dp,
                             bottomEnd = 28.dp
@@ -235,20 +218,16 @@ fun ListarIngressosEncerrados() {
                 // USER
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-
-                    verticalAlignment =
-                        Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
 
                     Box(
                         modifier = Modifier
                             .size(58.dp)
                             .clip(CircleShape)
-
                             .background(
                                 Color.White.copy(alpha = 0.2f)
                             ),
-
                         contentAlignment = Alignment.Center
                     ) {
 
@@ -256,11 +235,8 @@ fun ListarIngressosEncerrados() {
                             painter = painterResource(
                                 id = R.drawable.icon_user
                             ),
-
                             contentDescription = null,
-
                             tint = Color.White,
-
                             modifier = Modifier.size(30.dp)
                         )
                     }
@@ -271,11 +247,8 @@ fun ListarIngressosEncerrados() {
 
                     Text(
                         text = "Olá, Usuário",
-
                         color = Color.White,
-
                         fontSize = 26.sp,
-
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -285,9 +258,7 @@ fun ListarIngressosEncerrados() {
                 // TABS
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-
-                    horizontalArrangement =
-                        Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
 
                     TopTabButton(
@@ -304,28 +275,27 @@ fun ListarIngressosEncerrados() {
 
             // LISTA
             LazyColumn(
+                modifier = Modifier.padding(padding),
 
                 contentPadding = PaddingValues(
                     top = 200.dp,
                     start = 20.dp,
                     end = 20.dp,
-                    bottom = 100.dp
+                    bottom = 120.dp
                 ),
 
-                verticalArrangement =
-                    Arrangement.spacedBy(18.dp)
+                verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
 
                 item {
-                    EventCard(
+
+                    TicketCard(
+                        titulo = "Hackathon",
+                        data = "20 Mar, 10:00",
                         status = "ENCERRADO",
-
                         statusColor = Color(0xFFC62828),
-
                         backgroundStatus = Color(0xFFF8D7DA),
-
                         buttonColor = Color(0xFFA6A6A6),
-
                         buttonTextColor = Color(0xFFEDEDED)
                     )
 
@@ -333,15 +303,13 @@ fun ListarIngressosEncerrados() {
                         modifier = Modifier.height(18.dp)
                     )
 
-                    EventCard(
+                    TicketCard(
+                        titulo = "Workshop Figma",
+                        data = "15 Fev, 14:00",
                         status = "CANCELADO",
-
                         statusColor = Color(0xFF7A7A7A),
-
                         backgroundStatus = Color(0xFFE0E0E0),
-
                         buttonColor = Color(0xFFA6A6A6),
-
                         buttonTextColor = Color(0xFFEDEDED)
                     )
                 }
@@ -350,10 +318,7 @@ fun ListarIngressosEncerrados() {
     }
 }
 
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
+@Preview(showBackground = true)
 @Composable
 fun ListarIngressosEncerradosPreview() {
 

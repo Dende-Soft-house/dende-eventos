@@ -237,7 +237,9 @@ fun EventoCard(modifier: Modifier = Modifier, titulo: String, local: String, dat
 
             }
 
-            BottomNavBar(modifier = Modifier.align(BottomCenter))
+            Box(modifier = Modifier.align(BottomCenter)) {
+                BottomNavBar()
+            }
             }
         }
 

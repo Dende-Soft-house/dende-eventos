@@ -3,6 +3,7 @@ package br.com.dende.dendeeventos.core.designsystem.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 
 import androidx.compose.runtime.Composable
 
@@ -100,7 +102,7 @@ fun BottomNavBar(
 }
 
 @Composable
-fun BottomNavItem(
+fun RowScope.BottomNavItem(
     selected: Boolean,
     icon: Int
 ) {
@@ -148,10 +150,10 @@ fun BottomNavItem(
             }
         },
 
-        label = {}
+        label = {},
+
+        colors = NavigationBarItemDefaults.colors(
+            indicatorColor = Color.Transparent
+        )
     )
-}
-@Composable
-fun NavigationBarItem(selected: Boolean, onClick: () -> Unit, icon: @Composable () -> Unit, label: () -> Unit) {
-    TODO("Not yet implemented")
 }
