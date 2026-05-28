@@ -141,11 +141,19 @@ class CadastrarAlterarEventoViewModel : ViewModel() {
 
         return try {
             Evento(
-                eventoId = 0L, status = StatusEvento.ATIVO, nome = state.nome, paginaWeb = state.paginaWeb,
-                descricao = state.descricao, dataInicio = LocalDateTime.parse(state.dataInicio, dateFormatter),
-                dataFim = LocalDateTime.parse(state.dataFim, dateFormatter), tipoEvento = state.tipoEvento,
-                eventoPrincipal = state.eventoPrincipal, modalidadeEvento = state.modalidadeEvento,
-                capacidadeMaxima = state.capacidadeMaxima.toInt(), local = state.local,
+                eventoId = 0L,
+                status = StatusEvento.ATIVO,
+                organizador = 0L,
+                nome = state.nome,
+                paginaWeb = state.paginaWeb,
+                descricao = state.descricao,
+                dataInicio = LocalDateTime.parse(state.dataInicio, dateFormatter),
+                dataFim = LocalDateTime.parse(state.dataFim, dateFormatter),
+                tipoEvento = state.tipoEvento,
+                eventoPrincipal = state.eventoPrincipal,
+                modalidadeEvento = state.modalidadeEvento,
+                capacidadeMaxima = state.capacidadeMaxima.toInt(),
+                local = state.local,
                 faturamento = Faturamento(preco, state.aceitaEstorno, taxa)
             )
         } catch (e: Exception) {
