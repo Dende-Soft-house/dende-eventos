@@ -10,6 +10,8 @@ import br.com.dende.dendeeventos.feature.event.AtivarEventoAvisoDialog
 import br.com.dende.dendeeventos.feature.event.AtivarEventoOkDialog
 import br.com.dende.dendeeventos.feature.event.DesativarEventoAvisoDialog
 import br.com.dende.dendeeventos.feature.event.DesativarEventoOkDialog
+import br.com.dende.dendeeventos.feature.event.Teste
+import br.com.dende.dendeeventos.feature.event.EventoIniciadoErroDialog
 
 @Composable
 fun AppNavHost(
@@ -17,8 +19,12 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AppDestinations.AtivarEventoOkRoute
+        startDestination = AppDestinations.TesteRoute
     ) {
+        composable<AppDestinations.TesteRoute> {
+            Teste(navController = navController)
+        }
+
         composable<AppDestinations.AtivarEventoRoute> { backStackEntry ->
             val route: AppDestinations.AtivarEventoRoute = backStackEntry.toRoute()
             AtivarEventoAvisoDialog(
@@ -56,5 +62,14 @@ fun AppNavHost(
                 onEntendiClick = { navController.popBackStack() }
             )
         }
+
+        composable<AppDestinations.EventoIniciadoErroRoute> {
+            EventoIniciadoErroDialog(
+                onEntendiClick = { navController.popBackStack() }
+            )
+        }
     }
+
+
+
 }

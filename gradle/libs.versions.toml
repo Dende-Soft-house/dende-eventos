@@ -1,21 +1,21 @@
 [versions]
-agp = "8.13.2"
+agp = "8.7.2"
 kotlin = "2.0.21"
-coreKtx = "1.17.0"
+coreKtx = "1.15.0"
 junit = "4.13.2"
-junitVersion = "1.3.0"
-espressoCore = "3.7.0"
-lifecycleRuntimeKtx = "2.9.4"
-activityCompose = "1.11.0"
-composeBom = "2024.09.00"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+lifecycleRuntimeKtx = "2.8.7"
+activityCompose = "1.9.3"
+composeBom = "2024.10.00"
 coilCompose = "2.7.0"
-ui = "1.11.1"
-uiTextGoogleFonts = "1.11.1"
-foundation = "1.11.1"
-foundationVersion = "1.11.2"
-lifecycleViewmodelCompose = "2.7.0"
-navigationRuntimeKtx = "2.9.8"
-navigationCompose = "2.9.8"
+ui = "1.7.4"
+uiTextGoogleFonts = "1.7.4"
+foundation = "1.7.4"
+foundationVersion = "1.7.4"
+lifecycleViewmodelCompose = "2.8.7"
+navigationRuntimeKtx = "2.8.3"
+navigationCompose = "2.8.3"
 
 [libraries]
 androidx-compose-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
@@ -45,4 +45,3 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-

@@ -20,14 +20,14 @@ import br.com.dende.dendeeventos.R
 import br.com.dende.dendeeventos.ui.theme.Orange
 
 @Composable
-fun DesativarEventoOkDialog(onEntendiClick: () -> Unit) {
+fun EventoIniciadoErroDialog(onEntendiClick: () -> Unit) {
     Dialog(onDismissRequest = onEntendiClick) {
-        DesativarEventoOkContent(onEntendiClick = onEntendiClick)
+        EventoIniciadoErroContent(onEntendiClick = onEntendiClick)
     }
 }
 
 @Composable
-fun DesativarEventoOkContent(onEntendiClick: () -> Unit) {
+fun EventoIniciadoErroContent(onEntendiClick: () -> Unit) {
     Box(
         modifier = Modifier
             .width(342.dp)
@@ -39,7 +39,7 @@ fun DesativarEventoOkContent(onEntendiClick: () -> Unit) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ok),
+                painter = painterResource(id = R.drawable.aviso),
                 contentDescription = null,
                 modifier = Modifier.size(45.dp)
             )
@@ -47,10 +47,19 @@ fun DesativarEventoOkContent(onEntendiClick: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Evento desativado com sucesso!",
+                text = "Ação não permitida",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color.Black,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Não é possível cancelar um evento que já foi iniciado.",
+                fontSize = 14.sp,
+                color = Color.Gray,
                 textAlign = TextAlign.Center
             )
 
@@ -76,3 +85,8 @@ fun DesativarEventoOkContent(onEntendiClick: () -> Unit) {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun PreviewEventoIniciadoErroContent() {
+    EventoIniciadoErroContent(onEntendiClick = {})
+}

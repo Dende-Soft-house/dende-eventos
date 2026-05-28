@@ -19,6 +19,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.com.dende.dendeeventos.R
 import br.com.dende.dendeeventos.domain.EventStatusViewModel
+import br.com.dende.dendeeventos.feature.navigate.AppDestinations
 import br.com.dende.dendeeventos.ui.theme.Orange
 // AtivarEventoAviso.kt — primeira linha deve ser:
 
@@ -114,7 +115,7 @@ fun AtivarEventoAvisoContent(
                 placeholder = {
                     Text("CONFIRMAR", fontSize = 14.sp, color = Color.LightGray)
                 },
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
             )
 
             if (!erroText.isNullOrEmpty()) {
@@ -140,7 +141,8 @@ fun AtivarEventoAvisoContent(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Orange,
                     disabledContainerColor = Orange.copy(alpha = 0.5f)
-                )
+                ),
+
             ) {
                 if (estadoCarregando) {
                     CircularProgressIndicator(
