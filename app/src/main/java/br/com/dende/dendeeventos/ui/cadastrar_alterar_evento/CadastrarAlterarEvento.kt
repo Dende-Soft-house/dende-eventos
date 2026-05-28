@@ -68,6 +68,7 @@ import br.com.dende.dendeeventos.domain.Evento
 import br.com.dende.dendeeventos.domain.Faturamento
 import br.com.dende.dendeeventos.domain.ModalidadeEvento
 import br.com.dende.dendeeventos.domain.TipoEvento
+import br.com.dende.dendeeventos.ui.components.DendeNotificationDialog
 import br.com.dende.dendeeventos.ui.theme.Black
 import br.com.dende.dendeeventos.ui.theme.ButtonLinear
 import br.com.dende.dendeeventos.ui.theme.Error
@@ -80,6 +81,7 @@ import coil.compose.AsyncImage
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,6 +99,7 @@ fun InformacoesBasicasScreen(
     var erroDescricao by remember { mutableStateOf<String?>(null) }
     var erroDataInicio by remember { mutableStateOf(false) }
     var erroDataFim by remember { mutableStateOf(false) }
+    var erroDataDialog by remember { mutableStateOf<String?>(null) }
 
     var mostrarDataPickerInicio by remember { mutableStateOf(false) }
     var mostrarHoraPickerInicio by remember { mutableStateOf(false) }
@@ -133,22 +136,22 @@ fun InformacoesBasicasScreen(
     if (mostrarDataPickerInicio) {
         DatePickerDialog(
             onDismissRequest = { mostrarDataPickerInicio = false }, confirmButton = {
-            TextButton(
-                onClick = {
-                    if (datePickerStateInicio.selectedDateMillis != null) {
-                        mostrarDataPickerInicio = false
-                        mostrarHoraPickerInicio = true
-                    }
-                }) {
-                Text(
-                    "Próximo", color = Orange, fontWeight = FontWeight.Bold, fontFamily = Inter
-                )
-            }
-        }, dismissButton = {
-            TextButton(onClick = { mostrarDataPickerInicio = false }) {
-                Text("Cancelar", color = ButtonLinear, fontFamily = Inter)
-            }
-        }, colors = datePickerColors
+                TextButton(
+                    onClick = {
+                        if (datePickerStateInicio.selectedDateMillis != null) {
+                            mostrarDataPickerInicio = false
+                            mostrarHoraPickerInicio = true
+                        }
+                    }) {
+                    Text(
+                        "Próximo", color = Orange, fontWeight = FontWeight.Bold, fontFamily = Inter
+                    )
+                }
+            }, dismissButton = {
+                TextButton(onClick = { mostrarDataPickerInicio = false }) {
+                    Text("Cancelar", color = ButtonLinear, fontFamily = Inter)
+                }
+            }, colors = datePickerColors
         ) {
             DatePicker(state = datePickerStateInicio, colors = datePickerColors)
         }
@@ -157,12 +160,14 @@ fun InformacoesBasicasScreen(
     if (mostrarHoraPickerInicio) {
         DateTimePicker(onDismiss = { mostrarHoraPickerInicio = false }, onConfirm = {
             val dataSel = datePickerStateInicio.selectedDateMillis ?: 0L
-            val cal = Calendar.getInstance().apply {
+            val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
                 timeInMillis = dataSel
                 set(Calendar.HOUR_OF_DAY, timePickerStateInicio.hour)
                 set(Calendar.MINUTE, timePickerStateInicio.minute)
             }
-            dataInicio = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(cal.time)
+            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+            simpleDateFormat.timeZone = TimeZone.getTimeZone("UTC")
+            dataInicio = simpleDateFormat.format(cal.time)
             erroDataInicio = false
             mostrarHoraPickerInicio = false
         }) {
@@ -173,22 +178,22 @@ fun InformacoesBasicasScreen(
     if (mostrarDataPickerFim) {
         DatePickerDialog(
             onDismissRequest = { mostrarDataPickerFim = false }, confirmButton = {
-            TextButton(
-                onClick = {
-                    if (datePickerStateFim.selectedDateMillis != null) {
-                        mostrarDataPickerFim = false
-                        mostrarHoraPickerFim = true
-                    }
-                }) {
-                Text(
-                    "Próximo", color = Orange, fontWeight = FontWeight.Bold, fontFamily = Inter
-                )
-            }
-        }, dismissButton = {
-            TextButton(onClick = { mostrarDataPickerFim = false }) {
-                Text("Cancelar", color = ButtonLinear, fontFamily = Inter)
-            }
-        }, colors = datePickerColors
+                TextButton(
+                    onClick = {
+                        if (datePickerStateFim.selectedDateMillis != null) {
+                            mostrarDataPickerFim = false
+                            mostrarHoraPickerFim = true
+                        }
+                    }) {
+                    Text(
+                        "Próximo", color = Orange, fontWeight = FontWeight.Bold, fontFamily = Inter
+                    )
+                }
+            }, dismissButton = {
+                TextButton(onClick = { mostrarDataPickerFim = false }) {
+                    Text("Cancelar", color = ButtonLinear, fontFamily = Inter)
+                }
+            }, colors = datePickerColors
         ) {
             DatePicker(state = datePickerStateFim, colors = datePickerColors)
         }
@@ -197,12 +202,14 @@ fun InformacoesBasicasScreen(
     if (mostrarHoraPickerFim) {
         DateTimePicker(onDismiss = { mostrarHoraPickerFim = false }, onConfirm = {
             val dataSelFim = datePickerStateFim.selectedDateMillis ?: 0L
-            val cal = Calendar.getInstance().apply {
+            val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
                 timeInMillis = dataSelFim
                 set(Calendar.HOUR_OF_DAY, timePickerStateFim.hour)
                 set(Calendar.MINUTE, timePickerStateFim.minute)
             }
-            dataFim = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(cal.time)
+            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+            simpleDateFormat.timeZone = TimeZone.getTimeZone("UTC")
+            dataFim = simpleDateFormat.format(cal.time)
             erroDataFim = false
             mostrarHoraPickerFim = false
         }) {
@@ -214,21 +221,21 @@ fun InformacoesBasicasScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                Text(
-                    "Informações Básicas",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    fontFamily = Inter
-                )
-            }, navigationIcon = {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null,
-                        tint = Black
+                    Text(
+                        "Informações Básicas",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        fontFamily = Inter
                     )
-                }
-            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }, navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = Black
+                        )
+                    }
+                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
         }) { paddingValues ->
         Box(
@@ -354,9 +361,12 @@ fun InformacoesBasicasScreen(
 
                         erroDataInicio = dataInicio.isEmpty()
                         erroDataFim = dataFim.isEmpty()
+                        if (erroDataInicio || erroDataFim) {
+                            erroDataDialog = "Data(s) inválida(s)."
+                        }
 
                         when {
-                            erroNome == null && erroPaginaWeb == null && erroDescricao == null && !erroDataInicio && !erroDataFim -> {
+                            erroNome == null && erroPaginaWeb == null && erroDescricao == null && !erroDataInicio && !erroDataFim && erroDataDialog == null -> {
                                 onNext()
                             }
                         }
@@ -366,6 +376,17 @@ fun InformacoesBasicasScreen(
                         .height(56.dp),
                     containerColor = ButtonLinear,
                     contentColor = White
+                )
+            }
+
+            if (erroDataDialog != null) {
+                DendeNotificationDialog(
+                    title = "Atenção",
+                    description = "Data(s) inválida(s). Tente novamente.",
+                    iconRes = R.drawable.error_ico,
+                    confirmText = "OK",
+                    onConfirm = { erroDataDialog = null },
+                    onDismiss = { erroDataDialog = null }
                 )
             }
         }
@@ -410,21 +431,21 @@ fun InformacoesAdicionaisScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                Text(
-                    "Informações Adicionais",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    fontFamily = Inter
-                )
-            }, navigationIcon = {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null,
-                        tint = Black
+                    Text(
+                        "Informações Adicionais",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        fontFamily = Inter
                     )
-                }
-            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }, navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = Black
+                        )
+                    }
+                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
         }) { paddingValues ->
         Box(
@@ -459,7 +480,7 @@ fun InformacoesAdicionaisScreen(
                     expanded = expandirTipo, onExpandedChange = { expandirTipo = it }) {
                     OutlinedTextField(
                         value = tipoSelecionado?.name?.lowercase()?.replace("_", " ")
-                        ?.replaceFirstChar { it.uppercase() } ?: "",
+                            ?.replaceFirstChar { it.uppercase() } ?: "",
                         onValueChange = {},
                         readOnly = true,
                         placeholder = {
@@ -583,7 +604,7 @@ fun InformacoesAdicionaisScreen(
                     expanded = expandirModalidade, onExpandedChange = { expandirModalidade = it }) {
                     OutlinedTextField(
                         value = modalidadeSelecionada?.name?.lowercase()
-                        ?.replaceFirstChar { it.uppercase() } ?: "",
+                            ?.replaceFirstChar { it.uppercase() } ?: "",
                         onValueChange = {},
                         readOnly = true,
                         placeholder = {
@@ -738,21 +759,21 @@ fun FaturamentoScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                Text(
-                    "Faturamento",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    fontFamily = Inter
-                )
-            }, navigationIcon = {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null,
-                        tint = Black
+                    Text(
+                        "Faturamento",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        fontFamily = Inter
                     )
-                }
-            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }, navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = Black
+                        )
+                    }
+                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
         }) { paddingValues ->
         Box(
@@ -872,18 +893,18 @@ fun BannerScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                Text(
-                    "Banner", fontWeight = FontWeight.Bold, fontSize = 20.sp, fontFamily = Inter
-                )
-            }, navigationIcon = {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Voltar",
-                        tint = Black
+                    Text(
+                        "Banner", fontWeight = FontWeight.Bold, fontSize = 20.sp, fontFamily = Inter
                     )
-                }
-            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }, navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Voltar",
+                            tint = Black
+                        )
+                    }
+                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
         }) { paddingValues ->
         Box(
