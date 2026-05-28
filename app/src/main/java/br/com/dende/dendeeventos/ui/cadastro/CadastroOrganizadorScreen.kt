@@ -34,7 +34,8 @@ import br.com.dende.dendeeventos.ui.theme.White
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CadastrarOrganizadorScreen(
-    viewModel: CadastroOrganizadorViewModel = viewModel()
+    viewModel: CadastroOrganizadorViewModel = viewModel(),
+    onVoltarParaLogin: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -53,7 +54,7 @@ fun CadastrarOrganizadorScreen(
                 val mostrarBotao = !estaEmModal && state.currentStep == 1
 
                 if (mostrarBotao) {
-                    DendeBackButton(onClick = { viewModel.voltarPasso() })
+                    DendeBackButton(onClick = onVoltarParaLogin)
                     Spacer(modifier = Modifier.width(30.dp))
                 }
                 Text(
@@ -108,7 +109,10 @@ fun CadastrarOrganizadorScreen(
 
                 if (state.showSuccessDialog) {
                     CadastroConcluidoDialog(
-                        onConfirm = { viewModel.fecharDialogSucesso() },
+                        onConfirm = {
+                            viewModel.fecharDialogSucesso()
+                            onVoltarParaLogin()
+                        },
                         onDismiss = { viewModel.fecharDialogSucesso() }
                     )
                 }
@@ -475,13 +479,3 @@ fun ErroCamposNaoPreenchidosDialog(onTentarNovamente: () -> Unit){
     )
 }
 
-
-// PREVIEWS
-
-@Preview(device = Devices.PIXEL_7, showSystemUi = true, name = "Aplicativo Rodando")
-@Composable
-fun FullPreviewApp() {
-    MaterialTheme {
-        CadastrarOrganizadorScreen()
-    }
-}
