@@ -68,7 +68,6 @@ import br.com.dende.dendeeventos.domain.Evento
 import br.com.dende.dendeeventos.domain.Faturamento
 import br.com.dende.dendeeventos.domain.ModalidadeEvento
 import br.com.dende.dendeeventos.domain.TipoEvento
-import br.com.dende.dendeeventos.ui.components.DendeNotificationDialog
 import br.com.dende.dendeeventos.ui.theme.Black
 import br.com.dende.dendeeventos.ui.theme.ButtonLinear
 import br.com.dende.dendeeventos.ui.theme.Error
@@ -99,7 +98,6 @@ fun InformacoesBasicasScreen(
     var erroDescricao by remember { mutableStateOf<String?>(null) }
     var erroDataInicio by remember { mutableStateOf(false) }
     var erroDataFim by remember { mutableStateOf(false) }
-    var erroDataDialog by remember { mutableStateOf<String?>(null) }
 
     var mostrarDataPickerInicio by remember { mutableStateOf(false) }
     var mostrarHoraPickerInicio by remember { mutableStateOf(false) }
@@ -361,12 +359,9 @@ fun InformacoesBasicasScreen(
 
                         erroDataInicio = dataInicio.isEmpty()
                         erroDataFim = dataFim.isEmpty()
-                        if (erroDataInicio || erroDataFim) {
-                            erroDataDialog = "Data(s) inválida(s)."
-                        }
 
                         when {
-                            erroNome == null && erroPaginaWeb == null && erroDescricao == null && !erroDataInicio && !erroDataFim && erroDataDialog == null -> {
+                            erroNome == null && erroPaginaWeb == null && erroDescricao == null && !erroDataInicio && !erroDataFim -> {
                                 onNext()
                             }
                         }
@@ -376,17 +371,6 @@ fun InformacoesBasicasScreen(
                         .height(56.dp),
                     containerColor = ButtonLinear,
                     contentColor = White
-                )
-            }
-
-            if (erroDataDialog != null) {
-                DendeNotificationDialog(
-                    title = "Atenção",
-                    description = "Data(s) inválida(s). Tente novamente.",
-                    iconRes = R.drawable.error_ico,
-                    confirmText = "OK",
-                    onConfirm = { erroDataDialog = null },
-                    onDismiss = { erroDataDialog = null }
                 )
             }
         }
