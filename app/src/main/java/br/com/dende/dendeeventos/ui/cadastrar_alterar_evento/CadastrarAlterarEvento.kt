@@ -86,13 +86,13 @@ import java.util.TimeZone
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InformacoesBasicasScreen(
-    eventoAlterando: Evento? = null, onBack: () -> Unit, onNext: () -> Unit
+    evento: Evento? = null, onBack: () -> Unit, onNext: () -> Unit
 ) {
-    var nome by remember { mutableStateOf(eventoAlterando?.nome ?: "") }
-    var paginaWeb by remember { mutableStateOf(eventoAlterando?.paginaWeb ?: "") }
-    var descricao by remember { mutableStateOf(eventoAlterando?.descricao ?: "") }
-    var dataInicio by remember { mutableStateOf(eventoAlterando?.dataInicio?.toString() ?: "") }
-    var dataFim by remember { mutableStateOf(eventoAlterando?.dataFim?.toString() ?: "") }
+    var nome by remember { mutableStateOf(evento?.nome ?: "") }
+    var paginaWeb by remember { mutableStateOf(evento?.paginaWeb ?: "") }
+    var descricao by remember { mutableStateOf(evento?.descricao ?: "") }
+    var dataInicio by remember { mutableStateOf(evento?.dataInicio?.toString() ?: "") }
+    var dataFim by remember { mutableStateOf(evento?.dataFim?.toString() ?: "") }
 
     var erroNome by remember { mutableStateOf<String?>(null) }
     var erroPaginaWeb by remember { mutableStateOf<String?>(null) }
@@ -396,27 +396,27 @@ fun InformacoesBasicasScreen(
 @Preview(showBackground = true)
 @Composable
 fun InformacoesBasicasScreenPreview() {
-    InformacoesBasicasScreen(eventoAlterando = null, {}, {})
+    InformacoesBasicasScreen(evento = null, {}, {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InformacoesAdicionaisScreen(
-    eventoAlterando: Evento? = null, onBack: () -> Unit, onNext: () -> Unit
+    evento: Evento? = null, onBack: () -> Unit, onNext: () -> Unit
 ) {
-    var tipoSelecionado by remember { mutableStateOf(eventoAlterando?.tipoEvento) }
-    var modalidadeSelecionada by remember { mutableStateOf(eventoAlterando?.modalidadeEvento) }
+    var tipoSelecionado by remember { mutableStateOf(evento?.tipoEvento) }
+    var modalidadeSelecionada by remember { mutableStateOf(evento?.modalidadeEvento) }
     var eventoPrincipal by remember {
         mutableStateOf(
-            eventoAlterando?.eventoPrincipal?.toString() ?: ""
+            evento?.eventoPrincipal?.toString() ?: ""
         )
     }
     var capacidadeMaxima by remember {
         mutableStateOf(
-            eventoAlterando?.capacidadeMaxima?.toString() ?: ""
+            evento?.capacidadeMaxima?.toString() ?: ""
         )
     }
-    var localEvento by remember { mutableStateOf(eventoAlterando?.local ?: "") }
+    var localEvento by remember { mutableStateOf(evento?.local ?: "") }
 
     var expandirTipo by remember { mutableStateOf(false) }
     var expandirEventoPrincipal by remember { mutableStateOf(false) }
@@ -740,17 +740,17 @@ fun InformacoesAdicionaisScreen(
 @Preview(showBackground = true)
 @Composable
 fun InformacoesAdicionaisScreenPreview() {
-    InformacoesAdicionaisScreen(eventoAlterando = null, {}, {})
+    InformacoesAdicionaisScreen(evento = null, {}, {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FaturamentoScreen(
-    eventoAlterando: Faturamento? = null, onBack: () -> Unit, onNext: () -> Unit
+    evento: Faturamento? = null, onBack: () -> Unit, onNext: () -> Unit
 ) {
-    var valorIngresso by remember { mutableStateOf(eventoAlterando?.precoTicket?.toString() ?: "") }
-    var aceitaDevolucoes by remember { mutableStateOf(eventoAlterando?.aceitaEstorno ?: false) }
-    var taxaDevolucao by remember { mutableStateOf(eventoAlterando?.taxaEstorno?.toString() ?: "") }
+    var valorIngresso by remember { mutableStateOf(evento?.precoTicket?.toString() ?: "") }
+    var aceitaDevolucoes by remember { mutableStateOf(evento?.aceitaEstorno ?: false) }
+    var taxaDevolucao by remember { mutableStateOf(evento?.taxaEstorno?.toString() ?: "") }
 
     var erroValor by remember { mutableStateOf<String?>(null) }
     var erroTaxa by remember { mutableStateOf<String?>(null) }
@@ -879,15 +879,15 @@ fun FaturamentoScreen(
 @Preview(showBackground = true)
 @Composable
 fun FaturamentoScreenPreview() {
-    FaturamentoScreen(eventoAlterando = null, {}, {})
+    FaturamentoScreen(evento = null, {}, {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BannerScreen(
-    eventoAlterando: Evento? = null, onBack: () -> Unit, onComplete: () -> Unit
+    evento: Evento? = null, onBack: () -> Unit, onComplete: () -> Unit
 ) {
-    var bannerUri by remember { mutableStateOf(eventoAlterando?.urlBanner ?: "") }
+    var bannerUri by remember { mutableStateOf(evento?.urlBanner ?: "") }
 
     Scaffold(
         topBar = {
@@ -1012,5 +1012,5 @@ fun BannerScreen(
 @Preview(showBackground = true)
 @Composable
 fun BannerScreenPreview() {
-    BannerScreen(eventoAlterando = null, onBack = {}, onComplete = {})
+    BannerScreen(evento = null, onBack = {}, onComplete = {})
 }
