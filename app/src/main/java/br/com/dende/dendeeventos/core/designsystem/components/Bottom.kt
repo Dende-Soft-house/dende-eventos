@@ -1,12 +1,15 @@
 package br.com.dende.dendeeventos.core.designsystem.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 
@@ -17,8 +20,6 @@ import androidx.compose.runtime.Composable
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-
 import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.res.painterResource
@@ -31,102 +32,83 @@ import br.com.dende.dendeeventos.R
 
 @Composable
 fun BottomBar() {
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(85.dp)
-            .clip(
-                RoundedCornerShape(
-                    topStart = 28.dp,
-                    topEnd = 28.dp
-                )
-            )
+            .height(82.dp)
             .background(Color(0xFFF3F3F3))
     ) {
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = 12.dp),
 
+            horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // HOME
-            IconButton(
-                onClick = {},
-                modifier = Modifier.weight(1f)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(34.dp)
-                        .background(
-                            color = Color(0xFFEBDCF9),
-                            shape = RoundedCornerShape(12.dp)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(
-                            id = R.drawable.icon_home
-                        ),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
-            // SEARCH
-            IconButton(
-                onClick = {},
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    painter = painterResource(
-                        id = R.drawable.icon_search
-                    ),
-                    contentDescription = null,
-                    tint = Color.Black,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
-            // TICKET
-            IconButton(
-                onClick = {},
-                modifier = Modifier.weight(1f)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .background(
-                            color = Color(0xFFFF6A00),
-                            shape = RoundedCornerShape(14.dp)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(
-                            id = R.drawable.icon_ticket
-                        ),
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
-            // USER
-            IconButton(
-                onClick = {},
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    painter = painterResource(
-                        id = R.drawable.icon_user
-                    ),
-                    contentDescription = null,
-                    tint = Color.Black,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
+
+            BottomItem(
+                icon = R.drawable.icon_home,
+                selected = false
+            )
+
+            BottomItem(
+                icon = R.drawable.icon_search,
+                selected = false
+            )
+
+            BottomItem(
+                icon = R.drawable.icon_ticket,
+                selected = true
+            )
+
+            BottomItem(
+                icon = R.drawable.icon_user,
+                selected = false
+            )
         }
+    }
+}
+
+@Composable
+fun BottomItem(
+    icon: Int,
+    selected: Boolean
+) {
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+
+        Icon(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+
+            tint =
+                if (selected)
+                    Color(0xFFFF6A00)
+                else
+                    Color.Black,
+
+            modifier = Modifier.size(28.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .padding(top = 1.dp)
+                .width(24.dp)
+                .height(2.dp)
+                .background(
+                    if (selected)
+                        Color(0xFFFF6A00)
+                    else
+                        Color.Transparent,
+                    shape = RoundedCornerShape(50)
+                )
+        )
     }
 }
 
