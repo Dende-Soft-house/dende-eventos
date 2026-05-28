@@ -1,5 +1,6 @@
 package br.com.dende.dendeeventos.ui.listar_eventos_organizador
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -26,56 +27,52 @@ import br.com.dende.dendeeventos.ui.theme.Orange
 import br.com.dende.dendeeventos.ui.theme.SoftDarkish
 import br.com.dende.dendeeventos.ui.theme.White
 
-data class EventoListagem(
-    val id: String,
-    val nome: String,
-    val local: String,
-    val dataAcima: String,
-    val dataAbaixo: String
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MeusEventosScreen(onBackClick: () -> Unit, onEventClick: (String) -> Unit, onAddEventClick: () -> Unit) {
+fun MeusEventosScreen(
+    onBackClick: () -> Unit,
+    onEventClick: (String) -> Unit,
+    onAddEventClick: () -> Unit,
+    viewModel: ListarEventosOrganizadorViewModel
+) {
+    val uiState by viewModel.uiState.collectAsState()
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("AGENDADOS", "INATIVOS")
 
-    val eventosAgendados = listOf(
-        EventoListagem("1", "IntegraSI 2026.1", "CENTRO UNIVERSITÁRIO DE EXCELÊNCIA (UNEX)", "Março", "14"),
-        EventoListagem("2", "Integra SI - Hackathon", "CENTRO UNIVERSITÁRIO DE EXCELÊNCIA (UNEX)", "Março", "17")
-    )
+    LaunchedEffect(Unit) {
+        viewModel.carregarEventosDoOrganizador(1L)
+    }
 
-    val eventosInativos = listOf(
-        EventoListagem("3", "IntegraSI 2025.2", "CENTRO UNIVERSITÁRIO DE EXCELÊNCIA (UNEX)", "Setembro", "2025"),
-        EventoListagem("4", "IntegraSI 2025.1", "CENTRO UNIVERSITÁRIO DE EXCELÊNCIA (UNEX)", "Março", "2025"),
-        EventoListagem("5", "IntegraSI 2024.2", "CENTRO UNIVERSITÁRIO DE EXCELÊNCIA (UNEX)", "Agosto", "2024")
-    )
-
-    val eventosExibidos = if (selectedTab == 0) eventosAgendados else eventosInativos
+    val eventosExibidos = if (selectedTab == 0) {
+        uiState.eventos.filter { it.status.name == "ATIVO" }
+    } else {
+        uiState.eventos.filter { it.status.name == "INATIVO" }
+    }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                Text(
-                    "Meus Eventos",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    fontFamily = Inter
-                )
-            }, navigationIcon = {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Voltar",
-                        tint = Black
+                    Text(
+                        "Meus Eventos",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        fontFamily = Inter,
+                        color = Black
                     )
-                }
-            }, actions = {
-                IconButton(onClick = onAddEventClick) {
-                    Icon(Icons.Default.Add, contentDescription = "Novo Evento", tint = Black)
-                }
-            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
+                }, navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Voltar",
+                            tint = Black
+                        )
+                    }
+                }, actions = {
+                    IconButton(onClick = onAddEventClick) {
+                        Icon(Icons.Default.Add, contentDescription = "Novo Evento", tint = Black)
+                    }
+                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White)
             )
         }) { paddingValues ->
         Column(
@@ -112,30 +109,34 @@ fun MeusEventosScreen(onBackClick: () -> Unit, onEventClick: (String) -> Unit, o
                     }
                 }
             }
-
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(eventosExibidos) { evento ->
-                    OrganizerEventCard(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                            .clickable { onEventClick(evento.id) },
-                        title = evento.nome,
-                        location = evento.local,
-                        dataAcima = evento.dataAcima,
-                        dataAbaixo = evento.dataAbaixo
-                    )
+            if (uiState.isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = Orange)
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(eventosExibidos) { evento ->
+                        OrganizerEventCard(
+                            modifier = Modifier.clickable { onEventClick(evento.eventoId.toString()) },
+                            title = evento.nome,
+                            location = evento.local,
+                            dataAcima = "Mês",
+                            dataAbaixo = "Dia"
+                        )
+                    }
                 }
             }
         }
     }
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true)
 @Composable
 fun MeusEventosScreenPreview() {
-    MeusEventosScreen({}, {}, {})
+    MeusEventosScreen({}, {}, {}, ListarEventosOrganizadorViewModel())
 }

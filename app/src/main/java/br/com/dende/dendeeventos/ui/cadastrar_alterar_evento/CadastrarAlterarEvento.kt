@@ -41,6 +41,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +54,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.dende.dendeeventos.R
@@ -64,11 +64,8 @@ import br.com.dende.dendeeventos.core.designsystem.components.FormLabel
 import br.com.dende.dendeeventos.core.designsystem.components.FormSwitch
 import br.com.dende.dendeeventos.core.designsystem.components.ProgressBarStep
 import br.com.dende.dendeeventos.core.designsystem.theme.Inter
-import br.com.dende.dendeeventos.domain.Evento
-import br.com.dende.dendeeventos.domain.Faturamento
 import br.com.dende.dendeeventos.domain.ModalidadeEvento
 import br.com.dende.dendeeventos.domain.TipoEvento
-import br.com.dende.dendeeventos.ui.components.DendeNotificationDialog
 import br.com.dende.dendeeventos.ui.theme.Black
 import br.com.dende.dendeeventos.ui.theme.ButtonLinear
 import br.com.dende.dendeeventos.ui.theme.Error
@@ -86,20 +83,11 @@ import java.util.TimeZone
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InformacoesBasicasScreen(
-    evento: Evento? = null, onBack: () -> Unit, onNext: () -> Unit
+    onBack: () -> Unit,
+    onNext: () -> Unit,
+    viewModel: CadastrarAlterarEventoViewModel
 ) {
-    var nome by remember { mutableStateOf(evento?.nome ?: "") }
-    var paginaWeb by remember { mutableStateOf(evento?.paginaWeb ?: "") }
-    var descricao by remember { mutableStateOf(evento?.descricao ?: "") }
-    var dataInicio by remember { mutableStateOf(evento?.dataInicio?.toString() ?: "") }
-    var dataFim by remember { mutableStateOf(evento?.dataFim?.toString() ?: "") }
-
-    var erroNome by remember { mutableStateOf<String?>(null) }
-    var erroPaginaWeb by remember { mutableStateOf<String?>(null) }
-    var erroDescricao by remember { mutableStateOf<String?>(null) }
-    var erroDataInicio by remember { mutableStateOf(false) }
-    var erroDataFim by remember { mutableStateOf(false) }
-    var erroDataDialog by remember { mutableStateOf<String?>(null) }
+    val uiState by viewModel.uiState.collectAsState()
 
     var mostrarDataPickerInicio by remember { mutableStateOf(false) }
     var mostrarHoraPickerInicio by remember { mutableStateOf(false) }
@@ -115,11 +103,12 @@ fun InformacoesBasicasScreen(
         containerColor = White,
         titleContentColor = Black,
         headlineContentColor = Black,
-        weekdayContentColor = Color.Gray,
+        weekdayContentColor = Color.Black,
         selectedDayContainerColor = Orange,
         selectedDayContentColor = White,
         todayContentColor = Orange,
-        todayDateBorderColor = Orange
+        todayDateBorderColor = Orange,
+        dayContentColor = Black
     )
 
     val timePickerColors = TimePickerDefaults.colors(
@@ -167,8 +156,8 @@ fun InformacoesBasicasScreen(
             }
             val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
             simpleDateFormat.timeZone = TimeZone.getTimeZone("UTC")
-            dataInicio = simpleDateFormat.format(cal.time)
-            erroDataInicio = false
+            val dataFormatada = simpleDateFormat.format(cal.time)
+            viewModel.updateState { it.copy(dataInicio = dataFormatada, erroDataInicio = false) }
             mostrarHoraPickerInicio = false
         }) {
             TimePicker(state = timePickerStateInicio, colors = timePickerColors)
@@ -209,8 +198,8 @@ fun InformacoesBasicasScreen(
             }
             val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
             simpleDateFormat.timeZone = TimeZone.getTimeZone("UTC")
-            dataFim = simpleDateFormat.format(cal.time)
-            erroDataFim = false
+            val dataFormatada = simpleDateFormat.format(cal.time)
+            viewModel.updateState { it.copy(dataFim = dataFormatada, erroDataFim = false) }
             mostrarHoraPickerFim = false
         }) {
             TimePicker(state = timePickerStateFim, colors = timePickerColors)
@@ -225,7 +214,8 @@ fun InformacoesBasicasScreen(
                         "Informações Básicas",
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
-                        fontFamily = Inter
+                        fontFamily = Inter,
+                        color = Black
                     )
                 }, navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -268,33 +258,49 @@ fun InformacoesBasicasScreen(
 
                 FormLabel("Nome", true)
                 CustomTextField(
-                    nome,
-                    { nome = it; erroNome = null },
+                    uiState.nome,
+                    { novoNome ->
+                        viewModel.updateState { it.copy(nome = novoNome, erroNome = null) }
+                    },
                     "Digite nome do evento",
-                    isError = erroNome != null,
-                    errorMessage = erroNome
+                    isError = uiState.erroNome != null,
+                    errorMessage = uiState.erroNome
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 FormLabel("Página Web", false)
                 CustomTextField(
-                    paginaWeb,
-                    { paginaWeb = it; erroPaginaWeb = null },
+                    uiState.paginaWeb,
+                    { novaPaginaWeb ->
+                        viewModel.updateState {
+                            it.copy(
+                                paginaWeb = novaPaginaWeb,
+                                erroPaginaWeb = null
+                            )
+                        }
+                    },
                     "Digite página do evento",
-                    isError = erroPaginaWeb != null,
-                    errorMessage = erroPaginaWeb
+                    isError = uiState.erroPaginaWeb != null,
+                    errorMessage = uiState.erroPaginaWeb
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 FormLabel("Descrição", true)
                 CustomTextField(
-                    descricao,
-                    { descricao = it; erroDescricao = null },
+                    uiState.descricao,
+                    { novaDescricao ->
+                        viewModel.updateState {
+                            it.copy(
+                                descricao = novaDescricao,
+                                erroDescricao = null
+                            )
+                        }
+                    },
                     "Digite descrição do evento",
-                    isError = erroDescricao != null,
-                    errorMessage = erroDescricao
+                    isError = uiState.erroDescricao != null,
+                    errorMessage = uiState.erroDescricao
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -302,11 +308,11 @@ fun InformacoesBasicasScreen(
                 FormLabel("Data de início", true)
                 Box(modifier = Modifier.fillMaxWidth()) {
                     CustomTextField(
-                        dataInicio,
+                        uiState.dataInicio,
                         { },
                         "Selecione data e hora",
                         icon = Icons.Default.DateRange,
-                        isError = erroDataInicio
+                        isError = uiState.erroDataInicio
                     )
                     Box(
                         modifier = Modifier
@@ -319,11 +325,11 @@ fun InformacoesBasicasScreen(
                 FormLabel("Data de fim", true)
                 Box(modifier = Modifier.fillMaxWidth()) {
                     CustomTextField(
-                        dataFim,
+                        uiState.dataFim,
                         { },
                         "Selecione data e hora",
                         icon = Icons.Default.DateRange,
-                        isError = erroDataFim
+                        isError = uiState.erroDataFim
                     )
                     Box(
                         modifier = Modifier
@@ -342,33 +348,8 @@ fun InformacoesBasicasScreen(
                 DendeButton(
                     text = "CONTINUAR",
                     onClick = {
-                        erroNome = when {
-                            nome.isEmpty() -> "Campo obrigatório"
-                            nome.length < 3 -> "Nome curto ou inválido"
-                            else -> null
-                        }
-
-                        erroPaginaWeb = when {
-                            paginaWeb.isNotEmpty() && !paginaWeb.contains(".") -> "Página web inválida"
-                            else -> null
-                        }
-
-                        erroDescricao = when {
-                            descricao.isEmpty() -> "Campo obrigatório"
-                            descricao.length < 5 -> "Descrição curta ou inválida"
-                            else -> null
-                        }
-
-                        erroDataInicio = dataInicio.isEmpty()
-                        erroDataFim = dataFim.isEmpty()
-                        if (erroDataInicio || erroDataFim) {
-                            erroDataDialog = "Data(s) inválida(s)."
-                        }
-
-                        when {
-                            erroNome == null && erroPaginaWeb == null && erroDescricao == null && !erroDataInicio && !erroDataFim && erroDataDialog == null -> {
-                                onNext()
-                            }
+                        if (viewModel.validarInformacoesBasicas()) {
+                            onNext()
                         }
                     },
                     modifier = Modifier
@@ -378,54 +359,25 @@ fun InformacoesBasicasScreen(
                     contentColor = White
                 )
             }
-
-            if (erroDataDialog != null) {
-                DendeNotificationDialog(
-                    title = "Atenção",
-                    description = "Data(s) inválida(s). Tente novamente.",
-                    iconRes = R.drawable.error_ico,
-                    confirmText = "OK",
-                    onConfirm = { erroDataDialog = null },
-                    onDismiss = { erroDataDialog = null }
-                )
-            }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun InformacoesBasicasScreenPreview() {
-    InformacoesBasicasScreen(evento = null, {}, {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InformacoesAdicionaisScreen(
-    evento: Evento? = null, onBack: () -> Unit, onNext: () -> Unit
+    onBack: () -> Unit,
+    onNext: () -> Unit,
+    viewModel: CadastrarAlterarEventoViewModel
 ) {
-    var tipoSelecionado by remember { mutableStateOf(evento?.tipoEvento) }
-    var modalidadeSelecionada by remember { mutableStateOf(evento?.modalidadeEvento) }
-    var eventoPrincipal by remember {
-        mutableStateOf(
-            evento?.eventoPrincipal?.toString() ?: ""
-        )
-    }
-    var capacidadeMaxima by remember {
-        mutableStateOf(
-            evento?.capacidadeMaxima?.toString() ?: ""
-        )
-    }
-    var localEvento by remember { mutableStateOf(evento?.local ?: "") }
+    val uiState by viewModel.uiState.collectAsState()
+
+    var tipoSelecionado by remember { mutableStateOf(uiState.tipoEvento) }
+    var modalidadeSelecionada by remember { mutableStateOf(uiState.modalidadeEvento) }
 
     var expandirTipo by remember { mutableStateOf(false) }
     var expandirEventoPrincipal by remember { mutableStateOf(false) }
     var expandirModalidade by remember { mutableStateOf(false) }
-
-    var erroTipo by remember { mutableStateOf(false) }
-    var erroModalidade by remember { mutableStateOf(false) }
-    var erroCapacidade by remember { mutableStateOf<String?>(null) }
-    var erroLocal by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         topBar = {
@@ -435,7 +387,8 @@ fun InformacoesAdicionaisScreen(
                         "Informações Adicionais",
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
-                        fontFamily = Inter
+                        fontFamily = Inter,
+                        color = Black
                     )
                 }, navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -479,8 +432,8 @@ fun InformacoesAdicionaisScreen(
                 ExposedDropdownMenuBox(
                     expanded = expandirTipo, onExpandedChange = { expandirTipo = it }) {
                     OutlinedTextField(
-                        value = tipoSelecionado?.name?.lowercase()?.replace("_", " ")
-                            ?.replaceFirstChar { it.uppercase() } ?: "",
+                        value = uiState.tipoEvento.name.lowercase().replace("_", "/")
+                            .replaceFirstChar { it.uppercase() },
                         onValueChange = {},
                         readOnly = true,
                         placeholder = {
@@ -498,13 +451,13 @@ fun InformacoesAdicionaisScreen(
                                 enabled = true
                             )
                             .fillMaxWidth(),
-                        isError = erroTipo,
+                        isError = uiState.erroTipoEvento != null,
                         shape = RoundedCornerShape(16.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedBorderColor = when {
-                                erroTipo -> Error
+                                uiState.erroTipoEvento != null -> Error
                                 else -> Grey2
-                            }, focusedBorderColor = Black, cursorColor = Black
+                            }, focusedBorderColor = Black, cursorColor = Black, focusedTextColor = Black, unfocusedTextColor = Black, errorTextColor = Black
                         )
                     )
                     MaterialTheme(
@@ -524,8 +477,12 @@ fun InformacoesAdicionaisScreen(
                                         color = if (isSelected) Orange else Black
                                     )
                                 }, onClick = {
-                                    tipoSelecionado = tipo
-                                    erroTipo = false
+                                    viewModel.updateState {
+                                        it.copy(
+                                            tipoEvento = tipoSelecionado,
+                                            erroTipoEvento = null
+                                        )
+                                    }
                                     expandirTipo = false
                                 })
                             }
@@ -540,7 +497,7 @@ fun InformacoesAdicionaisScreen(
                     expanded = expandirEventoPrincipal,
                     onExpandedChange = { expandirEventoPrincipal = it }) {
                     OutlinedTextField(
-                        value = eventoPrincipal,
+                        value = uiState.eventoPrincipal?.nome ?: "",
                         onValueChange = {},
                         readOnly = true,
                         placeholder = {
@@ -562,7 +519,10 @@ fun InformacoesAdicionaisScreen(
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedBorderColor = Grey2,
                             focusedBorderColor = Black,
-                            cursorColor = Black
+                            cursorColor = Black,
+                            focusedTextColor = Black,
+                            unfocusedTextColor = Black,
+                            errorTextColor = Black
                         )
                     )
                     MaterialTheme(
@@ -575,22 +535,12 @@ fun InformacoesAdicionaisScreen(
                             onDismissRequest = { expandirEventoPrincipal = false }) {
                             DropdownMenuItem(text = {
                                 Text(
-                                    text = "IntegraSI 2026.1",
-                                    fontFamily = Inter,
-                                    color = if (eventoPrincipal == "IntegraSI 2026.1") Orange else Black
-                                )
-                            }, onClick = {
-                                eventoPrincipal = "IntegraSI 2026.1"
-                                expandirEventoPrincipal = false
-                            })
-                            DropdownMenuItem(text = {
-                                Text(
                                     text = "Nenhum",
                                     fontFamily = Inter,
-                                    color = if (eventoPrincipal == "Nenhum") Orange else Black
+                                    color = Black
                                 )
                             }, onClick = {
-                                eventoPrincipal = "Nenhum"
+                                viewModel.updateState { it.copy(eventoPrincipal = null) }
                                 expandirEventoPrincipal = false
                             })
                         }
@@ -603,8 +553,8 @@ fun InformacoesAdicionaisScreen(
                 ExposedDropdownMenuBox(
                     expanded = expandirModalidade, onExpandedChange = { expandirModalidade = it }) {
                     OutlinedTextField(
-                        value = modalidadeSelecionada?.name?.lowercase()
-                            ?.replaceFirstChar { it.uppercase() } ?: "",
+                        value = modalidadeSelecionada.name.lowercase()
+                            .replaceFirstChar { it.uppercase() },
                         onValueChange = {},
                         readOnly = true,
                         placeholder = {
@@ -622,13 +572,13 @@ fun InformacoesAdicionaisScreen(
                                 enabled = true
                             )
                             .fillMaxWidth(),
-                        isError = erroModalidade,
+                        isError = uiState.erroModalidade != null,
                         shape = RoundedCornerShape(16.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedBorderColor = when {
-                                erroModalidade -> Error
+                                uiState.erroModalidade != null -> Error
                                 else -> Grey2
-                            }, focusedBorderColor = Black, cursorColor = Black
+                            }, focusedBorderColor = Black, cursorColor = Black, focusedTextColor = Black, unfocusedTextColor = Black, errorTextColor = Black
                         )
                     )
                     MaterialTheme(
@@ -639,18 +589,22 @@ fun InformacoesAdicionaisScreen(
                         ExposedDropdownMenu(
                             expanded = expandirModalidade,
                             onDismissRequest = { expandirModalidade = false }) {
-                            ModalidadeEvento.entries.forEach { mod ->
-                                val isSelected = modalidadeSelecionada == mod
+                            ModalidadeEvento.entries.forEach { modalidade ->
+                                val isSelected = modalidadeSelecionada == modalidade
                                 DropdownMenuItem(text = {
                                     Text(
-                                        text = mod.name.lowercase()
+                                        text = modalidade.name.lowercase()
                                             .replaceFirstChar { it.uppercase() },
                                         fontFamily = Inter,
                                         color = if (isSelected) Orange else Black
                                     )
                                 }, onClick = {
-                                    modalidadeSelecionada = mod
-                                    erroModalidade = false
+                                    viewModel.updateState {
+                                        it.copy(
+                                            modalidadeEvento = modalidadeSelecionada,
+                                            erroModalidade = null
+                                        )
+                                    }
                                     expandirModalidade = false
                                 })
                             }
@@ -662,14 +616,18 @@ fun InformacoesAdicionaisScreen(
 
                 FormLabel("Capacidade Máxima", true)
                 CustomTextField(
-                    value = capacidadeMaxima,
-                    onValueChange = {
-                        capacidadeMaxima = it
-                        erroCapacidade = null
+                    value = uiState.capacidadeMaxima,
+                    onValueChange = { novaCapacidade ->
+                        viewModel.updateState {
+                            it.copy(
+                                capacidadeMaxima = novaCapacidade,
+                                erroCapacidadeMaxima = null
+                            )
+                        }
                     },
                     placeholder = "Digite capacidade máxima de pessoas",
-                    isError = erroCapacidade != null,
-                    errorMessage = erroCapacidade,
+                    isError = uiState.erroCapacidadeMaxima != null,
+                    errorMessage = uiState.erroCapacidadeMaxima,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
@@ -677,14 +635,13 @@ fun InformacoesAdicionaisScreen(
 
                 FormLabel("Local", true)
                 CustomTextField(
-                    value = localEvento,
-                    onValueChange = {
-                        localEvento = it
-                        erroLocal = null
+                    value = uiState.local,
+                    onValueChange = { novoLocal ->
+                        viewModel.updateState { it.copy(local = novoLocal, erroLocal = null) }
                     },
                     placeholder = "Digite local ou link do evento",
-                    isError = erroLocal != null,
-                    errorMessage = erroLocal
+                    isError = uiState.erroLocal != null,
+                    errorMessage = uiState.erroLocal
                 )
             }
 
@@ -698,32 +655,8 @@ fun InformacoesAdicionaisScreen(
                 DendeButton(
                     text = "CONTINUAR",
                     onClick = {
-                        erroTipo = when (tipoSelecionado) {
-                            null -> true
-                            else -> false
-                        }
-
-                        erroModalidade = when (modalidadeSelecionada) {
-                            null -> true
-                            else -> false
-                        }
-
-                        erroCapacidade = when {
-                            capacidadeMaxima.isEmpty() -> "Campo obrigatório"
-                            capacidadeMaxima.toIntOrNull() == null || capacidadeMaxima.toInt() < 0 -> "Capacidade inválida"
-                            else -> null
-                        }
-
-                        erroLocal = when {
-                            localEvento.isEmpty() -> "Campo obrigatório"
-                            localEvento.length < 3 -> "Local curto ou inválido"
-                            else -> null
-                        }
-
-                        when {
-                            !erroTipo && !erroModalidade && erroCapacidade == null && erroLocal == null -> {
-                                onNext()
-                            }
+                        if (viewModel.validarInformacoesAdicionais()) {
+                            onNext()
                         }
                     },
                     modifier = Modifier
@@ -737,23 +670,14 @@ fun InformacoesAdicionaisScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun InformacoesAdicionaisScreenPreview() {
-    InformacoesAdicionaisScreen(evento = null, {}, {})
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FaturamentoScreen(
-    evento: Faturamento? = null, onBack: () -> Unit, onNext: () -> Unit
+    onBack: () -> Unit,
+    onNext: () -> Unit,
+    viewModel: CadastrarAlterarEventoViewModel
 ) {
-    var valorIngresso by remember { mutableStateOf(evento?.precoTicket?.toString() ?: "") }
-    var aceitaDevolucoes by remember { mutableStateOf(evento?.aceitaEstorno ?: false) }
-    var taxaDevolucao by remember { mutableStateOf(evento?.taxaEstorno?.toString() ?: "") }
-
-    var erroValor by remember { mutableStateOf<String?>(null) }
-    var erroTaxa by remember { mutableStateOf<String?>(null) }
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -763,7 +687,8 @@ fun FaturamentoScreen(
                         "Faturamento",
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
-                        fontFamily = Inter
+                        fontFamily = Inter,
+                        color = Black
                     )
                 }, navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -804,12 +729,19 @@ fun FaturamentoScreen(
 
                 FormLabel("Valor de Ingresso", true)
                 CustomTextField(
-                    value = valorIngresso,
-                    onValueChange = { valorIngresso = it; erroValor = null },
+                    value = uiState.precoTicket,
+                    onValueChange = { novoPreco ->
+                        viewModel.updateState {
+                            it.copy(
+                                precoTicket = novoPreco,
+                                erroPrecoTicket = null
+                            )
+                        }
+                    },
                     placeholder = "Digite valor do ingresso do evento",
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    isError = erroValor != null,
-                    errorMessage = erroValor
+                    isError = uiState.erroPrecoTicket != null,
+                    errorMessage = uiState.erroPrecoTicket
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -817,19 +749,35 @@ fun FaturamentoScreen(
                 FormSwitch(
                     label = "Aceita Devoluções?",
                     isRequired = false,
-                    checked = aceitaDevolucoes,
-                    onCheckedChange = { aceitaDevolucoes = it })
+                    checked = uiState.aceitaEstorno,
+                    onCheckedChange = { aceita: Boolean ->
+                        viewModel.updateState {
+                            it.copy(
+                                aceitaEstorno = aceita,
+                                taxaEstorno = if (aceita) it.taxaEstorno else "",
+                                erroTaxaEstorno = if (aceita) it.erroTaxaEstorno else null
+                            )
+                        }
+                    }
+                )
 
-                if (aceitaDevolucoes) {
+                if (uiState.aceitaEstorno) {
                     Spacer(modifier = Modifier.height(24.dp))
                     FormLabel("Taxa de Devolução", true)
                     CustomTextField(
-                        value = taxaDevolucao,
-                        onValueChange = { taxaDevolucao = it; erroTaxa = null },
+                        value = uiState.taxaEstorno,
+                        onValueChange = { novaTaxa ->
+                            viewModel.updateState {
+                                it.copy(
+                                    taxaEstorno = novaTaxa,
+                                    erroTaxaEstorno = null
+                                )
+                            }
+                        },
                         placeholder = "Digite taxa de devolução do ingresso",
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = erroTaxa != null,
-                        errorMessage = erroTaxa
+                        isError = uiState.erroTaxaEstorno != null,
+                        errorMessage = uiState.erroTaxaEstorno
                     )
                 }
             }
@@ -844,25 +792,8 @@ fun FaturamentoScreen(
                 DendeButton(
                     text = "CONTINUAR",
                     onClick = {
-                        val valorNumerico = valorIngresso.replace(",", ".").toDoubleOrNull()
-                        erroValor = when {
-                            valorIngresso.isEmpty() -> "Campo obrigatório"
-                            valorNumerico == null || valorNumerico < 0.0 -> "Valor inválido"
-                            else -> null
-                        }
-
-                        val taxaNumerica = taxaDevolucao.replace(",", ".").toDoubleOrNull()
-                        erroTaxa = when {
-                            !aceitaDevolucoes -> null
-                            taxaDevolucao.isEmpty() -> "Campo obrigatório"
-                            taxaNumerica == null || taxaNumerica !in 0.0..100.0 -> "Taxa inválida"
-                            else -> null
-                        }
-
-                        when {
-                            erroValor == null && erroTaxa == null -> {
-                                onNext()
-                            }
+                        if (viewModel.validarFaturamento()) {
+                            onNext()
                         }
                     },
                     modifier = Modifier
@@ -876,25 +807,25 @@ fun FaturamentoScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun FaturamentoScreenPreview() {
-    FaturamentoScreen(evento = null, {}, {})
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BannerScreen(
-    evento: Evento? = null, onBack: () -> Unit, onComplete: () -> Unit
+    onBack: () -> Unit,
+    onComplete: () -> Unit,
+    viewModel: CadastrarAlterarEventoViewModel
 ) {
-    var bannerUri by remember { mutableStateOf(evento?.urlBanner ?: "") }
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        "Banner", fontWeight = FontWeight.Bold, fontSize = 20.sp, fontFamily = Inter
+                        "Banner",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        fontFamily = Inter,
+                        color = Black
                     )
                 }, navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -943,15 +874,15 @@ fun BannerScreen(
                         .height(220.dp)
                         .border(1.dp, Orange, RoundedCornerShape(16.dp))
                         .clip(RoundedCornerShape(16.dp))
-                        .background(if (bannerUri.isEmpty()) Grey2.copy(alpha = 0.2f) else White),
+                        .background(if (uiState.urlBanner.isEmpty()) Grey2.copy(alpha = 0.2f) else White),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (bannerUri.isEmpty()) {
+                    if (uiState.urlBanner.isEmpty()) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .clickable {
-                                    bannerUri = " "
+                                    uiState.urlBanner = " "
                                 }, contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -964,7 +895,7 @@ fun BannerScreen(
                     } else {
                         Box(modifier = Modifier.fillMaxSize()) {
                             AsyncImage(
-                                model = bannerUri.ifEmpty { null },
+                                model = uiState.urlBanner.ifEmpty { null },
                                 contentDescription = "Banner do evento",
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop,
@@ -973,7 +904,7 @@ fun BannerScreen(
                             )
 
                             IconButton(
-                                onClick = { bannerUri = "" },
+                                onClick = { uiState.urlBanner = "" },
                                 modifier = Modifier.align(Alignment.Center)
                             ) {
                                 Icon(
@@ -997,7 +928,10 @@ fun BannerScreen(
             ) {
                 DendeButton(
                     text = "CONCLUIR",
-                    onClick = onComplete,
+                    onClick = {
+                        val eventoPronto = viewModel.eventoParaSalvar()
+                        onComplete()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
@@ -1007,10 +941,4 @@ fun BannerScreen(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun BannerScreenPreview() {
-    BannerScreen(evento = null, onBack = {}, onComplete = {})
 }

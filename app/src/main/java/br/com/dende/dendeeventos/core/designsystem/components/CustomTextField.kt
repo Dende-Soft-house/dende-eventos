@@ -59,7 +59,10 @@ fun CustomTextField(
                 errorBorderColor = Error,
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
-                cursorColor = Black
+                cursorColor = Black,
+                focusedTextColor = Black,
+                unfocusedTextColor = Black,
+                errorTextColor = Black
             )
         )
         if (isError && errorMessage != null) {

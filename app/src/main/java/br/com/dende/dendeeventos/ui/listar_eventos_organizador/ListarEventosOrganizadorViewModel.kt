@@ -23,7 +23,6 @@ class ListarEventosOrganizadorViewModel : ViewModel() {
                 val todosEventos = exemploBusca()
 
                 val eventosProcessados = todosEventos
-                    // Regra 1: Apenas eventos cadastrados por ele
                     .filter { it.organizador == organizadorLogado }
                     .sortedWith(
                         compareBy<Evento> { it.dataInicio }

@@ -28,12 +28,19 @@ class CadastrarAlterarEventoViewModel : ViewModel() {
 
         updateState {
             it.copy(
-                nome = evento.nome, paginaWeb = evento.paginaWeb, descricao = evento.descricao,
-                dataInicio = evento.dataInicio.format(dateFormatter), dataFim = evento.dataFim.format(dateFormatter),
-                tipoEvento = evento.tipoEvento, modalidadeEvento = evento.modalidadeEvento,
-                capacidadeMaxima = evento.capacidadeMaxima.toString(), local = evento.local,
-                precoTicket = evento.faturamento.precoTicket.toString(), aceitaEstorno = evento.faturamento.aceitaEstorno,
-                taxaEstorno = evento.faturamento.taxaEstorno.toString(), urlBanner = evento.urlBanner ?: ""
+                nome = evento.nome,
+                paginaWeb = evento.paginaWeb,
+                descricao = evento.descricao,
+                dataInicio = evento.dataInicio.format(dateFormatter),
+                dataFim = evento.dataFim.format(dateFormatter),
+                tipoEvento = evento.tipoEvento,
+                modalidadeEvento = evento.modalidadeEvento,
+                capacidadeMaxima = evento.capacidadeMaxima.toString(),
+                local = evento.local,
+                precoTicket = evento.faturamento.precoTicket.toString(),
+                aceitaEstorno = evento.faturamento.aceitaEstorno,
+                taxaEstorno = evento.faturamento.taxaEstorno.toString(),
+                urlBanner = evento.urlBanner ?: ""
             )
         }
     }
