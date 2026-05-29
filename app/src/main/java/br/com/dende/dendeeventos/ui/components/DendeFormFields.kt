@@ -22,6 +22,14 @@ import br.com.dende.dendeeventos.ui.theme.BlackLinear
 import br.com.dende.dendeeventos.ui.theme.Orange
 import br.com.dende.dendeeventos.ui.theme.White
 import java.util.Calendar
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.lint.kotlin.metadata.Visibility
 
 @Composable
 fun DendeTextField(
@@ -58,6 +66,72 @@ fun DendeTextField(
                 cursorColor = Orange,
             )
         )
+    }
+}
+
+@Composable
+fun DendePasswordField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    title: String = "Senha",
+    placeholder: String = "********",
+    isError: Boolean = false,
+    errorMessage: String? = null,
+    modifier: Modifier = Modifier
+) {
+    var passwordVisible by remember { mutableStateOf(false) }
+
+    Column(modifier = modifier.fillMaxWidth().padding(horizontal = 18.dp)) {
+        Text(text = title, fontSize = 16.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = Color.Black)
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            placeholder = { Text(text = placeholder, color = Color.LightGray, fontFamily = Inter) },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(15.dp),
+            isError = isError,
+
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+
+            trailingIcon = {
+                val image = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+                val description = if (passwordVisible) "Esconder senha" else "Mostrar senha"
+
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(imageVector = image, contentDescription = description, tint = Color.Gray)
+                }
+            },
+
+            supportingText = {
+                if (isError && errorMessage != null) {
+                    Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+                }
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Orange,
+                unfocusedBorderColor = Orange,
+                cursorColor = Orange,
+            )
+        )
+    }
+}
+
+// Preview para você testar como ficou no Android Studio!
+@Preview(showBackground = true, name = "5. PasswordField - Senha")
+@Composable
+fun PreviewDendePasswordField() {
+    MaterialTheme {
+        Column(modifier = Modifier.padding(16.dp)) {
+            DendePasswordField(
+                value = "12345",
+                onValueChange = {},
+                isError = true,
+                errorMessage = "A senha deve ter no mínimo 8 caracteres."
+            )
+        }
     }
 }
 

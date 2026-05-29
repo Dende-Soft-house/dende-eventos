@@ -11,37 +11,26 @@ import java.util.Locale
 
 class CadastroViewModel : ViewModel() {
 
-    // Começamos na tela inicial de seleção de perfil
     private val _uiState = MutableStateFlow<CadastroUiState>(CadastroUiState.SelecaoPerfil)
     val uiState: StateFlow<CadastroUiState> = _uiState.asStateFlow()
 
     // ==========================================
-    // 1. NAVEGAÇÃO GERAL E SELEÇÃO DE PERFIL
+    // 1. NAVEGAÇÃO E SELEÇÃO
     // ==========================================
-
-    fun selecionarPerfilUsuario() {
-        _uiState.value = CadastroUiState.CadastroUsuarioUiState()
-    }
-
-    fun selecionarPerfilOrganizador() {
-        _uiState.value = CadastroUiState.CadastroOrganizadorUiState()
-    }
+    fun selecionarPerfilUsuario() { _uiState.value = CadastroUiState.CadastroUsuarioUiState() }
+    fun selecionarPerfilOrganizador() { _uiState.value = CadastroUiState.CadastroOrganizadorUiState() }
 
     fun voltarPasso() {
         _uiState.update { currentState ->
             when (currentState) {
                 is CadastroUiState.SelecaoPerfil -> currentState
-
                 is CadastroUiState.CadastroUsuarioUiState -> {
-                    if (currentState.currentStep > 1) {
-                        currentState.copy(currentStep = currentState.currentStep - 1)
-                    } else CadastroUiState.SelecaoPerfil
+                    if (currentState.currentStep > 1) currentState.copy(currentStep = currentState.currentStep - 1)
+                    else CadastroUiState.SelecaoPerfil
                 }
-
                 is CadastroUiState.CadastroOrganizadorUiState -> {
-                    if (currentState.currentStep > 1) {
-                        currentState.copy(currentStep = currentState.currentStep - 1)
-                    } else CadastroUiState.SelecaoPerfil
+                    if (currentState.currentStep > 1) currentState.copy(currentStep = currentState.currentStep - 1)
+                    else CadastroUiState.SelecaoPerfil
                 }
             }
         }
@@ -51,230 +40,198 @@ class CadastroViewModel : ViewModel() {
         val currentState = _uiState.value
 
         when (currentState) {
-            is CadastroUiState.SelecaoPerfil -> { /* Botões tratam isso */ }
-            is CadastroUiState.CadastroUsuarioUiState -> processarAvancoUsuario(currentState)
-            is CadastroUiState.CadastroOrganizadorUiState -> processarAvancoOrganizador(currentState)
-        }
-    }
-
-    // ==========================================
-    // 2. LÓGICA DO USUÁRIO (O SEU FLUXO)
-    // ==========================================
-
-    private fun processarAvancoUsuario(state: CadastroUiState.CadastroUsuarioUiState) {
-        if (state.currentStep == 1) {
-            if (validarDadosUsuario(state)) {
-                _uiState.update { state.copy(currentStep = 2) }
-            }
-        } else if (state.currentStep == 2) {
-            abrirDialogSucesso()
-        }
-    }
-
-    private fun validarDadosUsuario(state: CadastroUiState.CadastroUsuarioUiState): Boolean {
-        if (state.nome.isBlank() || state.dataNascimento.isBlank() || !state.aceitouTermos) {
-            _uiState.update { state.copy(erroAtualDialog = TipoErroDialog.CAMPOS_VAZIOS) }
-            return false
-        }
-        if (!isMaiorDeIdade(state.dataNascimento)) {
-            _uiState.update { state.copy(erroAtualDialog = TipoErroDialog.IDADE_MINIMA) }
-            return false
-        }
-        return true
-    }
-
-    fun updateNomeUsuario(novoNome: String) {
-        _uiState.update { if (it is CadastroUiState.CadastroUsuarioUiState) it.copy(nome = novoNome, nomeError = null) else it }
-    }
-
-    fun updateEmailUsuario(novoEmail: String) {
-        _uiState.update { if (it is CadastroUiState.CadastroUsuarioUiState) it.copy(email = novoEmail, emailError = null) else it }
-    }
-
-    fun updateSenhaUsuario(novaSenha: String) {
-        _uiState.update { if (it is CadastroUiState.CadastroUsuarioUiState) it.copy(senha = novaSenha, senhaError = null) else it }
-    }
-
-    fun updateDataNascimentoUsuario(novaData: String) {
-        _uiState.update { if (it is CadastroUiState.CadastroUsuarioUiState) it.copy(dataNascimento = novaData, dataNascimentoError = null) else it }
-    }
-
-    fun updateAceiteTermosUsuario(aceite: Boolean) {
-        _uiState.update { if (it is CadastroUiState.CadastroUsuarioUiState) it.copy(aceitouTermos = aceite) else it }
-    }
-
-    // ==========================================
-    // 3. LÓGICA DO ORGANIZADOR (O FLUXO DO SEU COLEGA)
-    // ==========================================
-
-    private fun processarAvancoOrganizador(state: CadastroUiState.CadastroOrganizadorUiState) {
-        when (state.currentStep) {
-            1 -> {
-                // Passo 1: Definiu se é empresa ou não. Apenas avança.
-                if (state.isEmpresa != null) {
-                    _uiState.update { state.copy(currentStep = 2) }
-                }
-            }
-            2 -> {
-                if (state.isEmpresa == true) {
-                    // Validar Formulário de Empresa (CNPJ, etc)
-                    if (state.cnpj.isBlank() || state.razaoSocial.isBlank() || state.nomeFantasia.isBlank()) {
-                        _uiState.update { state.copy(erroAtualDialog = TipoErroDialog.CAMPOS_VAZIOS) }
-                        return
-                    }
-                    _uiState.update { state.copy(currentStep = 3) }
-                } else {
-                    // Validar Formulário Dados Pessoais (Para quem NÃO é empresa)
-                    if (validarDadosPessoaisOrganizador(state)) {
-                        _uiState.update { state.copy(currentStep = 3) }
+            is CadastroUiState.CadastroUsuarioUiState -> {
+                if (currentState.currentStep == 1) {
+                    if (validarDadosPessoaisGeral(currentState.nome, currentState.email, currentState.senha, currentState.dataNascimento, currentState.aceitouTermos)) {
+                        _uiState.update { currentState.copy(currentStep = 2) }
                     }
                 }
             }
-            3 -> {
-                if (state.isEmpresa == true) {
-                    // Validar Formulário Dados Pessoais (Para quem É empresa)
-                    if (validarDadosPessoaisOrganizador(state)) {
-                        _uiState.update { state.copy(currentStep = 4) }
+            is CadastroUiState.CadastroOrganizadorUiState -> {
+                when (currentState.currentStep) {
+                    1 -> _uiState.update { currentState.copy(currentStep = 2) }
+                    2 -> {
+                        if (currentState.isEmpresa == true) {
+                            if (currentState.cnpj.isBlank() || currentState.razaoSocial.isBlank() || currentState.nomeFantasia.isBlank()) {
+                                abrirDialogErro(TipoErroDialog.CAMPOS_VAZIOS)
+                            } else {
+                                _uiState.update { currentState.copy(currentStep = 3) }
+                            }
+                        } else {
+                            if (validarDadosPessoaisGeral(currentState.nome, currentState.email, currentState.senha, currentState.dataNascimento, currentState.aceitouTermos)) {
+                                _uiState.update { currentState.copy(currentStep = 3) }
+                            }
+                        }
                     }
-                } else {
-                    // Passo 3 para quem NÃO é empresa é a tela de Confirmação Final
-                    abrirDialogSucesso()
+                    3 -> {
+                        if (currentState.isEmpresa == true) {
+                            if (validarDadosPessoaisGeral(currentState.nome, currentState.email, currentState.senha, currentState.dataNascimento, currentState.aceitouTermos)) {
+                                _uiState.update { currentState.copy(currentStep = 4) }
+                            }
+                        }
+                    }
                 }
             }
-            4 -> {
-                // Passo 4 para quem É empresa é a tela de Confirmação Final
-                abrirDialogSucesso()
+            else -> {}
+        }
+    }
+
+    // ==========================================
+    // 2. FUNÇÕES DE ATUALIZAÇÃO (Digitando no Teclado)
+    // ==========================================
+    fun updateNome(valor: String) {
+        _uiState.update {
+            when (it) {
+                is CadastroUiState.CadastroUsuarioUiState -> it.copy(nome = valor, nomeError = null)
+                is CadastroUiState.CadastroOrganizadorUiState -> it.copy(nome = valor, nomeError = null)
+                else -> it
             }
         }
     }
 
-    // A LÓGICA DE VALIDAÇÃO DO SEU COLEGA APLICADA AQUI
-    private fun validarDadosPessoaisOrganizador(state: CadastroUiState.CadastroOrganizadorUiState): Boolean {
-        var temErroDeFormato = false
-        var novoEmailError: String? = null
-        var novaSenhaError: String? = null
-
-        // 1. Validação do E-mail
-        if (state.email.isBlank()) {
-            novoEmailError = "O e-mail é obrigatório"
-            temErroDeFormato = true
-        } else if (!state.email.contains("@")) {
-            novoEmailError = "Digite um e-mail válido contendo '@'"
-            temErroDeFormato = true
+    fun updateEmail(valor: String) {
+        _uiState.update {
+            when (it) {
+                is CadastroUiState.CadastroUsuarioUiState -> it.copy(email = valor, emailError = null)
+                is CadastroUiState.CadastroOrganizadorUiState -> it.copy(email = valor, emailError = null)
+                else -> it
+            }
         }
+    }
 
-        // 2. Validação da Senha
-        if (state.senha.isBlank()) {
-            novaSenhaError = "A senha é obrigatória"
-            temErroDeFormato = true
-        } else if (state.senha.length < 8) {
-            novaSenhaError = "A senha deve ter no mínimo 8 caracteres"
-            temErroDeFormato = true
+    fun updateSenha(valor: String) {
+        _uiState.update {
+            when (it) {
+                is CadastroUiState.CadastroUsuarioUiState -> it.copy(senha = valor, senhaError = null)
+                is CadastroUiState.CadastroOrganizadorUiState -> it.copy(senha = valor, senhaError = null)
+                else -> it
+            }
         }
+    }
 
-        if (temErroDeFormato) {
+    fun updateGenero(valor: String) {
+        _uiState.update {
+            when (it) {
+                is CadastroUiState.CadastroUsuarioUiState -> it.copy(genero = valor)
+                is CadastroUiState.CadastroOrganizadorUiState -> it.copy(genero = valor)
+                else -> it
+            }
+        }
+    }
+
+    fun updateDataNascimento(valor: String) {
+        _uiState.update {
+            when (it) {
+                is CadastroUiState.CadastroUsuarioUiState -> it.copy(dataNascimento = valor)
+                is CadastroUiState.CadastroOrganizadorUiState -> it.copy(dataNascimento = valor)
+                else -> it
+            }
+        }
+    }
+
+    fun updateAceitouTermos(valor: Boolean) {
+        _uiState.update {
+            when (it) {
+                is CadastroUiState.CadastroUsuarioUiState -> it.copy(aceitouTermos = valor, aceitouTermosError = false)
+                is CadastroUiState.CadastroOrganizadorUiState -> it.copy(aceitouTermos = valor, aceitouTermosError = false)
+                else -> it
+            }
+        }
+    }
+
+    // Apenas Organizador
+    fun updateIsEmpresa(valor: Boolean) {
+        _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(isEmpresa = valor) else it }
+    }
+    fun updateCnpj(valor: String) {
+        _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(cnpj = valor) else it }
+    }
+    fun updateRazaoSocial(valor: String) {
+        _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(razaoSocial = valor) else it }
+    }
+    fun updateNomeFantasia(valor: String) {
+        _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(nomeFantasia = valor) else it }
+    }
+
+    // ==========================================
+    // 3. REGRAS DE NEGÓCIO E VALIDAÇÕES
+    // ==========================================
+    private fun validarDadosPessoaisGeral(nome: String, email: String, senha: String, dataNascimento: String, aceitouTermos: Boolean): Boolean {
+        var temErro = false
+        var emailErr: String? = null
+        var senhaErr: String? = null
+
+        if (email.isBlank()) { emailErr = "Obrigatório"; temErro = true }
+        else if (!email.contains("@")) { emailErr = "E-mail inválido"; temErro = true }
+
+        if (senha.isBlank()) { senhaErr = "Obrigatória"; temErro = true }
+        else if (senha.length < 8) { senhaErr = "Mínimo 8 caracteres"; temErro = true }
+
+        if (temErro) {
             _uiState.update {
-                if (it is CadastroUiState.CadastroOrganizadorUiState) {
-                    it.copy(emailError = novoEmailError, senhaError = novaSenhaError, erroAtualDialog = TipoErroDialog.CAMPOS_VAZIOS)
-                } else it
+                when (it) {
+                    is CadastroUiState.CadastroUsuarioUiState -> it.copy(emailError = emailErr, senhaError = senhaErr, erroAtualDialog = TipoErroDialog.CAMPOS_VAZIOS)
+                    is CadastroUiState.CadastroOrganizadorUiState -> it.copy(emailError = emailErr, senhaError = senhaErr, erroAtualDialog = TipoErroDialog.CAMPOS_VAZIOS)
+                    else -> it
+                }
             }
             return false
-        } else {
-            _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(emailError = null, senhaError = null) else it }
         }
 
-        // 3. Campos vazios e termos
-        if (state.nome.isBlank() || state.dataNascimento.isBlank() || !state.aceitouTermos) {
-            _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(erroAtualDialog = TipoErroDialog.CAMPOS_VAZIOS) else it }
+        if (nome.isBlank() || dataNascimento.isBlank() || !aceitouTermos) {
+            abrirDialogErro(TipoErroDialog.CAMPOS_VAZIOS)
             return false
         }
 
-        // 4. Idade mínima
-        if (!isMaiorDeIdade(state.dataNascimento)) {
-            _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(erroAtualDialog = TipoErroDialog.IDADE_MINIMA) else it }
+        if (!isMaiorDeIdade(dataNascimento)) {
+            abrirDialogErro(TipoErroDialog.IDADE_MINIMA)
             return false
         }
 
-        // 5. Email duplicado
-        if (state.email.lowercase() == "teste@dende.com") {
-            _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(erroAtualDialog = TipoErroDialog.EMAIL_DUPLICADO) else it }
+        if (email.lowercase() == "teste@dende.com") {
+            abrirDialogErro(TipoErroDialog.EMAIL_DUPLICADO)
             return false
         }
 
         return true
-    }
-
-    // Funções de Update do Organizador
-    fun updateIsEmpresaOrganizador(ehEmpresa: Boolean) {
-        _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(isEmpresa = ehEmpresa) else it }
-    }
-
-    fun updateCnpjOrganizador(novoCnpj: String) {
-        _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(cnpj = novoCnpj, cnpjError = null) else it }
-    }
-
-    fun updateRazaoSocialOrganizador(novaRazao: String) {
-        _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(razaoSocial = novaRazao, razaoSocialError = null) else it }
-    }
-
-    fun updateNomeFantasiaOrganizador(novoNomeFantasia: String) {
-        _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(nomeFantasia = novoNomeFantasia, nomeFantasiaError = null) else it }
-    }
-
-    fun updateEmailOrganizador(novoEmail: String) {
-        _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(email = novoEmail, emailError = null) else it }
-    }
-
-    fun updateSenhaOrganizador(novaSenha: String) {
-        _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(senha = novaSenha, senhaError = null) else it }
-    }
-
-    fun updateNomeOrganizador(novoNome: String) {
-        _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(nome = novoNome, nomeError = null) else it }
-    }
-
-    fun updateGeneroOrganizador(novoGenero: String) {
-        _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(genero = novoGenero, generoError = null) else it }
-    }
-
-    fun updateDataNascimentoOrganizador(novaData: String) {
-        _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(dataNascimento = novaData, dataNascimentoError = null) else it }
-    }
-
-    fun updateAceiteTermosOrganizador(aceitou: Boolean) {
-        _uiState.update { if (it is CadastroUiState.CadastroOrganizadorUiState) it.copy(aceitouTermos = aceitou, aceitouTermosError = false) else it }
-    }
-
-    // ==========================================
-    // 4. MÉTODOS UTILITÁRIOS E DIALOGS
-    // ==========================================
-
-    fun fecharDialogErro() {
-        _uiState.update { currentState ->
-            when (currentState) {
-                is CadastroUiState.CadastroUsuarioUiState -> currentState.copy(erroAtualDialog = null)
-                is CadastroUiState.CadastroOrganizadorUiState -> currentState.copy(erroAtualDialog = null)
-                is CadastroUiState.SelecaoPerfil -> currentState
-            }
-        }
     }
 
     fun abrirDialogSucesso() {
-        _uiState.update { currentState ->
-            when (currentState) {
-                is CadastroUiState.CadastroUsuarioUiState -> currentState.copy(showSuccessDialog = true)
-                is CadastroUiState.CadastroOrganizadorUiState -> currentState.copy(showSuccessDialog = true)
-                is CadastroUiState.SelecaoPerfil -> currentState
+        _uiState.update {
+            when (it) {
+                is CadastroUiState.CadastroUsuarioUiState -> it.copy(showSuccessDialog = true)
+                is CadastroUiState.CadastroOrganizadorUiState -> it.copy(showSuccessDialog = true)
+                else -> it
             }
         }
     }
 
     fun fecharDialogSucesso() {
-        _uiState.update { currentState ->
-            when (currentState) {
-                is CadastroUiState.CadastroUsuarioUiState -> currentState.copy(showSuccessDialog = false)
-                is CadastroUiState.CadastroOrganizadorUiState -> currentState.copy(showSuccessDialog = false)
-                is CadastroUiState.SelecaoPerfil -> currentState
+        _uiState.update {
+            when (it) {
+                is CadastroUiState.CadastroUsuarioUiState -> it.copy(showSuccessDialog = false)
+                is CadastroUiState.CadastroOrganizadorUiState -> it.copy(showSuccessDialog = false)
+                else -> it
+            }
+        }
+    }
+
+    private fun abrirDialogErro(tipo: TipoErroDialog) {
+        _uiState.update {
+            when (it) {
+                is CadastroUiState.CadastroUsuarioUiState -> it.copy(erroAtualDialog = tipo)
+                is CadastroUiState.CadastroOrganizadorUiState -> it.copy(erroAtualDialog = tipo)
+                else -> it
+            }
+        }
+    }
+
+    fun fecharDialogErro() {
+        _uiState.update {
+            when (it) {
+                is CadastroUiState.CadastroUsuarioUiState -> it.copy(erroAtualDialog = null)
+                is CadastroUiState.CadastroOrganizadorUiState -> it.copy(erroAtualDialog = null)
+                else -> it
             }
         }
     }
@@ -283,19 +240,12 @@ class CadastroViewModel : ViewModel() {
         return try {
             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             sdf.isLenient = false
-            val dataNascimentoForCalculo = sdf.parse(dataString) ?: return false
-
-            val calculoNascimento = Calendar.getInstance().apply { time = dataNascimentoForCalculo }
-            val calculoHoje = Calendar.getInstance()
-
-            var idade = calculoHoje.get(Calendar.YEAR) - calculoNascimento.get(Calendar.YEAR)
-
-            if (calculoHoje.get(Calendar.DAY_OF_YEAR) < calculoNascimento.get(Calendar.DAY_OF_YEAR)) {
-                idade--
-            }
+            val dataNasc = sdf.parse(dataString) ?: return false
+            val calNasc = Calendar.getInstance().apply { time = dataNasc }
+            val calHoje = Calendar.getInstance()
+            var idade = calHoje.get(Calendar.YEAR) - calNasc.get(Calendar.YEAR)
+            if (calHoje.get(Calendar.DAY_OF_YEAR) < calNasc.get(Calendar.DAY_OF_YEAR)) idade--
             idade >= 18
-        } catch (e: Exception) {
-            false
-        }
+        } catch (e: Exception) { false }
     }
 }

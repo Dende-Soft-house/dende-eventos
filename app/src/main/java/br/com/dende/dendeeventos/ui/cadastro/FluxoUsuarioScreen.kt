@@ -1,191 +1,188 @@
 package br.com.dende.dendeeventos.ui.cadastro
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.com.dende.dendeeventos.ui.theme.*
-import androidx.lifecycle.viewmodel.compose.viewModel
+import br.com.dende.dendeeventos.core.designsystem.theme.Inter
+import br.com.dende.dendeeventos.ui.components.*
+import br.com.dende.dendeeventos.ui.theme.Orange
 
-enum class CadastroStep {
-    PERFIL, DADOS, CONFIRMACAO
-}
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FluxoUsuarioScreen(
     state: CadastroUiState.CadastroUsuarioUiState,
-    viewModel: CadastroViewModel
+    viewModel: CadastroViewModel,
+    onVoltarParaLogin: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-    ) {
-        // Seu cabeçalho de voltar
-        IconButton(onClick = { viewModel.voltarPasso() }) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar", tint = Black)
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // O seu fluxo interno
-        if (state.currentStep == 1) {
-            DadosPessoaisForm(
-                email = state.email,
-                onEmailChange = { viewModel.updateEmailUsuario(it) },
-                senha = state.senha,
-                onSenhaChange = { viewModel.updateSenhaUsuario(it) },
-                nome = state.nome,
-                onNomeChange = { viewModel.updateNomeUsuario(it) },
-                onContinue = { viewModel.avancarPasso() },
-                onBack = { viewModel.voltarPasso() }
-            )
-        } else {
-            // Tela de Confirmação (Step 2)
-            Text("Tela de Confirmação do Usuário")
-        }
-    }
-}
-
-@Composable
-fun PerfilSelection(onOptionSelected: () -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Registrar-me",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(40.dp))
-        Text(
-            text = "Para qual finalidade gostaria de criar sua conta?",
-            color = SoftDarkish,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(40.dp))
-
-        Button(
-            onClick = onOptionSelected,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = ButtonLinear),
-            shape = RoundedCornerShape(12.dp)
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .padding(24.dp)
         ) {
-            Text("Participar de eventos", color = WhiteText)
-        }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                val estaEmModal = state.erroAtualDialog != null || state.showSuccessDialog
+                val mostrarBotao = !estaEmModal && state.currentStep == 1
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedButton(
-            onClick = onOptionSelected,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, Orange),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text("Organizar eventos", color = Black)
-        }
-    }
-}
-
-@Composable
-fun DadosPessoaisForm(
-    email: String, onEmailChange: (String) -> Unit,
-    senha: String, onSenhaChange: (String) -> Unit,
-    nome: String, onNomeChange: (String) -> Unit,
-    onContinue: () -> Unit,
-    onBack: () -> Unit
-) {
-    Column {
-        Text("Registrar-me", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-        Text("Passo 1 de 2", fontSize = 12.sp, color = Color.Gray)
-
-        // Barra de progresso customizada
-        LinearProgressIndicator(
-            progress = { 0.5f },
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-            color = ButtonLinear,
-            trackColor = Grey2,
-        )
-
-        Text("Dados Pessoais", fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 16.dp))
-
-        CustomTextField(label = "Email", value = email, onValueChange = onEmailChange, placeholder = "exemplo@exemplo.com")
-        CustomTextField(label = "Senha", value = senha, onValueChange = onSenhaChange, isPassword = true)
-        CustomTextField(label = "Nome", value = nome, onValueChange = onNomeChange, placeholder = "Exemplo da Silva")
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            OutlinedButton(
-                onClick = onBack,
-                modifier = Modifier.weight(1f).height(50.dp),
-                shape = RoundedCornerShape(25.dp)
-            ) {
-                Icon(Icons.Default.ArrowBack, contentDescription = null, modifier = Modifier.size(14.dp))
-                Spacer(Modifier.width(8.dp))
-                Text("VOLTAR")
+                if (mostrarBotao) {
+                    DendeBackButton(onClick = { viewModel.voltarPasso() })
+                    Spacer(modifier = Modifier.width(30.dp))
+                }
+                Text("Registrar-me", fontSize = 30.sp, fontWeight = FontWeight.Bold, fontFamily = Inter)
             }
-            Spacer(Modifier.width(16.dp))
-            Button(
-                onClick = onContinue,
-                modifier = Modifier.weight(1.4f).height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = ButtonLinear),
-                shape = RoundedCornerShape(25.dp)
-            ) {
-                Text("CONTINUAR")
-                Icon(Icons.Default.KeyboardArrowRight, contentDescription = null)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // BARRA DE PROGRESSO DO USUÁRIO
+            val passoAtualVisual = state.currentStep
+            val progresso = passoAtualVisual / state.totalSteps.toFloat()
+
+            Text(
+                text = "Passo $passoAtualVisual de ${state.totalSteps}",
+                style = MaterialTheme.typography.labelLarge,
+                color = Orange
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            LinearProgressIndicator(
+                progress = { progresso },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp),
+                color = Orange,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // ROTEAMENTO DOS PASSOS (View)
+            Box(modifier = Modifier.weight(1f)) {
+                when (state.currentStep) {
+                    1 -> CadastrarDadosComuns(state, viewModel)
+                    2 -> ConferenciaUsuarioComum(state, viewModel)
+                }
+            }
+
+            // DIALOGS E POP-UPS LIGADOS AO LOGIN
+            if (state.showSuccessDialog) {
+                CadastroConcluidoDialog(
+                    onConfirm = {
+                        viewModel.fecharDialogSucesso()
+                        onVoltarParaLogin() // <-- Vai pro Login ao terminar!
+                    },
+                    onDismiss = { viewModel.fecharDialogSucesso() }
+                )
+            }
+
+            when (state.erroAtualDialog) {
+                TipoErroDialog.CAMPOS_VAZIOS -> ErroCamposNaoPreenchidosDialog { viewModel.fecharDialogErro() }
+                TipoErroDialog.IDADE_MINIMA -> ErroIdadeMinimaDialog { viewModel.fecharDialogErro() }
+                TipoErroDialog.EMAIL_DUPLICADO -> ErroEmailDuplicadoDialog(
+                    onTentarNovamente = { viewModel.fecharDialogErro() },
+                    onIrParaLogin = {
+                        viewModel.fecharDialogErro()
+                        onVoltarParaLogin()
+                    }
+                )
+                null -> {}
             }
         }
     }
 }
 
 @Composable
-fun CustomTextField(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholder: String = "",
-    isPassword: Boolean = false
-) {
-    Column(modifier = Modifier.padding(bottom = 12.dp)) {
-        Text(label, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(placeholder, color = Color.LightGray) },
-            shape = RoundedCornerShape(12.dp),
-            visualTransformation = if (isPassword) PasswordVisualTransformation() else androidx.compose.ui.text.input.VisualTransformation.None,
-            keyboardOptions = KeyboardOptions(keyboardType = if (isPassword) KeyboardType.Password else KeyboardType.Text),
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = Orange,
-                focusedBorderColor = Orange
+fun CadastrarDadosComuns(state: CadastroUiState.CadastroUsuarioUiState, viewModel: CadastroViewModel) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text("Dados Pessoais", fontSize = 20.sp, fontWeight = FontWeight.Bold, fontFamily = Inter)
+
+            DendeTextField(
+                value = state.email,
+                onValueChange = { viewModel.updateEmail(it) },
+                title = "Email",
+                placeholder = "exemplo@email.com",
+                isError = state.emailError != null,
+                errorMessage = state.emailError
             )
+
+            DendePasswordField(
+                value = state.senha,
+                onValueChange = { viewModel.updateSenha(it) },
+                isError = state.senhaError != null,
+                errorMessage = state.senhaError
+            )
+
+            DendeTextField(
+                value = state.nome,
+                onValueChange = { viewModel.updateNome(it) },
+                title = "Nome",
+                placeholder = "João Silva",
+                isError = state.nomeError != null,
+                errorMessage = state.nomeError
+            )
+
+            DendeDropdownField(
+                value = state.genero,
+                onValueChange = { viewModel.updateGenero(it) },
+                options = listOf("Masculino", "Feminino", "Não Binário", "Prefiro não dizer"),
+                title = "Gênero",
+                placeholder = "Selecione..."
+            )
+
+            DendeDatePickerField(
+                value = state.dataNascimento,
+                onDateSelected = { viewModel.updateDataNascimento(it) },
+                title = "Data de Nascimento",
+                placeholder = "DD/MM/AAAA"
+            )
+
+            DendeCheckBox(
+                checked = state.aceitouTermos,
+                onCheckedChange = { viewModel.updateAceitouTermos(it) },
+                isError = state.aceitouTermosError
+            )
+        }
+
+        DendeFooterButton(
+            onPrimaryClick = { viewModel.avancarPasso() },
+            onSecondaryClick = { viewModel.voltarPasso() }
         )
     }
 }
 
-
-
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun CadastroUsuarioPreview() {
-    DendeeventosTheme {
-        FluxoUsuarioScreen(
-            state = CadastroUiState.CadastroUsuarioUiState(),
-            viewModel = viewModel()
+fun ConferenciaUsuarioComum(state: CadastroUiState.CadastroUsuarioUiState, viewModel: CadastroViewModel) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text("Confira seus dados", fontSize = 24.sp, fontWeight = FontWeight.Bold, fontFamily = Inter)
+
+            ItemConferencia("Nome Completo", state.nome)
+            ItemConferencia("E-mail", state.email)
+            ItemConferencia("Gênero", state.genero)
+            ItemConferencia("Nascimento", state.dataNascimento)
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        DendeFooterButton(
+            onPrimaryClick = { viewModel.abrirDialogSucesso() },
+            onSecondaryClick = { viewModel.voltarPasso() }
         )
     }
 }

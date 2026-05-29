@@ -61,12 +61,14 @@ sealed interface CadastroUiState {
         val senhaError: String? = null,
         val generoError: String? = null,
         val dataNascimentoError: String? = null,
+        // ... (resto dos campos) ...
         val aceitouTermosError: Boolean = false,
 
         // Pop-ups
         val showSuccessDialog: Boolean = false,
         val erroAtualDialog: TipoErroDialog? = null
     ) : CadastroUiState {
-        val totalSteps: Int = 4
+        val totalSteps: Int
+            get() = if (isEmpresa == false) 2 else 3
     }
 }

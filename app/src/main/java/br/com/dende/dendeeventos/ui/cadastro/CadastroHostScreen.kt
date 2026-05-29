@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.com.dende.dendeeventos.core.designsystem.theme.Inter
+import br.com.dende.dendeeventos.ui.components.DendeBackButton
 import br.com.dende.dendeeventos.ui.theme.BlackLinear
 import br.com.dende.dendeeventos.ui.theme.Orange
 import br.com.dende.dendeeventos.ui.theme.White
@@ -32,23 +33,27 @@ fun CadastroHostScreen(
             .fillMaxSize()
             .padding(paddingValues)
         ) {
-            // O Roteador direciona para o visual correto dependendo do estado
             when (val state = uiState) {
 
-                // 1. TELA DE SELEÇÃO (Com o visual do seu colega)
+                // 1. TELA DE SELEÇÃO INICIAL
                 is CadastroUiState.SelecaoPerfil -> {
-                    TelaSelecaoInicial(
+                    SelecaoPerfilScreen(
                         onParticiparClick = { viewModel.selecionarPerfilUsuario() },
-                        onOrganizarClick = { viewModel.selecionarPerfilOrganizador() }
+                        onOrganizarClick = { viewModel.selecionarPerfilOrganizador() },
+                        onVoltarParaLogin = onVoltarParaLogin
                     )
                 }
 
-                // 2. O SEU ARQUIVO (Fluxo do Usuário Comum)
+                // 2. FLUXO DO USUÁRIO COMUM
                 is CadastroUiState.CadastroUsuarioUiState -> {
-                    FluxoUsuarioScreen(state = state, viewModel = viewModel)
+                    FluxoUsuarioScreen(
+                        state = state,
+                        viewModel = viewModel,
+                        onVoltarParaLogin = onVoltarParaLogin
+                    )
                 }
 
-                // 3. O ARQUIVO DO SEU COLEGA (Fluxo do Organizador)
+                // 3. FLUXO DO ORGANIZADOR
                 is CadastroUiState.CadastroOrganizadorUiState -> {
                     FluxoOrganizadorScreen(
                         state = state,
@@ -61,27 +66,39 @@ fun CadastroHostScreen(
     }
 }
 
-// O visual que o seu colega criou, agora isolado em uma função limpa!
 @Composable
-fun TelaSelecaoInicial(
+fun SelecaoPerfilScreen(
     onParticiparClick: () -> Unit,
-    onOrganizarClick: () -> Unit
+    onOrganizarClick: () -> Unit,
+    onVoltarParaLogin: () -> Unit
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
             .padding(24.dp)
     ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            DendeBackButton(onClick = onVoltarParaLogin)
+            Spacer(modifier = Modifier.width(30.dp))
+            Text(
+                text = "Registrar-me",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = Inter
+            )
+        }
+
         Spacer(modifier = Modifier.height(20.dp))
+
         Text(
-            text = "Para qual finalidade gostaria de Criar sua conta?",
-            fontSize = 15.sp,
+            text = "Para qual finalidade gostaria de criar sua conta?",
+            fontSize = 18.sp,
             fontWeight = FontWeight.Normal,
             fontFamily = Inter,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
         )
+
         Spacer(modifier = Modifier.height(90.dp))
 
         Button(
@@ -92,8 +109,10 @@ fun TelaSelecaoInicial(
                 .fillMaxWidth()
                 .height(56.dp)
         ) {
-            Text("Participar de Eventos", fontSize = 23.sp, fontWeight = FontWeight.Bold, fontFamily = Inter)
+            Text("Participar de Eventos", fontSize = 20.sp, fontWeight = FontWeight.Bold, fontFamily = Inter)
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedButton(
             onClick = onOrganizarClick,
@@ -104,7 +123,7 @@ fun TelaSelecaoInicial(
                 .fillMaxWidth()
                 .height(56.dp)
         ) {
-            Text("Organizar Eventos", fontSize = 23.sp, fontWeight = FontWeight.Bold, fontFamily = Inter)
+            Text("Organizar Eventos", fontSize = 20.sp, fontWeight = FontWeight.Bold, fontFamily = Inter)
         }
     }
 }

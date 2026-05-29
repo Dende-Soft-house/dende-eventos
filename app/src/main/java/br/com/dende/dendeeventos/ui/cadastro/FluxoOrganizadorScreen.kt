@@ -24,6 +24,7 @@ import br.com.dende.dendeeventos.ui.components.DendeDropdownField
 import br.com.dende.dendeeventos.ui.components.DendeFooterButton
 import br.com.dende.dendeeventos.ui.components.DendeTextField
 import br.com.dende.dendeeventos.ui.components.DendeNotificationDialog
+import br.com.dende.dendeeventos.ui.components.DendePasswordField
 import br.com.dende.dendeeventos.ui.theme.Orange
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,7 +47,7 @@ fun FluxoOrganizadorScreen(
                 val mostrarBotao = !estaEmModal && state.currentStep == 1
 
                 if (mostrarBotao) {
-                    DendeBackButton(onClick = onVoltarParaLogin)
+                    DendeBackButton(onClick = { viewModel.voltarPasso() })
                     Spacer(modifier = Modifier.width(30.dp))
                 }
                 Text("Registrar-me", fontSize = 30.sp, fontWeight = FontWeight.Bold, fontFamily = Inter)
@@ -141,7 +142,7 @@ fun IsEmpresa(state: CadastroUiState.CadastroOrganizadorUiState, viewModel: Cada
         Row {
             OutlinedButton(
                 onClick = {
-                    viewModel.updateIsEmpresaOrganizador(true)
+                    viewModel.updateIsEmpresa(true)  
                     viewModel.avancarPasso()
                 },
                 shape = RoundedCornerShape(15.dp),
@@ -161,7 +162,7 @@ fun IsEmpresa(state: CadastroUiState.CadastroOrganizadorUiState, viewModel: Cada
 
             OutlinedButton(
                 onClick = {
-                    viewModel.updateIsEmpresaOrganizador(false)
+                    viewModel.updateIsEmpresa(false)  
                     viewModel.avancarPasso()
                 },
                 shape = RoundedCornerShape(15.dp),
@@ -194,7 +195,7 @@ fun CadastrarDadosEmpresariais(state: CadastroUiState.CadastroOrganizadorUiState
 
             DendeTextField(
                 value = state.cnpj,
-                onValueChange = { viewModel.updateCnpjOrganizador(it) },
+                onValueChange = { viewModel.updateCnpj(it) },  
                 title = "CNPJ",
                 placeholder = "XX.XXX.XXX/XXXX-XX",
                 isError = state.cnpjError != null,
@@ -203,7 +204,7 @@ fun CadastrarDadosEmpresariais(state: CadastroUiState.CadastroOrganizadorUiState
 
             DendeTextField(
                 value = state.razaoSocial,
-                onValueChange = { viewModel.updateRazaoSocialOrganizador(it) },
+                onValueChange = { viewModel.updateRazaoSocial(it) },  
                 title = "Razão Social",
                 placeholder = "Exemplo",
                 isError = state.razaoSocialError != null,
@@ -212,7 +213,7 @@ fun CadastrarDadosEmpresariais(state: CadastroUiState.CadastroOrganizadorUiState
 
             DendeTextField(
                 value = state.nomeFantasia,
-                onValueChange = { viewModel.updateNomeFantasiaOrganizador(it) },
+                onValueChange = { viewModel.updateNomeFantasia(it) },  
                 title = "Nome Fantasia",
                 placeholder = "Exemplo",
                 isError = state.nomeFantasiaError != null,
@@ -228,7 +229,6 @@ fun CadastrarDadosEmpresariais(state: CadastroUiState.CadastroOrganizadorUiState
         )
     }
 }
-
 @SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -245,25 +245,23 @@ fun CadastrarDadosPessoais(state: CadastroUiState.CadastroOrganizadorUiState, vi
 
             DendeTextField(
                 value = state.email,
-                onValueChange = { novoTexto -> viewModel.updateEmailOrganizador(novoTexto)},
+                onValueChange = { novoTexto -> viewModel.updateEmail(novoTexto)},  
                 title = "Email",
                 placeholder = "exemplo@email.com",
                 isError = state.emailError != null,
                 errorMessage = state.emailError
             )
 
-            DendeTextField(
+            DendePasswordField(
                 value = state.senha,
-                onValueChange = { viewModel.updateSenhaOrganizador(it) },
-                title = "Senha",
-                placeholder = "********",
+                onValueChange = { viewModel.updateSenha(it) },
                 isError = state.senhaError != null,
                 errorMessage = state.senhaError
             )
 
             DendeTextField(
                 value = state.nome,
-                onValueChange = { viewModel.updateNomeOrganizador(it) },
+                onValueChange = { viewModel.updateNome(it) },  
                 title = "Nome",
                 placeholder = "Dende Eventos",
                 isError = state.nomeError != null,
@@ -272,7 +270,7 @@ fun CadastrarDadosPessoais(state: CadastroUiState.CadastroOrganizadorUiState, vi
 
             DendeDropdownField(
                 value = state.genero,
-                onValueChange = { viewModel.updateGeneroOrganizador(it) },
+                onValueChange = { viewModel.updateGenero(it) },  
                 options = listOf("Masculino", "Feminino", "Não Binário", "Prefiro não dizer"),
                 title = "Gênero",
                 placeholder = "Selecione..."
@@ -280,14 +278,14 @@ fun CadastrarDadosPessoais(state: CadastroUiState.CadastroOrganizadorUiState, vi
 
             DendeDatePickerField(
                 value = state.dataNascimento,
-                onDateSelected = { viewModel.updateDataNascimentoOrganizador(it) },
+                onDateSelected = { viewModel.updateDataNascimento(it) }, 
                 title = "Data de Nascimento",
                 placeholder = "DD/MM/AAAA"
             )
 
             DendeCheckBox(
                 checked = state.aceitouTermos,
-                onCheckedChange = { novoValor -> viewModel.updateAceiteTermosOrganizador(novoValor) },
+                onCheckedChange = { novoValor -> viewModel.updateAceitouTermos(novoValor) }, 
                 isError = state.aceitouTermosError
             )
         }
