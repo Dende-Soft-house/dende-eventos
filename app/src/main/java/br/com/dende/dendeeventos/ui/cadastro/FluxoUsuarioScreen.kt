@@ -1,14 +1,11 @@
 package br.com.dende.dendeeventos.ui.cadastro
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,47 +19,44 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.dende.dendeeventos.ui.theme.*
+import androidx.lifecycle.viewmodel.compose.viewModel
 
-// Controle de Etapas
 enum class CadastroStep {
     PERFIL, DADOS, CONFIRMACAO
 }
 
 @Composable
-fun CadastroUsuarioScreen() {
-    var currentStep by remember { mutableStateOf(CadastroStep.PERFIL) }
-
-    // Estados dos inputs
-    var email by remember { mutableStateOf("") }
-    var senha by remember { mutableStateOf("") }
-    var nome by remember { mutableStateOf("") }
-
+fun FluxoUsuarioScreen(
+    state: CadastroUiState.CadastroUsuarioUiState,
+    viewModel: CadastroViewModel
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
             .padding(24.dp)
     ) {
-        // Cabeçalho com botão voltar
-        IconButton(onClick = {}) {
+        // Seu cabeçalho de voltar
+        IconButton(onClick = { viewModel.voltarPasso() }) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar", tint = Black)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        when (currentStep) {
-            CadastroStep.PERFIL -> PerfilSelection { currentStep = CadastroStep.DADOS }
-            CadastroStep.DADOS -> DadosPessoaisForm(
-                email = email,
-                onEmailChange = { email = it },
-                senha = senha,
-                onSenhaChange = { senha = it },
-                nome = nome,
-                onNomeChange = { nome = it },
-                onContinue = { currentStep = CadastroStep.CONFIRMACAO },
-                onBack = { currentStep = CadastroStep.PERFIL }
+        // O seu fluxo interno
+        if (state.currentStep == 1) {
+            DadosPessoaisForm(
+                email = state.email,
+                onEmailChange = { viewModel.updateEmailUsuario(it) },
+                senha = state.senha,
+                onSenhaChange = { viewModel.updateSenhaUsuario(it) },
+                nome = state.nome,
+                onNomeChange = { viewModel.updateNomeUsuario(it) },
+                onContinue = { viewModel.avancarPasso() },
+                onBack = { viewModel.voltarPasso() }
             )
-            CadastroStep.CONFIRMACAO -> { /* Tela de Confirmação */ }
+        } else {
+            // Tela de Confirmação (Step 2)
+            Text("Tela de Confirmação do Usuário")
         }
     }
 }
@@ -183,10 +177,15 @@ fun CustomTextField(
     }
 }
 
+
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun CadastroUsuarioPreview() {
-    DendeeventosTheme { // Usa o tema que você me enviou
-        CadastroUsuarioScreen()
+    DendeeventosTheme {
+        FluxoUsuarioScreen(
+            state = CadastroUiState.CadastroUsuarioUiState(),
+            viewModel = viewModel()
+        )
     }
 }

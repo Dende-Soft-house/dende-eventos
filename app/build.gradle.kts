@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.coil.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

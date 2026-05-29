@@ -1,41 +1,40 @@
 package br.com.dende.dendeeventos
 
 import android.os.Bundle
+import android.widget.Toast // Importe necessário para o Toast de teste
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import br.com.dende.dendeeventos.core.designsystem.components.CategoryChip
-import br.com.dende.dendeeventos.core.designsystem.components.EventCard
-import br.com.dende.dendeeventos.core.designsystem.components.InviteCard
-import br.com.dende.dendeeventos.core.designsystem.components.InvitePopup
+import br.com.dende.dendeeventos.core.designsystem.components.*
 import br.com.dende.dendeeventos.ui.theme.DendeeventosTheme
+import br.com.dende.dendeeventos.ui.cadastro.CadastroHostScreen
+// import br.com.dende.dendeeventos.ui.navigation.AppNavigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            EventCard()
+            DendeeventosTheme {
+
+                CadastroHostScreen(
+                    onVoltarParaLogin = {
+                        Toast.makeText(this, "Ação: Voltar para a tela de Login", Toast.LENGTH_SHORT).show()
+                    }
+                )
+
+
+            }
         }
     }
 }
+
 
 
 @Composable
