@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import br.com.dende.dendeeventos.feature.event.AtivarEventoAvisoDialog
@@ -25,7 +26,8 @@ fun AppNavHost(
             Teste(navController = navController)
         }
 
-        composable<AppDestinations.AtivarEventoRoute> { backStackEntry ->
+        // Usando 'dialog' para rotas que são modais, permitindo ver a tela anterior ao fundo
+        dialog<AppDestinations.AtivarEventoRoute> { backStackEntry ->
             val route: AppDestinations.AtivarEventoRoute = backStackEntry.toRoute()
             AtivarEventoAvisoDialog(
                 eventoId = route.eventoId,
@@ -38,13 +40,13 @@ fun AppNavHost(
             )
         }
 
-        composable<AppDestinations.AtivarEventoOkRoute> {
+        dialog<AppDestinations.AtivarEventoOkRoute> {
             AtivarEventoOkDialog(
                 onEntendiClick = { navController.popBackStack() }
             )
         }
 
-        composable<AppDestinations.DesativarEventoRoute> { backStackEntry ->
+        dialog<AppDestinations.DesativarEventoRoute> { backStackEntry ->
             val route: AppDestinations.DesativarEventoRoute = backStackEntry.toRoute()
             DesativarEventoAvisoDialog(
                 eventoId = route.eventoId,
@@ -57,19 +59,16 @@ fun AppNavHost(
             )
         }
 
-        composable<AppDestinations.DesativarEventoOkRoute> {
+        dialog<AppDestinations.DesativarEventoOkRoute> {
             DesativarEventoOkDialog(
                 onEntendiClick = { navController.popBackStack() }
             )
         }
 
-        composable<AppDestinations.EventoIniciadoErroRoute> {
+        dialog<AppDestinations.EventoIniciadoErroRoute> {
             EventoIniciadoErroDialog(
                 onEntendiClick = { navController.popBackStack() }
             )
         }
     }
-
-
-
 }

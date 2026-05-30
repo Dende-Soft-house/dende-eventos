@@ -16,7 +16,7 @@ import br.com.dende.dendeeventos.core.designsystem.theme.Inter
 @Composable
 fun DendeButton(
     text: String,
-    onClick: @Composable () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color,
     contentColor: Color

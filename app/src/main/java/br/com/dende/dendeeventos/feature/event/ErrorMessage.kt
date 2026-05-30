@@ -1,7 +1,6 @@
 package br.com.dende.dendeeventos.feature.event
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -18,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import br.com.dende.dendeeventos.R
 import br.com.dende.dendeeventos.ui.theme.Orange
+import br.com.dende.dendeeventos.ui.theme.DendeeventosTheme
 
 @Composable
 fun EventoIniciadoErroDialog(onEntendiClick: () -> Unit) {
@@ -28,15 +28,19 @@ fun EventoIniciadoErroDialog(onEntendiClick: () -> Unit) {
 
 @Composable
 fun EventoIniciadoErroContent(onEntendiClick: () -> Unit) {
-    Box(
+    // Usando Surface para melhor suporte a elevação e consistência com Material 3
+    Surface(
         modifier = Modifier
             .width(342.dp)
-            .background(Color.White, RoundedCornerShape(20.dp))
-            .padding(horizontal = 24.dp, vertical = 32.dp)
+            .wrapContentHeight(),
+        shape = RoundedCornerShape(20.dp),
+        color = Color.White
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 32.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.aviso),
@@ -57,7 +61,7 @@ fun EventoIniciadoErroContent(onEntendiClick: () -> Unit) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Não é possível cancelar um evento que já foi iniciado.",
+                text = "Não é possível realizar esta ação em um evento que já foi iniciado.",
                 fontSize = 14.sp,
                 color = Color.Gray,
                 textAlign = TextAlign.Center
@@ -88,5 +92,9 @@ fun EventoIniciadoErroContent(onEntendiClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewEventoIniciadoErroContent() {
-    EventoIniciadoErroContent(onEntendiClick = {})
+    DendeeventosTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            EventoIniciadoErroContent(onEntendiClick = {})
+        }
+    }
 }
