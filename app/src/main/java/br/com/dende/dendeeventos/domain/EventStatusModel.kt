@@ -4,7 +4,7 @@ enum class EtapaDesativacaoEvento {
 }
 
 data class EventoStatus(
-    val eventoId: Int,
+    val evento: Evento,
     var nomeEvento: String,
     // Variável responsável por controlar o estado do evento (ativo/inativo)
     var ativo: Boolean = false,
