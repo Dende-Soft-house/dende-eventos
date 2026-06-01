@@ -39,7 +39,7 @@ fun TicketCard(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Imagem do Banner no Topo
+
             Image(
                 painter = painterResource(id = R.drawable.banner_card),
                 contentDescription = "Banner do evento",
@@ -52,7 +52,6 @@ fun TicketCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Textos e Status (Meio)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -92,7 +91,6 @@ fun TicketCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Botão "Ingresso" (Fundo)
             Button(
                 onClick = onVerClick,
                 colors = ButtonDefaults.buttonColors(

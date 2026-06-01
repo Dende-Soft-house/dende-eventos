@@ -51,9 +51,8 @@ import br.com.dende.dendeeventos.ui.viewmodels.IngressoViewModel
 
 @Composable
 fun IngressoScreen(
-    viewModel: IngressoViewModel = viewModel() // Injeção do ViewModel
+    viewModel: IngressoViewModel = viewModel()
 ) {
-    // Observamos o estado atual do ViewModel
     val state by viewModel.uiState.collectAsState()
 
     Scaffold { padding ->
@@ -68,7 +67,6 @@ fun IngressoScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // TOPO
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -76,7 +74,7 @@ fun IngressoScreen(
             ) {
 
                 IconButton(
-                    onClick = { viewModel.voltar() }, // Ação de voltar
+                    onClick = { viewModel.voltar() },
                     modifier = Modifier.align(Alignment.CenterStart)
                 ) {
 
@@ -101,7 +99,6 @@ fun IngressoScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // BANNER + TITULO
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
@@ -121,7 +118,7 @@ fun IngressoScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
-                    text = state.titulo, // Vindo do ViewModel
+                    text = state.titulo,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF232330)
@@ -130,7 +127,7 @@ fun IngressoScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = state.descricao, // Vindo do ViewModel
+                    text = state.descricao,
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
@@ -138,7 +135,6 @@ fun IngressoScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // CARD INFO
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -153,28 +149,28 @@ fun IngressoScreen(
 
                     TicketInfoRow(
                         icon = R.drawable.icon_calendar,
-                        text = state.dataHora // Vindo do ViewModel
+                        text = state.dataHora
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     TicketInfoRow(
                         icon = R.drawable.icon_map_pin,
-                        text = state.local // Vindo do ViewModel
+                        text = state.local
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     TicketInfoRow(
                         icon = R.drawable.icon_ticket_ticket,
-                        text = state.tipoEntrada // Vindo do ViewModel
+                        text = state.tipoEntrada
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     TicketInfoRow(
                         icon = R.drawable.icon_user_ticket,
-                        text = state.nomeTitular // Vindo do ViewModel
+                        text = state.nomeTitular
                     )
 
                     Spacer(modifier = Modifier.height(28.dp))

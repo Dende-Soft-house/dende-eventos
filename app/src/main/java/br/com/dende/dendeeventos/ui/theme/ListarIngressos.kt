@@ -39,23 +39,21 @@ fun ListarIngressosScreen(
         }
     ) { padding ->
 
-        // Fundo cinza de toda a tela
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFFF3F3F3))
         ) {
 
-            // A LISTA AGORA CONTROLA TUDO (Header + Cartões)
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding),
-                contentPadding = PaddingValues(bottom = 120.dp), // Espaço no fundo para a NavBar
-                verticalArrangement = Arrangement.spacedBy(18.dp) // Espaçamento automático entre os itens
+                contentPadding = PaddingValues(bottom = 120.dp),
+                verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
 
-                // 1. O HEADER AGORA É O PRIMEIRO ITEM DA LISTA (Ele vai rolar junto!)
                 item {
                     Column(
                         modifier = Modifier
@@ -72,7 +70,6 @@ fun ListarIngressosScreen(
                     ) {
                         Spacer(modifier = Modifier.height(20.dp))
 
-                        // USER INFO
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
@@ -124,11 +121,10 @@ fun ListarIngressosScreen(
                     }
                 }
 
-                // 2. OS CARTÕES VÊM LOGO A SEGUIR
                 if (abaSelecionada == 0) {
                     items(2) {
                         TicketCard(
-                            modifier = Modifier.padding(horizontal = 20.dp), // Adiciona margem lateral aos cartões
+                            modifier = Modifier.padding(horizontal = 20.dp),
                             titulo = "IntegraSI FSA",
                             data = "21 Abr, 18:50",
                             status = "ATIVO",
