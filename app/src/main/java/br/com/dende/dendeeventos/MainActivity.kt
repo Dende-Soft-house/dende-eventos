@@ -26,13 +26,16 @@ import br.com.dende.dendeeventos.core.designsystem.components.EventCard
 import br.com.dende.dendeeventos.core.designsystem.components.InviteCard
 import br.com.dende.dendeeventos.core.designsystem.components.InvitePopup
 import br.com.dende.dendeeventos.ui.theme.DendeeventosTheme
+import br.com.dende.dendeeventos.ui.navigation.AppNavHost
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            EventCard()
+            DendeeventosTheme {
+                AppNavHost()
+            }
         }
     }
 }
