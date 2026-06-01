@@ -47,10 +47,6 @@ import br.com.dende.dendeeventos.core.designsystem.components.BottomNavBar
 import br.com.dende.dendeeventos.core.designsystem.components.TicketCard
 import br.com.dende.dendeeventos.core.designsystem.components.TopTabButton
 
-// ======================================================
-// ATIVOS
-// ======================================================
-
 @Composable
 fun ListarIngressosAtivos() {
 
@@ -179,10 +175,6 @@ fun ListarIngressosAtivosPreview() {
     ListarIngressosAtivos()
 }
 
-// ======================================================
-// ENCERRADOS
-// ======================================================
-
 @Composable
 fun ListarIngressosEncerrados() {
 
@@ -198,7 +190,6 @@ fun ListarIngressosEncerrados() {
                 .background(Color(0xFFF3F3F3))
         ) {
 
-            // HEADER
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

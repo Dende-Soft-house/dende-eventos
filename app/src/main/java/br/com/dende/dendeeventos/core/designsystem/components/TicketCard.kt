@@ -30,9 +30,9 @@ import androidx.compose.ui.unit.sp
 import br.com.dende.dendeeventos.R
 
 @Composable
-fun TicketCard( // <-- NOME ALTERADO PARA EVITAR CONFLITO
-    titulo: String, // <-- ADICIONADO PARA SER DINÂMICO
-    data: String,   // <-- ADICIONADO PARA SER DINÂMICO
+fun TicketCard(
+    titulo: String,
+    data: String,
     status: String,
     statusColor: Color,
     backgroundStatus: Color,
@@ -65,12 +65,12 @@ fun TicketCard( // <-- NOME ALTERADO PARA EVITAR CONFLITO
             ) {
                 Column {
                     Text(
-                        text = titulo, // <-- USA A VARIÁVEL AGORA
+                        text = titulo,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = data, // <-- USA A VARIÁVEL AGORA
+                        text = data,
                         color = Color.Gray
                     )
                 }

@@ -100,7 +100,6 @@ fun IngressoScreen() {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // BANNER + TITULO
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
 
