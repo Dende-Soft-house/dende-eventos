@@ -27,6 +27,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,11 +44,17 @@ import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 import br.com.dende.dendeeventos.R
+import br.com.dende.dendeeventos.ui.viewmodels.IngressoViewModel
 
 @Composable
-fun IngressoScreen() {
+fun IngressoScreen(
+    viewModel: IngressoViewModel = viewModel() // Injeção do ViewModel
+) {
+    // Observamos o estado atual do ViewModel
+    val state by viewModel.uiState.collectAsState()
 
     Scaffold { padding ->
 
@@ -68,7 +76,7 @@ fun IngressoScreen() {
             ) {
 
                 IconButton(
-                    onClick = {},
+                    onClick = { viewModel.voltar() }, // Ação de voltar
                     modifier = Modifier.align(Alignment.CenterStart)
                 ) {
 
@@ -76,24 +84,17 @@ fun IngressoScreen() {
                         painter = painterResource(
                             id = R.drawable.icon_arrow
                         ),
-
                         contentDescription = "Botão de Voltar",
-
                         tint = Color(0xFFFF6A00),
-
                         modifier = Modifier.size(28.dp)
                     )
                 }
 
                 Text(
                     text = "Ingresso",
-
                     fontSize = 22.sp,
-
                     fontWeight = FontWeight.Bold,
-
                     color = Color(0xFF232330),
-
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
@@ -103,7 +104,6 @@ fun IngressoScreen() {
             // BANNER + TITULO
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-
                 modifier = Modifier.fillMaxWidth()
             ) {
 
@@ -111,35 +111,27 @@ fun IngressoScreen() {
                     painter = painterResource(
                         id = R.drawable.banner_card
                     ),
-
                     contentDescription = "Banner do Evento",
-
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(150.dp),
-
                     contentScale = ContentScale.Crop
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
-                    text = "IntegraSI FSA",
-
+                    text = state.titulo, // Vindo do ViewModel
                     fontSize = 24.sp,
-
                     fontWeight = FontWeight.Bold,
-
                     color = Color(0xFF232330)
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Um encontro de tecnologia, inovação e conexão",
-
+                    text = state.descricao, // Vindo do ViewModel
                     fontSize = 14.sp,
-
                     color = Color.Gray
                 )
             }
@@ -149,9 +141,7 @@ fun IngressoScreen() {
             // CARD INFO
             Card(
                 modifier = Modifier.fillMaxWidth(),
-
                 shape = RoundedCornerShape(20.dp),
-
                 colors = CardDefaults.cardColors(
                     containerColor = Color(0xFFEDEDED)
                 )
@@ -163,45 +153,41 @@ fun IngressoScreen() {
 
                     TicketInfoRow(
                         icon = R.drawable.icon_calendar,
-                        text = "21 de Abril as 18:40"
+                        text = state.dataHora // Vindo do ViewModel
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     TicketInfoRow(
                         icon = R.drawable.icon_map_pin,
-                        text = "UNEX, Feira de Santana - BA"
+                        text = state.local // Vindo do ViewModel
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     TicketInfoRow(
                         icon = R.drawable.icon_ticket_ticket,
-                        text = "Entrada Gratuita"
+                        text = state.tipoEntrada // Vindo do ViewModel
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     TicketInfoRow(
                         icon = R.drawable.icon_user_ticket,
-                        text = "Chaira Sacra"
+                        text = state.nomeTitular // Vindo do ViewModel
                     )
 
                     Spacer(modifier = Modifier.height(28.dp))
 
                     Box(
                         modifier = Modifier.fillMaxWidth(),
-
                         contentAlignment = Alignment.Center
                     ) {
-
                         Image(
                             painter = painterResource(
                                 id = R.drawable.qrcode
                             ),
-
                             contentDescription = "QR Code",
-
                             modifier = Modifier.size(180.dp)
                         )
                     }
@@ -213,59 +199,44 @@ fun IngressoScreen() {
             // BOTÕES
             Row(
                 modifier = Modifier.fillMaxWidth(),
-
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
                 // BAIXAR
                 Button(
-                    onClick = {},
-
+                    onClick = { viewModel.baixarIngresso() }, // Ligado ao ViewModel
                     modifier = Modifier
                         .weight(1f)
                         .height(56.dp),
-
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF1F2230)
                     ),
-
                     shape = RoundedCornerShape(16.dp)
                 ) {
-
                     Text(
                         text = "Baixar",
-
                         fontSize = 18.sp,
-
                         fontWeight = FontWeight.Bold,
-
                         color = Color.White
                     )
                 }
 
                 // CANCELAR
                 OutlinedButton(
-                    onClick = {},
-
+                    onClick = { viewModel.cancelarIngresso() }, // Ligado ao ViewModel
                     modifier = Modifier
                         .weight(1f)
                         .height(56.dp),
-
                     shape = RoundedCornerShape(16.dp),
-
                     border = BorderStroke(
                         width = 2.5.dp,
                         color = Color.Black
                     )
                 ) {
-
                     Text(
                         text = "Cancelar",
-
                         fontSize = 18.sp,
-
                         fontWeight = FontWeight.Bold,
-
                         color = Color.Black
                     )
                 }
@@ -281,18 +252,13 @@ fun TicketInfoRow(
     icon: Int,
     text: String
 ) {
-
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Icon(
             painter = painterResource(id = icon),
-
             contentDescription = null,
-
             tint = Color(0xFFFF6A00),
-
             modifier = Modifier.size(18.dp)
         )
 
@@ -300,9 +266,7 @@ fun TicketInfoRow(
 
         Text(
             text = text,
-
             fontSize = 15.sp,
-
             color = Color(0xFF232330)
         )
     }
@@ -314,6 +278,5 @@ fun TicketInfoRow(
 )
 @Composable
 fun IngressoScreenPreview() {
-
     IngressoScreen()
 }
