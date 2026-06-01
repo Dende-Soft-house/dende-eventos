@@ -7,11 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,22 +19,65 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+
+// IMPORTS DE NAVEGAÇÃO
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+
+// IMPORTS DAS TUAS TELAS E TEMA
+import br.com.dende.dendeeventos.ui.theme.viewmodels.ListarIngressosScreen
+import br.com.dende.dendeeventos.ui.theme.IngressoScreen
+import br.com.dende.dendeeventos.ui.theme.DendeeventosTheme
+
+// IMPORTS DOS TEUS COMPONENTES DE TESTE
 import br.com.dende.dendeeventos.core.designsystem.components.CategoryChip
 import br.com.dende.dendeeventos.core.designsystem.components.TicketCard
-import br.com.dende.dendeeventos.core.designsystem.components.InviteCard
 import br.com.dende.dendeeventos.core.designsystem.components.InvitePopup
-import br.com.dende.dendeeventos.ui.theme.DendeeventosTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            TicketCard()
+            DendeeventosTheme {
+                // 1. Cria o controlador de navegação (o "GPS")
+                val navController = rememberNavController()
+
+                // 2. Define o mapa de telas
+                NavHost(
+                    navController = navController,
+                    startDestination = "lista_ingressos" // Define a tela inicial
+                ) {
+
+                    // Rota da Tela de Lista
+                    composable("lista_ingressos") {
+                        ListarIngressosScreen(
+                            onNavigateToIngresso = {
+                                // Manda ir para a tela de detalhes
+                                navController.navigate("detalhes_ingresso")
+                            }
+                        )
+                    }
+
+                    // Rota da Tela de Detalhes
+                    composable("detalhes_ingresso") {
+                        IngressoScreen(
+                            onBackClick = {
+                                // "Estoura" a tela atual e volta para a anterior
+                                navController.popBackStack()
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
 }
 
+// ==========================================
+// AS TUAS FUNÇÕES DE TESTE MANTIDAS ABAIXO
+// ==========================================
 
 @Composable
 fun MinhaTela() {
@@ -79,7 +120,7 @@ fun CategorySelector() {
         // Categoria Design
         CategoryChip(
             label = "Design",
-            iconRes = R.drawable.ic_launcher_background, // seu ícone
+            iconRes = R.drawable.ic_launcher_background, // teu ícone
             isSelected = selectedCategory == "Design",
             onClick = { selectedCategory = "Design" }
         )
@@ -87,13 +128,12 @@ fun CategorySelector() {
         // Categoria Art
         CategoryChip(
             label = "Teste",
-            iconRes = R.drawable.ic_launcher_background, // seu ícone
+            iconRes = R.drawable.ic_launcher_background, // teu ícone
             isSelected = selectedCategory == "Art",
             onClick = { selectedCategory = "Art" }
         )
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

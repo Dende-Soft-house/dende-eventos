@@ -51,7 +51,8 @@ import br.com.dende.dendeeventos.ui.viewmodels.IngressoViewModel
 
 @Composable
 fun IngressoScreen(
-    viewModel: IngressoViewModel = viewModel() // Injeção do ViewModel
+    viewModel: IngressoViewModel = viewModel(),
+    onBackClick: () -> Unit = {}// Injeção do ViewModel
 ) {
     // Observamos o estado atual do ViewModel
     val state by viewModel.uiState.collectAsState()
@@ -76,7 +77,7 @@ fun IngressoScreen(
             ) {
 
                 IconButton(
-                    onClick = { viewModel.voltar() }, // Ação de voltar
+                    onClick = onBackClick, // Ação de voltar
                     modifier = Modifier.align(Alignment.CenterStart)
                 ) {
 

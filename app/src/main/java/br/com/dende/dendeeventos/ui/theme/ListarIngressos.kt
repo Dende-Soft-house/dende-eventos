@@ -29,7 +29,8 @@ import br.com.dende.dendeeventos.ui.theme.viewmodels.ListarIngressosViewModel
 
 @Composable
 fun ListarIngressosScreen(
-    viewModel: ListarIngressosViewModel = viewModel()
+    viewModel: ListarIngressosViewModel = viewModel(),
+    onNavigateToIngresso: () -> Unit = {}
 ) {
     val abaSelecionada by viewModel.abaSelecionada.collectAsState()
 
@@ -135,7 +136,8 @@ fun ListarIngressosScreen(
                             statusColor = Color(0xFF169B16),
                             backgroundStatus = Color(0xFFDFF5D8),
                             buttonColor = Color(0xFF1F2230),
-                            buttonTextColor = Color.White
+                            buttonTextColor = Color.White,
+                            onVerClick = onNavigateToIngresso
                         )
                     }
                 } else {
