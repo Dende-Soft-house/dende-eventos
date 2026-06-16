@@ -42,7 +42,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavController
 import br.com.dende.dendeeventos.domain.ModalConfirmacaoViewModel
+import br.com.dende.dendeeventos.ui.navigation.AppDestinations
 import br.com.dende.dendeeventos.ui.theme.DendeeventosTheme
 import br.com.dende.dendeeventos.ui.theme.Orange
 
@@ -67,6 +69,7 @@ enum class ModalConfirmacaoTipo(
 fun ReativarInativarUsuarioModalConfirmacao(
     visible: Boolean,
     tipo: ModalConfirmacaoTipo,
+    navController: NavController,
     viewModel: ModalConfirmacaoViewModel = remember { ModalConfirmacaoViewModel() },
     onSuccess: (ModalConfirmacaoTipo) -> Unit,
     onCancel: () -> Unit,
@@ -94,6 +97,19 @@ fun ReativarInativarUsuarioModalConfirmacao(
 
             if (confirmado) {
                 onSuccess(tipoAtual)
+                if (tipoAtual == ModalConfirmacaoTipo.REATIVAR) {
+                    // Redireciona diretamente para o Feed de Eventos ao reativar
+                    navController.navigate(AppDestinations.FeedEventos) {
+                        popUpTo(AppDestinations.Login) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                } else if (tipoAtual == ModalConfirmacaoTipo.INATIVAR) {
+                    // Redireciona para o Login ao inativar, limpando a pilha
+                    navController.navigate(AppDestinations.Login) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
             }
         },
         onCancel = {
@@ -299,10 +315,12 @@ private fun ReativarInativarUsuarioModalConfirmacaoContent(
 @Preview(showBackground = true)
 @Composable
 fun ReativarInativarUsuarioModalPreview() {
+    val navController = androidx.navigation.compose.rememberNavController()
     DendeeventosTheme {
         ReativarInativarUsuarioModalConfirmacao(
             visible = true,
             tipo = ModalConfirmacaoTipo.REATIVAR,
+            navController = navController,
             onSuccess = {},
             onCancel = {},
             onDismissRequest = {}

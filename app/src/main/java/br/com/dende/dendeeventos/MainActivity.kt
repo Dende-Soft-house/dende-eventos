@@ -21,18 +21,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import br.com.dende.dendeeventos.core.designsystem.components.CategoryChip
 import br.com.dende.dendeeventos.core.designsystem.components.EventCard
 import br.com.dende.dendeeventos.core.designsystem.components.InviteCard
 import br.com.dende.dendeeventos.core.designsystem.components.InvitePopup
+import br.com.dende.dendeeventos.ui.SearchScreen
+import br.com.dende.dendeeventos.ui.navigation.AppNavHost
 import br.com.dende.dendeeventos.ui.theme.DendeeventosTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
-            EventCard()
+            DendeeventosTheme {
+                AppNavHost()
+            }
         }
     }
 }
@@ -93,6 +101,25 @@ fun CategorySelector() {
         )
     }
 }
+
+    // Geralmente fica no MainActivity ou em um arquivo de rotas central
+    @Composable
+    fun AppNavigation() {
+        // 1. O NavController principal é criado AQUI
+        val navController = rememberNavController()
+
+        NavHost(navController = navController, startDestination = "lista_usuarios") {
+
+            composable("lista_usuarios") {
+                // 2. Você PASSAR o navController como parâmetro para a sua tela
+                //SearchScreen(navController = navController)
+            }
+
+            composable("sua_tela_de_destino") {
+                //TelaDeSucesso()
+            }
+        }
+    }
 
 
 @Preview(showBackground = true)
