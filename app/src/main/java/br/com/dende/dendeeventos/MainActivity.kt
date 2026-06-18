@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            EventCard()
+            br.com.dende.dendeeventos.ui.theme.ListarIngressosAtivos()
         }
     }
 }
