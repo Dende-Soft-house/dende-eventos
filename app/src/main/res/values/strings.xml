@@ -4,4 +4,8 @@
     <string name="btn_accept">Accept</string>
     <string name="btn_reject">Reject</string>
     <string name="label_invite_on">invite you on</string>
+    <string name="active_events_warning_title">Inativar Usuário</string>
+    <string name="active_events_warning_message">Há eventos ativos ou em execução.\nDesative-os para inativar o usuário</string>
+    <string name="active_events_warning_confirm">DESATIVE TODOS EVENTOS</string>
+    <string name="active_events_warning_cancel">CANCELAR</string>
 </resources>
